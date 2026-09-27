@@ -1,0 +1,111 @@
+---
+nombre: 'Amazon Athena'
+categoria: 'analitica'
+nivel: 'intermedio'
+resumenCorto: 'Consulta con SQL los datos que ya están en S3, sin servidores, sin cargas previas y pagando por consulta.'
+analogia: 'Es poder hacerle preguntas en voz alta a una bodega llena de cajas sin tener que sacarlas ni ordenarlas antes: preguntas, y alguien va, mira y responde.'
+cuandoAplicarlo: 'Cuando hay datos en S3 —registros, exportaciones, CSV, Parquet— y hace falta consultarlos de vez en cuando sin montar ni mantener una base de datos.'
+casosDeUso:
+  - 'Analizar los registros de acceso de CloudFront o de un balanceador'
+  - 'Explorar un conjunto de datos abierto antes de decidir qué hacer con él'
+  - 'Consultar el informe detallado de facturación de AWS'
+  - 'Dar acceso analítico a un lago de datos sin aprovisionar un clúster'
+
+conceptosClave:
+  - termino: 'Catálogo de datos'
+    definicion: 'El esquema —tablas, columnas, tipos— que define cómo interpretar los archivos de S3. Lo aporta AWS Glue.'
+  - termino: 'Partición'
+    definicion: 'La división de los datos por carpetas, normalmente por fecha. Es lo que evita escanear todo el bucket.'
+  - termino: 'Formato columnar'
+    definicion: 'Parquet u ORC: guardan por columnas, se comprimen mejor y reducen enormemente lo que se escanea.'
+  - termino: 'Grupo de trabajo'
+    definicion: 'La agrupación que separa equipos y permite fijar un límite de datos escaneados por consulta.'
+
+modeloDePrecios: 'Por terabyte de datos escaneados. Si la consulta lee menos datos, cuesta menos: el precio depende del formato y de las particiones, no del tiempo de ejecución.'
+capaGratuita: 'No hay capa gratuita, pero el costo por consulta sobre conjuntos pequeños es de centavos.'
+trampasDeCosto:
+  - 'Un `SELECT *` sobre datos en CSV escanea todo el archivo; el mismo dato en Parquet puede costar una fracción.'
+  - 'Datos sin particionar obligan a escanear todo el histórico para consultar un solo día.'
+  - 'No fijar un límite de escaneo en el grupo de trabajo: una consulta mal escrita puede leer terabytes.'
+
+alternativas:
+  - servicio: 'Amazon Redshift'
+    slug: 'bases-de-datos/redshift'
+    porque: 'si las consultas son constantes y muchas, un almacén dedicado sale más barato y más rápido.'
+  - servicio: 'Amazon EMR'
+    slug: 'analitica/emr'
+    porque: 'si el procesamiento necesita código en Spark y no se puede expresar en SQL.'
+  - servicio: 'Amazon OpenSearch Service'
+    slug: 'analitica/opensearch'
+    porque: 'si lo que se busca es explorar registros de forma interactiva y en texto libre.'
+
+serviciosRelacionados:
+  - 'almacenamiento/s3'
+  - 'analitica/glue'
+  - 'bases-de-datos/redshift'
+  - 'analitica/quicksight'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Data Engineer – Associate'
+  - 'AWS Certified Data Analytics – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Athena'
+    url: 'https://docs.aws.amazon.com/athena/'
+  - titulo: 'Precios de Amazon Athena'
+    url: 'https://aws.amazon.com/athena/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+La ruta tradicional para analizar datos era pesada: montar una base, definir el esquema, cargar los
+datos y recién entonces poder preguntar. Athena invierte el orden. Los datos se quedan donde están,
+en S3, y el esquema se aplica **en el momento de leer**.
+
+Eso cambia la economía del análisis. No hay clúster encendido ni proceso de carga; se paga por
+terabyte escaneado. Una consulta ocasional sobre unos gigabytes cuesta centavos, y si nadie pregunta
+nada durante un mes, no se paga nada.
+
+## Cómo funciona
+
+1. Los datos están en **S3**, idealmente particionados por fecha y en formato **Parquet**.
+2. Un rastreador de **AWS Glue** recorre el bucket y registra el esquema en el catálogo de datos.
+3. Escribes SQL corriente contra esas tablas, desde la consola, la CLI o un cliente JDBC.
+4. Athena reparte la lectura, escanea solo las particiones y columnas necesarias, y devuelve el
+   resultado a S3.
+5. El costo de la consulta lo determina cuántos bytes hubo que leer.
+
+## Manos a la obra
+
+- Activa los registros de acceso de un bucket o de una distribución de CloudFront y espera unas horas.
+- Crea una tabla sobre esa carpeta y ejecuta una consulta que cuente las peticiones por día.
+- Fíjate en el dato que muestra la consola: cuántos datos escaneó y cuánto costó.
+- Convierte una copia del conjunto a Parquet particionado y repite la misma consulta.
+- Compara los dos escaneos: la diferencia suele ser de un orden de magnitud.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="SQL directamente sobre el bucket"
+  descripcion="Los registros de acceso se acumulan en Amazon S3, organizados en carpetas por fecha. Un rastreador de AWS Glue recorre esos archivos y registra su esquema en el catálogo de datos. Desde ahí, Amazon Athena responde consultas SQL leyendo únicamente las particiones y columnas que la consulta necesita, y deja el resultado en S3. Nadie cargó los datos en ninguna base: el esquema se aplica en el momento de leer."
+  nodos={[
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'registros', categoria: 'almacenamiento' },
+    { id: 'glue', etiqueta: 'AWS Glue', sub: 'catálogo', categoria: 'analitica' },
+    { id: 'athena', etiqueta: 'Amazon Athena', sub: 'consulta SQL', categoria: 'analitica' },
+    { id: 'persona', etiqueta: 'Analista', tipo: 'externo' },
+  ]}
+  flujos={[
+    { de: 's3', a: 'glue', etiqueta: 'rastrea' },
+    { de: 'glue', a: 'athena', etiqueta: 'esquema' },
+    { de: 'athena', a: 'persona', etiqueta: 'resultado' },
+  ]}
+/>
+
+La lección que más rinde con Athena es de formato: el mismo análisis puede costar diez veces menos
+solo por guardar los datos en Parquet y particionarlos por fecha.

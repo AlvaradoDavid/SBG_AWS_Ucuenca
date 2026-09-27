@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Health'
+categoria: 'administracion-y-gobernanza'
+nivel: 'fundamental'
+resumenCorto: 'Avisos sobre eventos de AWS que afectan a tus recursos concretos: degradaciones, mantenimientos, fin de soporte.'
+cuandoAplicarlo: 'Cuando algo falla y hay que descartar rápido si el problema es propio o de la región donde se opera.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Health'
+    url: 'https://aws.amazon.com/premiumsupport/technology/aws-health/'
+  - titulo: 'Precios de AWS Health'
+    url: 'https://aws.amazon.com/premiumsupport/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+A diferencia del panel público de estado, AWS Health filtra por los recursos que realmente tienes: avisa qué instancia concreta requiere reinicio, qué certificado caduca o qué versión de motor deja de recibir soporte.
+
+Su API permite enviar esos eventos a EventBridge y automatizar la respuesta, en vez de esperar a que alguien lea un correo.

@@ -1,0 +1,114 @@
+---
+nombre: 'AWS CloudTrail'
+categoria: 'administracion-y-gobernanza'
+nivel: 'fundamental'
+resumenCorto: 'Registra quién hizo qué en la cuenta: cada llamada a la API queda anotada con su autor, su origen y su resultado.'
+analogia: 'Es el libro de visitas del edificio, pero completo: anota quién entró, a qué hora, a qué oficina fue y si le dejaron pasar o no.'
+cuandoAplicarlo: 'Siempre. Es la fuente de verdad cuando hay que responder quién borró un recurso, quién cambió un permiso o si una credencial se usó desde otro lugar.'
+casosDeUso:
+  - 'Averiguar quién borró un bucket o detuvo una instancia'
+  - 'Investigar el uso de una credencial desde una dirección inesperada'
+  - 'Demostrar en una auditoría qué cambios hubo y quién los hizo'
+  - 'Disparar una alerta automática ante acciones sensibles'
+
+conceptosClave:
+  - termino: 'Evento de administración'
+    definicion: 'Las operaciones sobre recursos: crear, borrar, modificar permisos. Se registran por defecto.'
+  - termino: 'Evento de datos'
+    definicion: 'Las operaciones sobre el contenido, como leer un objeto de S3. No se registran por defecto y sí tienen costo.'
+  - termino: 'Traza (trail)'
+    definicion: 'La configuración que entrega los eventos a un bucket de S3 para conservarlos más allá de 90 días.'
+  - termino: 'Historial de eventos'
+    definicion: 'La vista de los últimos 90 días de eventos de administración, disponible sin configurar nada.'
+  - termino: 'Validación de integridad'
+    definicion: 'El archivo firmado que permite demostrar que los registros no fueron alterados.'
+
+modeloDePrecios: 'El historial de 90 días de eventos de administración es gratuito. La primera copia de esos eventos en una traza también. Los eventos de datos y las trazas adicionales se cobran por evento registrado.'
+capaGratuita: 'Los eventos de administración están cubiertos de forma permanente. Lo que puede crecer es el registro de eventos de datos y el almacenamiento en S3.'
+trampasDeCosto:
+  - 'Activar eventos de datos sobre un bucket con mucho tráfico: cada lectura de objeto pasa a ser un evento facturado.'
+  - 'Varias trazas duplicadas registrando lo mismo en cuentas distintas.'
+  - 'El bucket de destino sin regla de ciclo de vida: los registros se acumulan durante años.'
+
+alternativas:
+  - servicio: 'AWS Config'
+    slug: 'administracion-y-gobernanza/config'
+    porque: 'si la pregunta no es quién llamó a la API, sino en qué estado quedó el recurso y si cumple la política.'
+  - servicio: 'Amazon CloudWatch'
+    slug: 'administracion-y-gobernanza/cloudwatch'
+    porque: 'si lo que se busca son los registros de la aplicación y sus métricas, no las llamadas a la API de AWS.'
+  - servicio: 'Amazon GuardDuty'
+    slug: 'seguridad-identidad/guardduty'
+    porque: 'si quieres que alguien analice ese registro por ti y avise de comportamiento sospechoso.'
+
+serviciosRelacionados:
+  - 'administracion-y-gobernanza/cloudwatch'
+  - 'administracion-y-gobernanza/config'
+  - 'seguridad-identidad/iam'
+  - 'almacenamiento/s3'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Security – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de AWS CloudTrail'
+    url: 'https://docs.aws.amazon.com/cloudtrail/'
+  - titulo: 'Precios de AWS CloudTrail'
+    url: 'https://aws.amazon.com/cloudtrail/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Todo lo que ocurre en AWS es una llamada a una API: crear una instancia desde la consola, borrar un
+bucket con la CLI, desplegar con una plantilla. CloudTrail registra esas llamadas con su autor, la
+hora, la dirección de origen, los parámetros y el resultado.
+
+Su valor aparece siempre después, cuando hay que reconstruir qué pasó. Y tiene un matiz que conviene
+saber desde el principio: el historial gratuito cubre **90 días** de eventos de administración. Si
+hace falta más tiempo, hay que crear una traza que los deposite en S3 antes de necesitarlos.
+
+## Cómo funciona
+
+1. Los **eventos de administración** se registran automáticamente en toda cuenta.
+2. El **historial de eventos** de la consola permite buscar en los últimos 90 días sin configurar nada.
+3. Una **traza** entrega los eventos a un bucket de S3, donde se conservan el tiempo que se decida.
+4. Desde ahí se consultan con **Athena**, se envían a CloudWatch Logs o alimentan a otros servicios.
+5. Los **eventos de datos** —leer un objeto, invocar una función— se activan aparte y tienen costo.
+
+## Manos a la obra
+
+- Crea y borra un bucket de S3, y busca las dos acciones en el historial de eventos.
+- Abre el JSON de un evento y localiza quién lo hizo, desde qué dirección y con qué credencial.
+- Crea una traza hacia un bucket propio con una regla de ciclo de vida de 90 días.
+- Crea una regla de EventBridge que avise cuando alguien modifique una política de IAM.
+- Consulta esos registros con Athena para practicar las dos cosas a la vez.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="El rastro de una acción en la cuenta"
+  descripcion="Una persona del equipo borra un bucket desde la consola de AWS. Esa acción es una llamada a la API que AWS CloudTrail registra con su autor, su hora y su resultado. La traza deposita el evento en un bucket de Amazon S3 para conservarlo más allá de los 90 días del historial, y una regla de Amazon EventBridge detecta las acciones sensibles y avisa al equipo por Amazon SNS. El registro no impide la acción: permite reconstruirla y aprender de ella."
+  nodos={[
+    { id: 'persona', etiqueta: 'Equipo', sub: 'borra un bucket', tipo: 'externo' },
+    { id: 'trail', etiqueta: 'AWS CloudTrail', sub: 'registra', categoria: 'administracion-y-gobernanza' },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'histórico', categoria: 'almacenamiento', fila: 0 },
+    { id: 'eb', etiqueta: 'EventBridge', sub: 'regla', categoria: 'integracion-y-mensajeria', fila: 1 },
+    { id: 'sns', etiqueta: 'Amazon SNS', sub: 'avisa', categoria: 'integracion-y-mensajeria' },
+  ]}
+  flujos={[
+    { de: 'persona', a: 'trail', etiqueta: 'llamada API' },
+    { de: 'trail', a: 's3', etiqueta: 'conserva' },
+    { de: 'trail', a: 'eb', etiqueta: 'evento' },
+    { de: 'eb', a: 'sns', etiqueta: 'alerta' },
+  ]}
+/>
+
+En una cuenta compartida por varias personas, CloudTrail es lo que convierte un «se borró solo» en
+una respuesta concreta y verificable.

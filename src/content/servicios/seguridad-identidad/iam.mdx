@@ -1,0 +1,104 @@
+---
+nombre: 'AWS IAM'
+nombreCompleto: 'Identity and Access Management'
+categoria: 'seguridad-identidad'
+nivel: 'fundamental'
+resumenCorto: 'Controla quién —persona, servicio o pipeline— puede hacer qué dentro de la cuenta de AWS.'
+analogia: 'Es el sistema de llaves del edificio: define qué puertas abre cada credencial. No guarda nada adentro de las salas, solo decide quién entra a cuál.'
+cuandoAplicarlo: 'Siempre. Cualquier persona, servicio o proceso automatizado que necesite tocar recursos de AWS pasa primero por IAM — es la base de la seguridad de toda la cuenta.'
+casosDeUso:
+  - 'Dar a GitHub Actions permiso para desplegar el sitio, sin guardar contraseñas'
+  - 'Crear usuarios para cada miembro del club con acceso limitado a lo que necesitan'
+  - 'Restringir qué puede hacer una función Lambda dentro de la cuenta'
+  - 'Auditar quién hizo qué cuando algo se rompe'
+
+conceptosClave:
+  - termino: 'Usuario'
+    definicion: 'Una identidad permanente para una persona. Tiene credenciales propias de acceso.'
+  - termino: 'Rol'
+    definicion: 'Una identidad temporal que alguien o algo puede "asumir". Es la forma recomendada para servicios y automatizaciones.'
+  - termino: 'Política'
+    definicion: 'Un documento JSON que lista qué acciones están permitidas o denegadas sobre qué recursos.'
+  - termino: 'Menor privilegio'
+    definicion: 'El principio central: dar exactamente los permisos necesarios, nunca más "por si acaso".'
+  - termino: 'Cuenta raíz'
+    definicion: 'La identidad original de la cuenta. Solo debe usarse para tareas que la exigen, con MFA activado y nunca compartida.'
+
+modeloDePrecios: 'IAM es gratuito. Solo pagas por los recursos que las identidades consumen.'
+capaGratuita: 'Sin costo, sin límites de uso.'
+trampasDeCosto:
+  - 'IAM no cuesta, pero un permiso demasiado amplio sí: una credencial filtrada con acceso total puede consumir todos los créditos del club en horas.'
+  - 'Publicar por accidente claves de acceso en un repositorio público es la causa número uno de facturas inesperadas.'
+
+alternativas:
+  - servicio: 'AWS IAM Identity Center'
+    porque: 'si el club crece y necesitan gestionar accesos de muchas personas en varias cuentas de AWS a la vez.'
+
+serviciosRelacionados:
+  - 'almacenamiento/s3'
+  - 'computo/lambda'
+  - 'computo/ec2'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Security – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de AWS IAM'
+    url: 'https://docs.aws.amazon.com/iam/'
+  - titulo: 'Buenas prácticas de seguridad en IAM'
+    url: 'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html'
+
+actualizado: 2026-08-06
+autor: 'AWS SBG UCuenca'
+destacado: true
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+IAM es el sistema de identidades y permisos de AWS. No almacena datos de la aplicación ni corre
+código: define **quién puede hacer qué**. Eso incluye personas — los miembros del club — pero también
+servicios de AWS actuando en nombre de otros procesos, como GitHub Actions desplegando este mismo sitio.
+
+El principio central es el de *menor privilegio*: cada identidad debería tener exactamente los
+permisos que necesita, ni uno más.
+
+## Cómo funciona
+
+1. Creas **usuarios** para personas y **roles** para servicios o automatizaciones.
+2. Adjuntas **políticas** que describen acciones permitidas sobre recursos concretos.
+3. Cuando alguien intenta una acción, IAM evalúa las políticas aplicables: una denegación explícita
+   siempre gana sobre cualquier permiso.
+4. Los roles se *asumen* temporalmente, entregando credenciales que expiran solas.
+
+## Manos a la obra
+
+- Crea un usuario nuevo sin ningún permiso e inicia sesión con él.
+- Intenta listar los buckets de S3: fallará con *Access Denied*.
+- Adjunta una política que permita solo `s3:ListAllMyBuckets` y repite: ahora funciona, pero abrir
+  un bucket concreto sigue fallando.
+- Esa progresión — permiso por permiso — es la mejor forma de entender el menor privilegio.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Despliegue sin claves guardadas"
+  descripcion="GitHub Actions se autentica ante AWS usando OIDC, una identidad federada, y asume un rol de IAM. Ese rol lleva una política acotada que solo permite dos cosas: escribir en el bucket de Amazon S3 del club e invalidar la caché de su distribución de CloudFront. Nunca existe una llave de AWS guardada como secreto en GitHub, y las credenciales del rol expiran solas."
+  nodos={[
+    { id: 'gha', etiqueta: 'GitHub Actions', sub: 'sin secretos', tipo: 'externo' },
+    { id: 'rol', etiqueta: 'Rol de IAM', sub: 'menor privilegio', categoria: 'seguridad-identidad' },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'bucket del sitio', categoria: 'almacenamiento', fila: 0 },
+    { id: 'cf', etiqueta: 'CloudFront', sub: 'distribución', categoria: 'redes-y-entrega-de-contenido', fila: 1 },
+  ]}
+  flujos={[
+    { de: 'gha', a: 'rol', etiqueta: 'asume (OIDC)' },
+    { de: 'rol', a: 's3', etiqueta: 'sube dist/' },
+    { de: 'rol', a: 'cf', etiqueta: 'invalida' },
+  ]}
+/>
+
+El rol no *contiene* nada: solo autoriza. Si mañana se filtrara el workflow de GitHub, no habría
+ninguna llave que robar, y el permiso más amplio disponible seguiría siendo «escribir en ese bucket».

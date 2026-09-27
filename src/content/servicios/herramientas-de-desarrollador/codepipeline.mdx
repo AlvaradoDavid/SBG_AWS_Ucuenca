@@ -1,0 +1,22 @@
+---
+nombre: 'AWS CodePipeline'
+categoria: 'herramientas-de-desarrollador'
+nivel: 'intermedio'
+resumenCorto: 'Orquesta el camino del código: origen, compilación, pruebas, aprobación y despliegue, en etapas visibles.'
+cuandoAplicarlo: 'Cuando el paso de commit a producción debe estar automatizado y auditado de principio a fin.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS CodePipeline'
+    url: 'https://aws.amazon.com/codepipeline/'
+  - titulo: 'Precios de AWS CodePipeline'
+    url: 'https://aws.amazon.com/codepipeline/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+CodePipeline encadena etapas y decide qué se ejecuta y en qué orden, llamando a CodeBuild para compilar, a CodeDeploy para publicar y a quien haga falta para aprobar manualmente. Cada ejecución queda registrada con su resultado.
+
+Se integra con repositorios externos, así que el código puede vivir fuera de AWS y el canal seguir corriendo dentro.

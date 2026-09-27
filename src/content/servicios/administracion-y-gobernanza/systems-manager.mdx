@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Systems Manager'
+categoria: 'administracion-y-gobernanza'
+nivel: 'intermedio'
+resumenCorto: 'Caja de herramientas para operar flotas de servidores: parches, comandos remotos, inventario y almacén de parámetros.'
+cuandoAplicarlo: 'Cuando hay más de un puñado de instancias y entrar por SSH a cada una deja de ser razonable.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Systems Manager'
+    url: 'https://aws.amazon.com/systems-manager/'
+  - titulo: 'Precios de AWS Systems Manager'
+    url: 'https://aws.amazon.com/systems-manager/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Session Manager abre una sesión en una instancia sin puertos abiertos ni llaves SSH, con todo registrado; Patch Manager aplica actualizaciones en ventanas programadas; Run Command ejecuta lo mismo en cien máquinas; y Parameter Store guarda configuración y secretos con cifrado.
+
+Parameter Store merece atención propia: es la forma gratuita de sacar credenciales del código, y la puerta de entrada a Secrets Manager cuando hace falta rotación automática.

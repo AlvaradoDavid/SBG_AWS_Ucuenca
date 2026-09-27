@@ -1,0 +1,109 @@
+---
+nombre: 'Amazon Cognito'
+categoria: 'seguridad-identidad'
+nivel: 'intermedio'
+resumenCorto: 'Registro, inicio de sesión y control de acceso para las personas que usan tu aplicación, no para quien administra AWS.'
+analogia: 'IAM es el control de acceso del personal del edificio; Cognito es el mostrador donde se registran y acreditan los visitantes de la aplicación.'
+cuandoAplicarlo: 'Cuando tu aplicación necesita cuentas de usuario, inicio de sesión con Google o Microsoft, o autenticación de varios factores, y no quieres construir esa capa.'
+casosDeUso:
+  - 'Registro e inicio de sesión de la aplicación web o móvil del club'
+  - 'Entrar con la cuenta institucional o con un proveedor social'
+  - 'Proteger una API de API Gateway con tokens verificables'
+  - 'Dar a la aplicación móvil credenciales temporales para escribir en S3'
+
+conceptosClave:
+  - termino: 'Grupo de usuarios (user pool)'
+    definicion: 'El directorio de personas de tu aplicación, con sus contraseñas, atributos y verificación.'
+  - termino: 'Grupo de identidades (identity pool)'
+    definicion: 'Lo que convierte una identidad autenticada en credenciales temporales de AWS.'
+  - termino: 'Proveedor de identidad federado'
+    definicion: 'Google, Apple, Microsoft o un proveedor SAML del que Cognito acepta el inicio de sesión.'
+  - termino: 'Token de identidad y de acceso'
+    definicion: 'Los JWT que la aplicación presenta como prueba de quién es y qué puede hacer.'
+  - termino: 'Interfaz alojada'
+    definicion: 'Las pantallas de registro e inicio de sesión que Cognito publica listas, personalizables con tu marca.'
+
+modeloDePrecios: 'Por usuario activo mensual, con precios escalonados que bajan según el volumen. Las funciones avanzadas de seguridad y el uso de SAML tienen tarifa aparte.'
+capaGratuita: 'Una cantidad generosa de usuarios activos al mes sin costo de forma permanente. Conviene revisar el límite vigente en la página de precios, porque ha cambiado con el tiempo.'
+trampasDeCosto:
+  - 'Activar las funciones avanzadas de seguridad sin necesitarlas multiplica el costo por usuario.'
+  - 'Los mensajes de verificación por SMS los cobra el servicio de mensajería, no Cognito, y son la partida cara.'
+  - 'Usuarios de prueba creados en masa que quedan contando como activos.'
+
+alternativas:
+  - servicio: 'AWS IAM Identity Center'
+    slug: 'seguridad-identidad/iam-identity-center'
+    porque: 'si a quien hay que dar acceso es al equipo interno, para entrar a las cuentas de AWS y no a tu aplicación.'
+  - servicio: 'Un proveedor de identidad externo'
+    porque: 'si la organización ya tiene un proveedor corporativo y la aplicación solo debe confiar en él.'
+
+serviciosRelacionados:
+  - 'seguridad-identidad/iam'
+  - 'integracion-y-mensajeria/api-gateway'
+  - 'front-end-web-y-movil/amplify'
+  - 'computo/lambda'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+  - 'AWS Certified Security – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Cognito'
+    url: 'https://docs.aws.amazon.com/cognito/'
+  - titulo: 'Precios de Amazon Cognito'
+    url: 'https://aws.amazon.com/cognito/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+La confusión más común al empezar es pensar que IAM sirve para los usuarios de la aplicación. No es
+así: IAM gobierna quién puede administrar recursos de AWS. Las personas que usan tu aplicación son
+otra cosa, y esa es la parcela de Cognito.
+
+Construir autenticación desde cero es un error clásico: hay que resolver el almacenamiento seguro de
+contraseñas, la verificación por correo, la recuperación, el segundo factor, la expiración de sesión
+y el inicio con proveedores externos. Cognito trae todo eso resuelto y probado.
+
+## Cómo funciona
+
+1. Creas un **grupo de usuarios** y defines qué atributos pides y qué política de contraseñas aplicas.
+2. La aplicación usa la **interfaz alojada** o las bibliotecas de Amplify para registrar y autenticar.
+3. Al iniciar sesión, Cognito devuelve **tokens** firmados: uno de identidad y uno de acceso.
+4. La aplicación envía el token en cada petición; **API Gateway** lo valida antes de dejar pasar nada.
+5. Si además hace falta llamar a servicios de AWS desde el cliente, un **grupo de identidades**
+   intercambia el token por credenciales temporales con permisos acotados.
+
+## Manos a la obra
+
+- Crea un grupo de usuarios con verificación por correo y contraseña de al menos ocho caracteres.
+- Activa la interfaz alojada, regístrate con tu propio correo y confirma la cuenta.
+- Decodifica el token de identidad en un depurador de JWT y observa los campos que trae dentro.
+- Protege una API de API Gateway con un autorizador de Cognito y comprueba el 401 sin token.
+- Añade el inicio de sesión con Google como proveedor federado.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Inicio de sesión y llamada autenticada"
+  descripcion="Una persona inicia sesión desde la aplicación web contra el grupo de usuarios de Amazon Cognito, que verifica las credenciales y devuelve un token firmado. La aplicación envía ese token en cada llamada a Amazon API Gateway, que lo valida antes de invocar la función de AWS Lambda que ejecuta la lógica. La contraseña nunca llega a la aplicación ni a la función: lo único que circula después del inicio de sesión es un token con fecha de caducidad."
+  nodos={[
+    { id: 'persona', etiqueta: 'Persona', sub: 'navegador', tipo: 'externo' },
+    { id: 'cognito', etiqueta: 'Amazon Cognito', sub: 'grupo de usuarios', categoria: 'seguridad-identidad' },
+    { id: 'apigw', etiqueta: 'API Gateway', sub: 'valida token', categoria: 'integracion-y-mensajeria' },
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'lógica', categoria: 'computo' },
+  ]}
+  flujos={[
+    { de: 'persona', a: 'cognito', etiqueta: 'se autentica' },
+    { de: 'cognito', a: 'apigw', etiqueta: 'token' },
+    { de: 'apigw', a: 'lambda', etiqueta: 'invoca' },
+  ]}
+/>
+
+Que la validación del token ocurra en API Gateway y no dentro de la función es lo que evita repetir
+la comprobación en cada punto de la API y olvidarla justo en uno.

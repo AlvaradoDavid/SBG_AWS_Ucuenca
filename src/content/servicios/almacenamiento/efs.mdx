@@ -1,0 +1,114 @@
+---
+nombre: 'Amazon EFS'
+nombreCompleto: 'Elastic File System'
+categoria: 'almacenamiento'
+nivel: 'intermedio'
+resumenCorto: 'Sistema de archivos compartido que muchas instancias pueden montar a la vez y que crece y encoge solo.'
+analogia: 'Es la carpeta compartida de la oficina: varias personas trabajan sobre los mismos archivos al mismo tiempo, y nadie tiene que decidir de antemano cuánto espacio va a ocupar.'
+cuandoAplicarlo: 'Cuando varias instancias o tareas necesitan leer y escribir los mismos archivos simultáneamente, y un volumen de un solo dueño como EBS no alcanza.'
+casosDeUso:
+  - 'Directorio compartido de contenidos entre varios servidores web'
+  - 'Almacenamiento común para un clúster de procesamiento o de análisis'
+  - 'Directorios de usuario compartidos en entornos de desarrollo'
+  - 'Estado compartido entre tareas de ECS o funciones Lambda que lo requieren'
+
+conceptosClave:
+  - termino: 'Sistema de archivos'
+    definicion: 'El recurso principal. Es regional: vive en varias zonas de disponibilidad a la vez.'
+  - termino: 'Destino de montaje'
+    definicion: 'El punto de red en cada subred desde el que las instancias montan el sistema de archivos por NFS.'
+  - termino: 'Clase de almacenamiento'
+    definicion: 'Estándar para lo activo e infrecuente o de archivo para lo que casi no se toca, mucho más barato.'
+  - termino: 'Gestión del ciclo de vida'
+    definicion: 'La regla que mueve sola los archivos no accedidos a la clase más barata pasados unos días.'
+  - termino: 'Punto de acceso'
+    definicion: 'Una entrada al sistema de archivos con usuario y directorio raíz fijos, para aislar aplicaciones.'
+
+modeloDePrecios: 'Por gigabyte realmente almacenado al mes, según la clase de almacenamiento. No se aprovisiona capacidad: se paga lo que hay. El rendimiento elástico se cobra por operaciones.'
+capaGratuita: '5 GB en la clase estándar al mes durante los primeros 12 meses.'
+trampasDeCosto:
+  - 'La clase estándar cuesta bastante más que S3 por gigabyte: no es el sitio para guardar archivos que nadie toca.'
+  - 'No activar la gestión del ciclo de vida deja en la clase cara datos que llevan meses sin abrirse.'
+  - 'Montar EFS desde otra región o zona genera tráfico entre zonas que se factura aparte.'
+
+alternativas:
+  - servicio: 'Amazon EBS'
+    slug: 'almacenamiento/ebs'
+    porque: 'si solo una instancia necesita el disco, EBS es más barato y de menor latencia.'
+  - servicio: 'Amazon S3'
+    slug: 'almacenamiento/s3'
+    porque: 'si la aplicación puede hablar por API con objetos en vez de necesitar rutas de archivo, S3 cuesta una fracción.'
+  - servicio: 'Amazon FSx'
+    slug: 'almacenamiento/fsx'
+    porque: 'si hace falta SMB de Windows o el rendimiento de Lustre, EFS solo habla NFS.'
+
+serviciosRelacionados:
+  - 'almacenamiento/ebs'
+  - 'almacenamiento/s3'
+  - 'computo/ec2'
+  - 'contenedores/ecs'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified SysOps Administrator – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon EFS'
+    url: 'https://docs.aws.amazon.com/efs/'
+  - titulo: 'Precios de Amazon EFS'
+    url: 'https://aws.amazon.com/efs/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+EFS resuelve la limitación más incómoda de EBS: un volumen se conecta a una sola instancia y vive en
+una sola zona de disponibilidad. En cuanto la arquitectura tiene varias máquinas idénticas detrás de
+un balanceador, hace falta un lugar común donde todas vean los mismos archivos.
+
+Además es **elástico** en el sentido literal: no se aprovisiona tamaño. Crece cuando se escriben
+archivos, encoge cuando se borran, y se paga exactamente lo que hay guardado. Eso elimina la decisión
+de cuánto disco pedir, que en EBS hay que tomar por adelantado.
+
+## Cómo funciona
+
+1. Creas el **sistema de archivos**, que es regional y se replica entre zonas de disponibilidad.
+2. AWS crea un **destino de montaje** en cada subred donde quieras acceder a él.
+3. Cada instancia lo monta por NFS, y desde ese momento es una carpeta normal del sistema.
+4. Varias instancias escriben a la vez: el bloqueo y la coherencia los resuelve el protocolo.
+5. La **gestión del ciclo de vida** mueve a la clase infrecuente o de archivo lo que nadie abre.
+
+## Manos a la obra
+
+- Crea un sistema de archivos con los valores por defecto y su grupo de seguridad para el puerto NFS.
+- Lanza dos instancias t3.micro en zonas distintas y monta EFS en ambas.
+- Escribe un archivo desde la primera instancia y léelo desde la segunda: aparece al instante.
+- Activa la política de ciclo de vida a 30 días y observa el ahorro estimado.
+- **Borra el sistema de archivos y las instancias al terminar.**
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un directorio común para varias instancias"
+  descripcion="Un balanceador de carga reparte las peticiones de los visitantes entre dos instancias de Amazon EC2 situadas en zonas de disponibilidad distintas. Las dos instancias montan por NFS el mismo sistema de archivos de Amazon EFS, así que ven exactamente los mismos archivos y cualquiera puede atender cualquier petición. Ese almacenamiento compartido es lo que permite que las instancias sean intercambiables y desechables."
+  nodos={[
+    { id: 'alb', etiqueta: 'Load Balancer', sub: 'reparte tráfico', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 'ec2a', etiqueta: 'Amazon EC2', sub: 'zona A', categoria: 'computo', fila: 0 },
+    { id: 'ec2b', etiqueta: 'Amazon EC2', sub: 'zona B', categoria: 'computo', fila: 1 },
+    { id: 'efs', etiqueta: 'Amazon EFS', sub: 'archivos comunes', categoria: 'almacenamiento' },
+  ]}
+  flujos={[
+    { de: 'alb', a: 'ec2a' },
+    { de: 'alb', a: 'ec2b', etiqueta: 'reparte' },
+    { de: 'ec2a', a: 'efs', etiqueta: 'monta NFS' },
+    { de: 'ec2b', a: 'efs' },
+  ]}
+/>
+
+La pregunta que conviene hacerse antes de elegir EFS es si la aplicación necesita de verdad rutas de
+archivo. Si puede hablar con objetos, S3 resuelve lo mismo por una fracción del precio.

@@ -1,0 +1,106 @@
+---
+nombre: 'Amazon S3'
+nombreCompleto: 'Simple Storage Service'
+categoria: 'almacenamiento'
+nivel: 'fundamental'
+resumenCorto: 'Almacenamiento de objetos duradero y económico, la base de casi cualquier sitio estático.'
+analogia: 'Es un disco duro infinito en internet, pero organizado por archivos completos en vez de carpetas del sistema: guardas un archivo, te dan una dirección, y desde ahí lo recuperas.'
+cuandoAplicarlo: 'Cuando necesitas guardar archivos (imágenes, backups, sitios estáticos, datasets) de forma duradera y accesible desde internet, sin administrar un sistema de archivos tú mismo.'
+casosDeUso:
+  - 'Alojar los archivos compilados de un sitio estático, como este mismo'
+  - 'Guardar backups, logs o datasets de investigación'
+  - 'Servir imágenes y archivos descargables de una aplicación'
+  - 'Recibir archivos que luego procesa una función Lambda'
+
+conceptosClave:
+  - termino: 'Bucket'
+    definicion: 'El contenedor donde viven los objetos. Su nombre es único a nivel mundial, no solo dentro de tu cuenta.'
+  - termino: 'Objeto'
+    definicion: 'Cada archivo guardado, junto con sus metadatos. S3 no tiene carpetas reales: son parte del nombre del objeto.'
+  - termino: 'Clase de almacenamiento'
+    definicion: 'Standard, Infrequent Access, Glacier… definen el equilibrio entre costo de guardar y costo/velocidad de recuperar.'
+  - termino: 'Block Public Access'
+    definicion: 'El interruptor que impide exponer un bucket a internet por accidente. Debe quedarse encendido salvo que sepas exactamente qué haces.'
+
+modeloDePrecios: 'Por GB almacenado al mes, por número de peticiones (GET, PUT) y por transferencia de datos hacia internet.'
+capaGratuita: '5 GB de almacenamiento Standard, 20.000 peticiones GET y 2.000 PUT al mes durante los primeros 12 meses.'
+trampasDeCosto:
+  - 'Servir archivos grandes directamente desde S3 a internet: la transferencia de salida es lo que más se cobra. CloudFront delante sale más barato.'
+  - 'Dejar versiones antiguas acumulándose con el versionado activado sin una regla de ciclo de vida.'
+  - 'Subir backups a la clase Standard cuando casi nunca se leen: Glacier cuesta una fracción.'
+
+alternativas:
+  - servicio: 'Amazon EBS'
+    porque: 'si necesitas un disco montado en una instancia EC2 con acceso tipo sistema de archivos.'
+  - servicio: 'Amazon DynamoDB'
+    slug: 'bases-de-datos/dynamodb'
+    porque: 'si necesitas consultar y actualizar registros individuales, no guardar archivos completos.'
+
+serviciosRelacionados:
+  - 'redes-y-entrega-de-contenido/cloudfront'
+  - 'computo/lambda'
+  - 'seguridad-identidad/iam'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon S3'
+    url: 'https://docs.aws.amazon.com/s3/'
+  - titulo: 'Precios de Amazon S3'
+    url: 'https://aws.amazon.com/s3/pricing/'
+
+actualizado: 2026-08-06
+autor: 'AWS SBG UCuenca'
+destacado: true
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Amazon S3 guarda *objetos* — en la práctica, archivos — organizados en **buckets**. No es un disco
+duro tradicional ni una base de datos: es almacenamiento diseñado para ser prácticamente
+indestructible (AWS anuncia once nueves de durabilidad) y escalar sin límite práctico de tamaño total.
+
+Es, además, el servicio detrás de la infraestructura de este mismo sitio: los archivos que genera
+Astro al compilar el proyecto se suben a un bucket S3, y desde ahí los sirve CloudFront.
+
+## Cómo funciona
+
+1. Creas un **bucket** con un nombre único a nivel mundial, en una región concreta.
+2. Subes **objetos**, cada uno con una clave (su "ruta") y metadatos.
+3. Defines quién puede leerlos: por política del bucket, por IAM, o — en el caso de este sitio —
+   solo desde CloudFront mediante *Origin Access Control*.
+4. Opcionalmente configuras **reglas de ciclo de vida** para mover objetos viejos a clases más baratas.
+
+## Manos a la obra
+
+- Crea un bucket con Block Public Access activado.
+- Sube un `index.html` de una sola línea.
+- Genera una URL prefirmada desde la consola y ábrela: el archivo se descarga aunque el bucket sea privado.
+- Prueba a abrir la URL directa del objeto sin firmar: recibirás *Access Denied*. Ese contraste es
+  el que enseña cómo funciona el acceso en S3.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Cómo se publica este sitio"
+  descripcion="El comando astro build genera la carpeta dist/ con el sitio compilado. Un paso de despliegue sincroniza esa carpeta con un bucket de Amazon S3 privado. CloudFront lee de ese bucket mediante Origin Access Control y sirve el sitio al visitante con HTTPS y caché en el borde, sin que el bucket quede nunca expuesto a internet."
+  nodos={[
+    { id: 'build', etiqueta: 'dist/', sub: 'astro build', tipo: 'externo' },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'bucket privado', categoria: 'almacenamiento' },
+    { id: 'cf', etiqueta: 'CloudFront', sub: 'caché de borde', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 'visitante', etiqueta: 'Visitante', tipo: 'externo' },
+  ]}
+  flujos={[
+    { de: 'build', a: 's3', etiqueta: 'sincroniza' },
+    { de: 's3', a: 'cf', etiqueta: 'origen (OAC)' },
+    { de: 'cf', a: 'visitante', etiqueta: 'HTTPS' },
+  ]}
+/>
+
+Fíjate en que el bucket nunca habla directamente con el visitante. Esa es la diferencia entre
+*guardar* archivos y *servirlos*, y también la razón de que salga más barato.

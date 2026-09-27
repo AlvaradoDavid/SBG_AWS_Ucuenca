@@ -1,0 +1,116 @@
+---
+nombre: 'Amazon API Gateway'
+categoria: 'integracion-y-mensajeria'
+nivel: 'intermedio'
+resumenCorto: 'Publica, protege y controla APIs: recibe las peticiones HTTP y las entrega a Lambda, a un servicio o a otro backend.'
+analogia: 'Es la recepción de un edificio: recibe a todo el que llega, comprueba que tiene cita, anota la visita y lo dirige a la oficina correcta.'
+cuandoAplicarlo: 'Cuando necesitas exponer una API pública o interna con autenticación, límites de uso y registro, sin escribir esa capa dentro de la aplicación.'
+casosDeUso:
+  - 'Publicar una API sin servidores con funciones Lambda detrás'
+  - 'Poner autenticación y límites de tasa delante de un servicio existente'
+  - 'Ofrecer una API a terceros con claves y planes de uso'
+  - 'Exponer WebSockets para una aplicación en tiempo real'
+
+conceptosClave:
+  - termino: 'API REST y API HTTP'
+    definicion: 'Dos variantes: la REST trae más funciones —claves, cachés, validación—; la HTTP es más simple, rápida y barata.'
+  - termino: 'Recurso y método'
+    definicion: 'La ruta (`/eventos`) y el verbo (`GET`, `POST`) que definen cada punto de la API.'
+  - termino: 'Integración'
+    definicion: 'A qué se conecta el método: una función Lambda, un servicio de AWS o una URL HTTP externa.'
+  - termino: 'Autorizador'
+    definicion: 'Quién valida la petición: un grupo de usuarios de Cognito, IAM, o una función Lambda propia.'
+  - termino: 'Etapa'
+    definicion: 'Una versión desplegada de la API con su propia URL: `dev`, `prod`, cada una con su configuración.'
+  - termino: 'Plan de uso'
+    definicion: 'El límite de peticiones por segundo y por mes asociado a una clave de API.'
+
+modeloDePrecios: 'Por millón de peticiones, con tarifas distintas para API HTTP —más barata— y REST. Se suma la transferencia de datos y, en la REST, la caché si se activa.'
+capaGratuita: 'Un millón de peticiones al mes de API REST y HTTP durante los primeros 12 meses. Con Lambda detrás, una API pequeña puede salir prácticamente gratis.'
+trampasDeCosto:
+  - 'Activar la caché de una API REST y olvidarla: se cobra por hora aunque no haya tráfico.'
+  - 'Elegir REST por costumbre cuando la API HTTP basta: la diferencia de precio por millón de peticiones es notable.'
+  - 'Un cliente mal programado que reintenta en bucle multiplica el número de peticiones facturadas.'
+
+alternativas:
+  - servicio: 'Elastic Load Balancing'
+    slug: 'redes-y-entrega-de-contenido/elb'
+    porque: 'si detrás hay instancias o contenedores y no necesitas claves, planes de uso ni integración directa con Lambda.'
+  - servicio: 'AWS AppSync'
+    slug: 'front-end-web-y-movil/appsync'
+    porque: 'si la API es de GraphQL y los clientes necesitan pedir exactamente los campos que usan.'
+  - servicio: 'URL de función de Lambda'
+    slug: 'computo/lambda'
+    porque: 'si solo hace falta un punto HTTP para una función y no toda una capa de administración de API.'
+
+serviciosRelacionados:
+  - 'computo/lambda'
+  - 'seguridad-identidad/cognito'
+  - 'bases-de-datos/dynamodb'
+  - 'redes-y-entrega-de-contenido/cloudfront'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon API Gateway'
+    url: 'https://docs.aws.amazon.com/apigateway/'
+  - titulo: 'Precios de Amazon API Gateway'
+    url: 'https://aws.amazon.com/api-gateway/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Una función Lambda no habla HTTP por sí sola, y una aplicación no debería ocuparse de autenticar,
+limitar el tráfico, validar entradas y registrar cada llamada. API Gateway es la capa que resuelve
+todo eso delante del código de negocio.
+
+Su papel es de portero y de traductor: recibe la petición HTTP, comprueba quién llama, aplica los
+límites de uso, transforma la petición si hace falta y la entrega al destino. La respuesta hace el
+camino inverso. La aplicación se queda solo con la lógica que le importa.
+
+## Cómo funciona
+
+1. Defines los **recursos** y **métodos** de la API: rutas y verbos HTTP.
+2. Cada método apunta a una **integración**: una función Lambda, un servicio de AWS o una URL externa.
+3. Un **autorizador** valida el token o la firma antes de que la petición llegue al backend.
+4. Publicas la API en una **etapa**, que expone la URL desde la que responde.
+5. Un **plan de uso** con claves limita cuántas peticiones puede hacer cada consumidor.
+
+## Manos a la obra
+
+- Crea una API HTTP con una ruta `GET /hola` integrada con una función Lambda que devuelva un JSON.
+- Publica la etapa `dev` y llama a la URL desde el navegador o con `curl`.
+- Añade un autorizador de Cognito y comprueba que sin token la respuesta es 401.
+- Activa el registro de acceso hacia CloudWatch y revisa una petición completa en los registros.
+- Fija un límite de tasa bajo y lanza peticiones en bucle para ver la respuesta 429.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Una API sin servidores de principio a fin"
+  descripcion="La aplicación web envía una petición HTTPS a Amazon API Gateway, que valida el token contra el grupo de usuarios de Amazon Cognito antes de dejarla pasar. Si la petición es legítima, API Gateway invoca la función de AWS Lambda que ejecuta la lógica, y esa función lee y escribe en la tabla de Amazon DynamoDB. No hay ningún servidor encendido esperando: todas las piezas cobran por uso."
+  nodos={[
+    { id: 'app', etiqueta: 'Aplicación web', tipo: 'externo' },
+    { id: 'apigw', etiqueta: 'API Gateway', sub: 'valida y enruta', categoria: 'integracion-y-mensajeria' },
+    { id: 'cognito', etiqueta: 'Amazon Cognito', sub: 'identidad', categoria: 'seguridad-identidad', fila: 1 },
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'lógica', categoria: 'computo', fila: 0 },
+    { id: 'ddb', etiqueta: 'Amazon DynamoDB', sub: 'datos', categoria: 'bases-de-datos' },
+  ]}
+  flujos={[
+    { de: 'app', a: 'apigw', etiqueta: 'HTTPS' },
+    { de: 'apigw', a: 'cognito', etiqueta: 'valida' },
+    { de: 'apigw', a: 'lambda', etiqueta: 'invoca' },
+    { de: 'lambda', a: 'ddb', etiqueta: 'lee y guarda' },
+  ]}
+/>
+
+Este patrón — API Gateway, Lambda y DynamoDB — es la arquitectura sin servidores más repetida de
+AWS, y la que mejor se sostiene con créditos de estudiante.

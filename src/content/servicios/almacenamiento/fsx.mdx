@@ -1,0 +1,22 @@
+---
+nombre: 'Amazon FSx'
+categoria: 'almacenamiento'
+nivel: 'avanzado'
+resumenCorto: 'Sistemas de archivos administrados de terceros: Windows File Server, Lustre, NetApp ONTAP y OpenZFS.'
+cuandoAplicarlo: 'Cuando la aplicación exige un sistema de archivos concreto — SMB de Windows o Lustre de alto rendimiento — y no basta con EFS.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon FSx'
+    url: 'https://aws.amazon.com/fsx/'
+  - titulo: 'Precios de Amazon FSx'
+    url: 'https://aws.amazon.com/fsx/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+FSx no es un sistema de archivos propio de AWS, sino cuatro implementaciones conocidas ofrecidas como servicio administrado. FSx for Windows habla SMB y se integra con Active Directory; FSx for Lustre alcanza cientos de gigabytes por segundo para cómputo de alto rendimiento y se conecta directamente con S3.
+
+La elección depende del protocolo que exija la aplicación, no de la preferencia del equipo.

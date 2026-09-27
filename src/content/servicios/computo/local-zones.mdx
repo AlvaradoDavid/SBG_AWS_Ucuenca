@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Local Zones'
+categoria: 'computo'
+nivel: 'avanzado'
+resumenCorto: 'Extensiones de una región de AWS instaladas cerca de grandes ciudades, para latencias de un dígito de milisegundos.'
+cuandoAplicarlo: 'Cuando una aplicación necesita estar físicamente cerca de sus usuarios — juegos en tiempo real, edición de video remota, procesos industriales.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Local Zones'
+    url: 'https://aws.amazon.com/about-aws/global-infrastructure/localzones/'
+  - titulo: 'Precios de AWS Local Zones'
+    url: 'https://aws.amazon.com/about-aws/global-infrastructure/localzones/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Una Local Zone es un trozo de una región de AWS colocado en un área metropolitana concreta. Se ve como una zona de disponibilidad más dentro de tu VPC, así que lanzas instancias EC2 allí con las mismas API de siempre, pero el tráfico recorre mucha menos distancia.
+
+No todos los servicios están disponibles en cada Local Zone: se usan como extensión de latencia, con la región principal como base.

@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Lake Formation'
+categoria: 'analitica'
+nivel: 'avanzado'
+resumenCorto: 'Construye y gobierna un lago de datos sobre S3, con permisos hasta el nivel de columna y de fila.'
+cuandoAplicarlo: 'Cuando varios equipos consultan el mismo lago y cada uno debe ver solo las columnas que le corresponden.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Lake Formation'
+    url: 'https://aws.amazon.com/lake-formation/'
+  - titulo: 'Precios de AWS Lake Formation'
+    url: 'https://aws.amazon.com/lake-formation/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Lake Formation se apoya en el catálogo de Glue y añade la capa de gobierno: registra las ubicaciones de S3, define permisos con granularidad fina y los aplica de forma consistente en Athena, Redshift Spectrum y EMR.
+
+Sin él, los permisos del lago se implementan con políticas de bucket, que no distinguen columnas ni filas.

@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Config'
+categoria: 'administracion-y-gobernanza'
+nivel: 'intermedio'
+resumenCorto: 'Registra la configuración de cada recurso y su historial de cambios, y evalúa reglas de cumplimiento continuo.'
+cuandoAplicarlo: 'Cuando hay que responder qué cambió, cuándo y quién lo hizo, o garantizar que ningún bucket quede público.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Config'
+    url: 'https://aws.amazon.com/config/'
+  - titulo: 'Precios de AWS Config'
+    url: 'https://aws.amazon.com/config/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Config guarda una línea de tiempo de la configuración de cada recurso y permite comparar dos momentos. Sobre eso se aplican reglas — sean administradas o propias en Lambda — que marcan como no conformes los recursos que se salen de la política.
+
+Se complementa con CloudTrail: CloudTrail dice quién llamó a qué API; Config dice en qué estado quedó el recurso.

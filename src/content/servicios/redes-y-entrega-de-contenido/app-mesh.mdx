@@ -1,0 +1,22 @@
+---
+nombre: 'AWS App Mesh'
+categoria: 'redes-y-entrega-de-contenido'
+nivel: 'avanzado'
+resumenCorto: 'Malla de servicios basada en Envoy que estandariza la comunicación, los reintentos y la observabilidad entre microservicios.'
+cuandoAplicarlo: 'Cuando hay tantos microservicios que la lógica de reintentos y descubrimiento repetida en cada uno se vuelve inmanejable.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS App Mesh'
+    url: 'https://aws.amazon.com/app-mesh/'
+  - titulo: 'Precios de AWS App Mesh'
+    url: 'https://aws.amazon.com/app-mesh/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+App Mesh inyecta un proxy Envoy junto a cada servicio y concentra en la malla las decisiones de enrutamiento, reintento, tiempo de espera y despliegue progresivo. El código de la aplicación deja de contener esa lógica.
+
+A cambio, agrega un componente más que operar: se justifica cuando el número de servicios es alto, no en una arquitectura de tres piezas.

@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Network Firewall'
+categoria: 'seguridad-identidad'
+nivel: 'avanzado'
+resumenCorto: 'Firewall administrado con inspección de estado y detección de intrusiones en el borde de la VPC.'
+cuandoAplicarlo: 'Cuando los grupos de seguridad se quedan cortos y hace falta filtrar por dominio, protocolo o firmas de amenazas.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Network Firewall'
+    url: 'https://aws.amazon.com/network-firewall/'
+  - titulo: 'Precios de AWS Network Firewall'
+    url: 'https://aws.amazon.com/network-firewall/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Un grupo de seguridad decide por dirección IP y puerto; Network Firewall inspecciona el tráfico con reglas de estado y firmas compatibles con Suricata, y puede bloquear por nombre de dominio o por patrón dentro del paquete.
+
+Se despliega en una subred propia por la que se enruta el tráfico de salida, con registro completo de lo permitido y lo bloqueado.

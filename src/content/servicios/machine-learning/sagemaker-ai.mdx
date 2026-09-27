@@ -1,0 +1,115 @@
+---
+nombre: 'Amazon SageMaker AI'
+categoria: 'machine-learning'
+nivel: 'avanzado'
+resumenCorto: 'Plataforma completa para construir, entrenar y desplegar modelos de aprendizaje automático administrados por AWS.'
+analogia: 'Es el taller equipado del que solo pagas las horas que usas: las máquinas, las herramientas y el banco de pruebas ya están ahí, y tú traes la pieza que quieres fabricar.'
+cuandoAplicarlo: 'Cuando ningún servicio de IA lista para usar resuelve el problema y hace falta entrenar un modelo propio con datos propios.'
+casosDeUso:
+  - 'Entrenar un modelo con los datos de la organización y publicarlo como API'
+  - 'Experimentar en cuadernos con GPU sin instalar controladores'
+  - 'Ajustar un modelo fundacional con ejemplos propios'
+  - 'Desplegar inferencia por lotes sobre millones de registros'
+
+conceptosClave:
+  - termino: 'SageMaker Studio'
+    definicion: 'El entorno de trabajo en el navegador: cuadernos, experimentos, trabajos y modelos en un solo lugar.'
+  - termino: 'Trabajo de entrenamiento'
+    definicion: 'La ejecución que levanta instancias, entrena con los datos de S3 y las apaga al terminar.'
+  - termino: 'Punto de conexión (endpoint)'
+    definicion: 'El modelo desplegado como API en tiempo real. Cobra por hora de instancia, esté o no en uso.'
+  - termino: 'Transformación por lotes'
+    definicion: 'Inferencia sobre un conjunto grande de datos de una sola vez, sin mantener ningún punto de conexión.'
+  - termino: 'Registro de modelos'
+    definicion: 'El catálogo con las versiones de cada modelo, su métrica y su estado de aprobación.'
+
+modeloDePrecios: 'Por segundo de instancia en cada actividad —cuadernos, entrenamiento, puntos de conexión, procesamiento— según el tipo elegido. Las instancias con GPU son de las más caras del catálogo.'
+capaGratuita: 'Durante los primeros dos meses hay horas gratuitas de cuadernos, entrenamiento e inferencia en tipos pequeños. Las GPU no entran en esa oferta.'
+trampasDeCosto:
+  - 'Un punto de conexión en tiempo real olvidado: cobra cada hora del mes aunque no reciba una sola petición. Es la trampa número uno del servicio.'
+  - 'Cuadernos con GPU dejados encendidos después de una sesión de trabajo.'
+  - 'Entrenar con una instancia enorme cuando el conjunto de datos cabe en una pequeña.'
+
+alternativas:
+  - servicio: 'Amazon Bedrock'
+    slug: 'machine-learning/bedrock'
+    porque: 'si un modelo fundacional ya resuelve la tarea, entrenar uno propio es un rodeo caro.'
+  - servicio: 'Servicios de IA lista para usar'
+    slug: 'machine-learning/rekognition'
+    porque: 'si la tarea es común —visión, texto, voz— hay una API entrenada que la resuelve sin proyecto de datos.'
+  - servicio: 'Amazon EC2 con GPU'
+    slug: 'computo/ec2'
+    porque: 'si prefieres controlar el entorno completo y ya tienes tu propia canalización de entrenamiento.'
+
+serviciosRelacionados:
+  - 'machine-learning/bedrock'
+  - 'almacenamiento/s3'
+  - 'analitica/glue'
+  - 'machine-learning/sagemaker-ground-truth'
+
+certificaciones:
+  - 'AWS Certified AI Practitioner'
+  - 'AWS Certified Machine Learning Engineer – Associate'
+  - 'AWS Certified Machine Learning – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon SageMaker AI'
+    url: 'https://docs.aws.amazon.com/sagemaker/'
+  - titulo: 'Precios de Amazon SageMaker AI'
+    url: 'https://aws.amazon.com/sagemaker-ai/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Entrenar un modelo tiene una parte interesante —los datos y el algoritmo— y una parte tediosa que
+suele consumir la mayoría del tiempo: preparar máquinas con GPU, instalar controladores compatibles,
+distribuir el entrenamiento, guardar los pesos, publicar una API y vigilar que no se degrade.
+
+SageMaker AI cubre esa segunda parte de principio a fin. Cada etapa es un servicio administrado que
+se levanta, hace su trabajo y se apaga. La parte que hay que aprender a controlar es la factura: aquí
+las instancias son caras y algunas se quedan encendidas si nadie las apaga.
+
+## Cómo funciona
+
+1. Trabajas en **Studio**: cuadernos conectados a los datos de S3, sin instalar nada localmente.
+2. Un **trabajo de entrenamiento** levanta las instancias que pidas, entrena y las apaga al terminar.
+   Solo se pagan esos minutos.
+3. El modelo resultante se guarda en S3 y se registra en el **registro de modelos**.
+4. Para usarlo, se despliega en un **punto de conexión** en tiempo real, o se ejecuta una
+   **transformación por lotes** si no hace falta respuesta inmediata.
+5. La supervisión vigila la desviación de los datos, que es lo que hace que un modelo bueno empeore
+   con el tiempo.
+
+## Manos a la obra
+
+- Abre Studio y arranca un cuaderno en la instancia más pequeña disponible.
+- Entrena un modelo sencillo con un algoritmo integrado sobre un conjunto de datos público.
+- Despliégalo en un punto de conexión y haz una inferencia desde el propio cuaderno.
+- **Borra el punto de conexión inmediatamente después.** Este paso es el que evita la factura sorpresa.
+- Repite la inferencia como transformación por lotes y compara el costo de ambos caminos.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Del conjunto de datos al modelo en producción"
+  descripcion="Los datos de entrenamiento viven en Amazon S3. Un trabajo de entrenamiento de Amazon SageMaker AI levanta instancias, entrena el modelo y las apaga al terminar, dejando los pesos de vuelta en S3. Desde ahí, el modelo se despliega en un punto de conexión que responde inferencias en tiempo real a la aplicación. El punto de conexión es el único componente que permanece encendido, y por eso es el que hay que vigilar en la factura."
+  nodos={[
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'datos', categoria: 'almacenamiento' },
+    { id: 'train', etiqueta: 'SageMaker AI', sub: 'entrena', categoria: 'machine-learning' },
+    { id: 'endpoint', etiqueta: 'Punto de conexión', sub: 'inferencia', categoria: 'machine-learning' },
+    { id: 'app', etiqueta: 'Aplicación', tipo: 'externo' },
+  ]}
+  flujos={[
+    { de: 's3', a: 'train', etiqueta: 'entrena con' },
+    { de: 'train', a: 'endpoint', etiqueta: 'despliega' },
+    { de: 'endpoint', a: 'app', etiqueta: 'predicción' },
+  ]}
+/>
+
+Antes de abrir un proyecto en SageMaker AI conviene hacerse una pregunta honesta: ¿existe ya un
+servicio de IA o un modelo en Bedrock que resuelva esto? En muchos casos la respuesta es sí.

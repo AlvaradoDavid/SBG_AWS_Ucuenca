@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Transit Gateway'
+categoria: 'redes-y-entrega-de-contenido'
+nivel: 'avanzado'
+resumenCorto: 'Concentrador de red que conecta cientos de VPC y redes locales entre sí sin emparejarlas una por una.'
+cuandoAplicarlo: 'Cuando el número de VPC crece y la malla de emparejamientos se vuelve imposible de mantener.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Transit Gateway'
+    url: 'https://aws.amazon.com/transit-gateway/'
+  - titulo: 'Precios de AWS Transit Gateway'
+    url: 'https://aws.amazon.com/transit-gateway/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Conectar diez VPC entre sí por emparejamiento exige cuarenta y cinco conexiones; con un Transit Gateway son diez, una por VPC hacia el concentrador. Las tablas de enrutamiento del gateway deciden qué red puede hablar con cuál.
+
+Es la topología estándar en organizaciones con muchas cuentas, donde cada equipo tiene su propia VPC y todas comparten salida y conectividad con el centro de datos.

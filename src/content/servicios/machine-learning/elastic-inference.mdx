@@ -1,0 +1,24 @@
+---
+nombre: 'Amazon Elastic Inference'
+categoria: 'machine-learning'
+nivel: 'avanzado'
+resumenCorto: 'Permitía añadir una fracción de GPU a una instancia EC2 para abaratar la inferencia sin pagar una GPU entera.'
+cuandoAplicarlo: 'Ya no es la vía recomendada: AWS dirige estos casos a las instancias con Inferentia o a las de GPU.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon Elastic Inference'
+    url: 'https://aws.amazon.com/machine-learning/elastic-inference/'
+  - titulo: 'Precios de Amazon Elastic Inference'
+    url: 'https://aws.amazon.com/machine-learning/elastic-inference/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Elastic Inference conectaba aceleradores por red a una instancia normal, de modo que se pagaba solo la capacidad de inferencia necesaria en lugar de una instancia con GPU completa.
+
+Se documenta por completitud del catálogo; antes de plantear su uso conviene comprobar su disponibilidad actual en la página oficial.
+
+**Nota:** AWS dejó de recomendar este servicio. La ruta vigente para abaratar inferencia son las instancias basadas en AWS Inferentia.

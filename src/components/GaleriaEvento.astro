@@ -1,0 +1,201 @@
+---
+import { Image } from 'astro:assets';
+import type { FotoEvento } from '../lib/fotos';
+
+interface Props {
+  fotos: FotoEvento[];
+  titulo: string;
+}
+const { fotos, titulo } = Astro.props;
+
+/** Datos que necesita el visor. Las miniaturas ya están en el DOM; aquí solo
+    viajan las versiones grandes (1600px) para cargarlas bajo demanda. */
+const completas = fotos.map((foto, i) => ({
+  src: foto.completa.src,
+  ancho: foto.completa.width,
+  alto: foto.completa.height,
+  alt: `${titulo} — foto ${i + 1}`,
+}));
+---
+
+<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+  {fotos.map((foto, i) => (
+    <a
+      href={foto.completa.src}
+      data-visor={i}
+      aria-label={`Ampliar foto ${i + 1} de ${fotos.length}`}
+      class="group block cursor-pointer overflow-hidden rounded-lg bg-tinta-100"
+    >
+      <Image
+        src={foto.miniatura}
+        alt={`${titulo} — foto ${i + 1}`}
+        widths={[300, 600]}
+        sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
+        loading={i < 8 ? 'eager' : 'lazy'}
+        class="aspect-square h-full w-full object-cover transition duration-300 group-hover:scale-105"
+      />
+    </a>
+  ))}
+</div>
+
+<!-- Visor. Vive fuera del flujo y solo se muestra con JS; sin JS los enlaces
+     de arriba siguen abriendo la imagen directamente. -->
+<div
+  id="visor"
+  role="dialog"
+  aria-modal="true"
+  aria-label={`Galería de ${titulo}`}
+  hidden
+  class="fixed inset-0 z-[100] hidden place-items-center bg-marca-grey/95 backdrop-blur-sm"
+>
+  <button
+    type="button"
+    id="visor-cerrar"
+    aria-label="Cerrar galería"
+    class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-lg text-white/80 transition hover:bg-white/10 hover:text-white"
+  >
+    <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    id="visor-anterior"
+    aria-label="Foto anterior"
+    class="absolute left-2 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-marca-grey/60 text-white/90 backdrop-blur-sm transition hover:bg-marca-grey/80 hover:text-white sm:left-6"
+  >
+    <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    id="visor-siguiente"
+    aria-label="Foto siguiente"
+    class="absolute right-2 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-marca-grey/60 text-white/90 backdrop-blur-sm transition hover:bg-marca-grey/80 hover:text-white sm:right-6"
+  >
+    <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+
+  <!-- En móvil la foto usa casi todo el ancho: las flechas flotan encima con su
+       propio fondo, en vez de robarle 128px de espacio con padding. -->
+  <figure class="flex max-h-full flex-col items-center gap-4 px-3 py-16 sm:px-20">
+    <img
+      id="visor-imagen"
+      src=""
+      alt=""
+      class="max-h-[78vh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
+    />
+    <figcaption class="text-center">
+      <p class="font-display text-sm font-bold text-white">{titulo}</p>
+      <p id="visor-contador" aria-live="polite" class="mt-1 font-mono text-xs uppercase tracking-widest text-white/60"></p>
+    </figcaption>
+  </figure>
+</div>
+
+<script define:vars={{ completas }}>
+  const visor = document.getElementById('visor');
+  const imagen = document.getElementById('visor-imagen');
+  const contador = document.getElementById('visor-contador');
+  const botonCerrar = document.getElementById('visor-cerrar');
+  const botonAnterior = document.getElementById('visor-anterior');
+  const botonSiguiente = document.getElementById('visor-siguiente');
+  const disparadores = document.querySelectorAll('[data-visor]');
+
+  let indice = 0;
+  let origen = null;
+
+  // Con una sola foto las flechas sobran.
+  if (completas.length < 2) {
+    botonAnterior.hidden = true;
+    botonSiguiente.hidden = true;
+  }
+
+  function mostrar(i) {
+    indice = (i + completas.length) % completas.length;
+    const foto = completas[indice];
+    imagen.src = foto.src;
+    imagen.alt = foto.alt;
+    imagen.width = foto.ancho;
+    imagen.height = foto.alto;
+    contador.textContent = `${indice + 1} / ${completas.length}`;
+  }
+
+  function abrir(i, elemento) {
+    origen = elemento;
+    mostrar(i);
+    visor.hidden = false;
+    visor.classList.replace('hidden', 'grid');
+    document.body.style.overflow = 'hidden';
+    botonCerrar.focus();
+  }
+
+  function cerrar() {
+    visor.hidden = true;
+    visor.classList.replace('grid', 'hidden');
+    document.body.style.overflow = '';
+    imagen.src = '';
+    origen?.focus();
+  }
+
+  // Precarga la vecina para que las flechas se sientan instantáneas.
+  function precargar(i) {
+    const vecina = completas[(i + completas.length) % completas.length];
+    if (vecina) new Image().src = vecina.src;
+  }
+
+  disparadores.forEach((enlace) => {
+    enlace.addEventListener('click', (evento) => {
+      evento.preventDefault();
+      const i = Number(enlace.dataset.visor);
+      abrir(i, enlace);
+      precargar(i + 1);
+      precargar(i - 1);
+    });
+  });
+
+  botonCerrar.addEventListener('click', cerrar);
+  botonAnterior.addEventListener('click', () => {
+    mostrar(indice - 1);
+    precargar(indice - 1);
+  });
+  botonSiguiente.addEventListener('click', () => {
+    mostrar(indice + 1);
+    precargar(indice + 1);
+  });
+
+  // Clic en el fondo (no en la imagen ni en los botones) cierra el visor.
+  visor.addEventListener('click', (evento) => {
+    if (evento.target === visor || evento.target.tagName === 'FIGURE') cerrar();
+  });
+
+  document.addEventListener('keydown', (evento) => {
+    if (visor.hidden) return;
+
+    if (evento.key === 'Escape') {
+      cerrar();
+    } else if (evento.key === 'ArrowLeft' && completas.length > 1) {
+      mostrar(indice - 1);
+      precargar(indice - 1);
+    } else if (evento.key === 'ArrowRight' && completas.length > 1) {
+      mostrar(indice + 1);
+      precargar(indice + 1);
+    } else if (evento.key === 'Tab') {
+      // Mantiene el foco dentro del visor mientras está abierto.
+      const focales = [botonCerrar, botonAnterior, botonSiguiente].filter((b) => !b.hidden);
+      const primero = focales[0];
+      const ultimo = focales[focales.length - 1];
+      if (evento.shiftKey && document.activeElement === primero) {
+        evento.preventDefault();
+        ultimo.focus();
+      } else if (!evento.shiftKey && document.activeElement === ultimo) {
+        evento.preventDefault();
+        primero.focus();
+      }
+    }
+  });
+</script>

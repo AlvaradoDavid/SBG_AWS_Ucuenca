@@ -1,0 +1,386 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TarjetaServicio from '../components/TarjetaServicio.astro';
+import FondoParticulas from '../components/FondoParticulas.astro';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { club } from '../lib/categorias';
+import { fotosDeEvento } from '../lib/fotos';
+import { fechaLarga } from '../lib/fechas';
+
+const servicios = await getCollection('servicios');
+const destacados = servicios.filter((s) => s.data.destacado).slice(0, 3);
+
+const eventos = (await getCollection('eventos')).sort(
+  (a, b) => b.data.fecha.getTime() - a.data.fecha.getTime()
+);
+
+/** Trayectoria: los eventos marcados como hito, del más antiguo al más reciente. */
+const trayectoria = eventos
+  .filter((e) => e.data.hito)
+  .sort((a, b) => a.data.fecha.getTime() - b.data.fecha.getTime());
+
+/** Una foto de cada uno de los cuatro eventos más recientes, para "Quiénes somos". */
+const fotosNosotros = eventos
+  .slice(0, 4)
+  .map((evento) => ({ foto: fotosDeEvento(evento.data.carpetaFotos)[0], evento }))
+  .filter((f) => f.foto);
+
+/** Collage del hero: tres eventos distintos, para mostrar actividad real de entrada. */
+const fotosHero = eventos
+  .map((evento) => ({ foto: fotosDeEvento(evento.data.carpetaFotos)[0], evento }))
+  .filter((f) => f.foto)
+  .slice(0, 3);
+
+/** Galería de portada: una foto representativa de cada evento. */
+const galeria = eventos
+  .flatMap((evento) => {
+    const fotos = fotosDeEvento(evento.data.carpetaFotos);
+    return fotos.slice(0, 2).map((foto) => ({ foto, evento }));
+  })
+  .slice(0, 8);
+
+const totalFotos = eventos.reduce(
+  (suma, e) => suma + fotosDeEvento(e.data.carpetaFotos).length,
+  0
+);
+
+const pilares = [
+  {
+    icono: '/marca/icono-wrench.svg',
+    titulo: 'Aprender construyendo',
+    texto: 'Talleres prácticos donde cada participante despliega algo real en su propia cuenta de AWS.',
+  },
+  {
+    icono: '/marca/icono-teams.svg',
+    titulo: 'Comunidad abierta',
+    texto: 'Sin requisitos previos: recibimos a cualquier estudiante con curiosidad por la nube.',
+  },
+  {
+    icono: '/marca/icono-trophy.svg',
+    titulo: 'Camino a la certificación',
+    texto: 'Sesiones de estudio y material propio orientado a las certificaciones oficiales de AWS.',
+  },
+];
+---
+
+<Layout title="Inicio">
+  <!-- Hero -->
+  <section class="relative overflow-hidden border-b border-tinta-200 bg-tinta-50">
+    <!-- Acentos de la paleta de marca, muy tenues para no competir con el texto. -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -right-24 -top-32 h-[28rem] w-[28rem] rounded-full bg-marca-amber/20 blur-3xl"
+    >
+    </div>
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -bottom-40 left-1/4 h-[24rem] w-[24rem] rounded-full bg-marca-purple/15 blur-3xl"
+    >
+    </div>
+
+    <!-- Campo de partículas: va sobre los halos y bajo el contenido. -->
+    <FondoParticulas />
+
+    <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[1.1fr_1fr]">
+      <div>
+        <p class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-tinta-500">
+          <img src="/marca/program-icon-amber.svg" alt="" width="16" height="16" class="h-4 w-4" />
+          {club.universidad}
+        </p>
+        <h1 class="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-tinta-900 sm:text-5xl">
+          AWS Student<br />Builder Group
+        </h1>
+        <p class="mt-6 max-w-xl text-lg leading-relaxed text-tinta-600">
+          Comunidad enfocada en cloud computing, innovación y tecnologías AWS. Conectamos a personas
+          apasionadas por la tecnología mediante eventos, workshops, networking y experiencias
+          prácticas en la nube.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href="/servicios"
+            class="rounded-lg bg-marca-grey px-6 py-3 text-sm font-bold text-white transition hover:bg-tinta-700"
+          >
+            Explorar el catálogo
+          </a>
+          <a
+            href="#nosotros"
+            class="rounded-lg border border-tinta-300 bg-white/60 px-6 py-3 text-sm font-bold text-tinta-700 transition hover:border-tinta-500"
+          >
+            Conocer al grupo
+          </a>
+        </div>
+
+        <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-tinta-200 pt-6">
+          {[
+            { etiqueta: 'Eventos', valor: eventos.length },
+            { etiqueta: 'Fichas de servicios', valor: servicios.length },
+            { etiqueta: 'Fotos del grupo', valor: totalFotos },
+          ].map((dato) => (
+            <div>
+              <dt class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">
+                {dato.etiqueta}
+              </dt>
+              <dd
+                data-contador={dato.valor}
+                class="mt-1 font-display text-2xl font-bold tabular-nums text-tinta-900"
+              >
+                {dato.valor}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <!-- Collage: prueba visual de que el grupo está activo -->
+      {fotosHero.length === 3 && (
+        <div class="grid grid-cols-2 gap-3 sm:gap-4">
+          <a
+            href={`/eventos/${fotosHero[0].evento.id}`}
+            class="group relative row-span-2 block overflow-hidden rounded-2xl bg-tinta-200 shadow-sm ring-1 ring-tinta-900/5"
+          >
+            <Image
+              src={fotosHero[0].foto.miniatura}
+              alt={fotosHero[0].evento.data.titulo}
+              widths={[400, 800]}
+              sizes="(max-width: 1024px) 45vw, 24vw"
+              loading="eager"
+              class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            />
+            <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-marca-grey/90 to-transparent p-4 pt-10 text-xs font-bold text-white">
+              {fotosHero[0].evento.data.titulo}
+            </span>
+          </a>
+          {fotosHero.slice(1).map(({ foto, evento }) => (
+            <a
+              href={`/eventos/${evento.id}`}
+              class="group block overflow-hidden rounded-2xl bg-tinta-200 shadow-sm ring-1 ring-tinta-900/5"
+              title={evento.data.titulo}
+            >
+              <Image
+                src={foto.miniatura}
+                alt={evento.data.titulo}
+                widths={[300, 600]}
+                sizes="(max-width: 1024px) 45vw, 24vw"
+                loading="eager"
+                class="aspect-[4/3] h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              />
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Pilares -->
+  <section class="mx-auto max-w-6xl px-6 py-16">
+    <div class="grid gap-8 sm:grid-cols-3">
+      {pilares.map((pilar) => (
+        <div data-reveal>
+          <img src={pilar.icono} alt="" width="36" height="36" class="h-9 w-9" />
+          <h3 class="mt-4 font-display text-lg font-bold text-tinta-900">{pilar.titulo}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-tinta-600">{pilar.texto}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Servicios destacados -->
+  {destacados.length > 0 && (
+    <section class="border-y border-tinta-200 bg-tinta-50">
+      <div class="mx-auto max-w-6xl px-6 py-16">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Del catálogo</p>
+            <h2 class="mt-3 font-display text-2xl font-bold text-tinta-900">
+              Empieza por los fundamentales
+            </h2>
+          </div>
+          <a href="/servicios" class="text-sm font-bold text-tinta-900 underline">
+            Ver los {servicios.length} servicios →
+          </a>
+        </div>
+        <div class="mt-8 grid gap-6 sm:grid-cols-3">
+          {destacados.map((servicio) => (
+            <div data-reveal><TarjetaServicio servicio={servicio} /></div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Quiénes somos -->
+  <section id="nosotros" class="mx-auto max-w-6xl scroll-mt-24 px-6 py-20">
+    <div class="grid items-center gap-12 lg:grid-cols-2">
+      <div data-reveal>
+        <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Quiénes somos</p>
+        <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">
+          Un espacio para aprender, construir y crecer juntos.
+        </h2>
+        <p class="mt-5 leading-relaxed text-tinta-600">
+          {club.nombre} – {club.universidad} es una comunidad enfocada en cloud computing,
+          innovación y tecnologías AWS.
+        </p>
+        <p class="mt-4 leading-relaxed text-tinta-600">
+          Nuestro objetivo es conectar a personas apasionadas por la tecnología mediante eventos,
+          workshops, networking y experiencias prácticas en la nube, creando un espacio para
+          aprender, construir y crecer juntos.
+        </p>
+        <p class="mt-4 leading-relaxed text-tinta-600">
+          Como parte del programa global de AWS Student Builder Groups, buscamos impulsar la próxima
+          generación de líderes cloud y acercar a la comunidad al ecosistema tecnológico de AWS.
+        </p>
+        <p class="mt-6 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-tinta-500">
+          <img src="/marca/icono-bolt.svg" alt="" width="16" height="16" class="h-4 w-4" />
+          Fundado en diciembre de 2025 · Cuenca, Ecuador
+        </p>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        {fotosNosotros.map(({ foto, evento }) => (
+          <a
+            href={`/eventos/${evento.id}`}
+            data-reveal
+            class="group block overflow-hidden rounded-xl bg-tinta-100"
+            title={evento.data.titulo}
+          >
+            <Image
+              src={foto.miniatura}
+              alt={evento.data.titulo}
+              widths={[300, 600]}
+              sizes="(max-width: 1024px) 45vw, 22vw"
+              loading="lazy"
+              class="aspect-square h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Trayectoria -->
+  <section id="trayectoria" class="scroll-mt-24 border-y border-tinta-200 bg-tinta-50">
+    <div class="mx-auto max-w-6xl px-6 py-20">
+      <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Trayectoria</p>
+      <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">Nuestros hitos</h2>
+      <ol
+        class="relative mt-10 max-w-2xl space-y-10 pl-8 before:absolute before:left-0 before:top-1 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-marca-amber before:via-marca-purple before:to-marca-blue before:opacity-40 before:content-['']"
+      >
+        <li class="relative">
+          <span class="absolute -left-[41px] flex h-5 w-5 rounded-full border-2 border-marca-amber bg-marca-amber ring-4 ring-marca-amber/20"></span>
+          <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">
+            Diciembre de 2025
+          </p>
+          <p class="mt-1 font-display text-lg font-bold text-tinta-900">
+            Fundación del grupo
+          </p>
+          <p class="mt-1 leading-relaxed text-tinta-600">
+            Nace el capítulo de la {club.universidad} dentro del programa global de AWS Student
+            Builder Groups, en Cuenca, Ecuador.
+          </p>
+        </li>
+        {trayectoria.map((hito) => (
+          <li class="relative" data-reveal>
+            <span class="absolute -left-[41px] flex h-5 w-5 rounded-full border-2 border-marca-amber bg-white"></span>
+            <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">
+              {fechaLarga(hito.data.fecha)}
+            </p>
+            <a href={`/eventos/${hito.id}`} class="mt-1 block font-display text-lg font-bold text-tinta-900 hover:underline">
+              {hito.data.titulo}
+            </a>
+            <p class="mt-1 leading-relaxed text-tinta-600">{hito.data.resumen}</p>
+          </li>
+        ))}
+      </ol>
+      <a href="/eventos" class="mt-8 inline-block text-sm font-bold text-tinta-900 underline">
+        Ver los {eventos.length} eventos →
+      </a>
+    </div>
+  </section>
+
+  <!-- Galería -->
+  <section class="mx-auto max-w-6xl px-6 py-20">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Galería</p>
+        <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">Momentos del grupo</h2>
+      </div>
+      <a href="/eventos" class="text-sm font-bold text-tinta-900 underline">
+        Ver las {totalFotos} fotos →
+      </a>
+    </div>
+    <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {galeria.map(({ foto, evento }) => (
+        <a
+          href={`/eventos/${evento.id}`}
+          data-reveal
+          class="group block overflow-hidden rounded-xl bg-tinta-100"
+          title={evento.data.titulo}
+        >
+          <Image
+            src={foto.miniatura}
+            alt={evento.data.titulo}
+            widths={[300, 600]}
+            sizes="(max-width: 640px) 45vw, 22vw"
+            loading="lazy"
+            class="aspect-square h-full w-full object-cover transition duration-300 group-hover:scale-105"
+          />
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Conteo ascendente en las cifras del hero. El valor final ya está en el HTML,
+  // así que sin JS —o con reduced-motion— simplemente se lee el número correcto.
+  const quiereMenosMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cifras = document.querySelectorAll<HTMLElement>('[data-contador]');
+
+  if (!quiereMenosMovimiento && cifras.length > 0) {
+    const animar = (cifra: HTMLElement) => {
+      const destino = Number(cifra.dataset.contador);
+      if (!Number.isFinite(destino) || destino === 0) return;
+
+      const duracion = 900;
+      let inicio: number | null = null;
+      let terminado = false;
+
+      function paso(ahora: number) {
+        inicio ??= ahora;
+        const avance = Math.min((ahora - inicio) / duracion, 1);
+        // easeOutCubic: arranca rápido y frena, se siente natural al leer.
+        const suavizado = 1 - Math.pow(1 - avance, 3);
+        cifra.textContent = String(Math.round(destino * suavizado));
+        if (avance < 1) {
+          requestAnimationFrame(paso);
+        } else {
+          terminado = true;
+        }
+      }
+
+      cifra.textContent = '0';
+      requestAnimationFrame(paso);
+
+      // Red de seguridad: el navegador congela requestAnimationFrame en pestañas
+      // de fondo, y una cifra clavada en 0 sería un dato falso. setTimeout sí
+      // corre en ese estado, así que garantiza el valor real pase lo que pase.
+      setTimeout(() => {
+        if (!terminado) cifra.textContent = String(destino);
+      }, duracion + 600);
+    };
+
+    // Arranca cuando la cifra entra en pantalla, no al cargar: así el conteo
+    // se ve completo y nunca queda un 0 congelado en una pestaña de fondo.
+    const observer = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((entrada) => {
+          if (!entrada.isIntersecting) return;
+          observer.unobserve(entrada.target);
+          animar(entrada.target as HTMLElement);
+        });
+      },
+      { threshold: 0.5 }
+    );
+    cifras.forEach((cifra) => observer.observe(cifra));
+  }
+</script>

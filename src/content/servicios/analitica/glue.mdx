@@ -1,0 +1,113 @@
+---
+nombre: 'AWS Glue'
+categoria: 'analitica'
+nivel: 'avanzado'
+resumenCorto: 'Servicio de integración de datos sin servidores: descubre esquemas, transforma datos y los deja listos para analizar.'
+analogia: 'Es el equipo que recibe cajas de proveedores distintos, revisa qué trae cada una, la etiqueta y la deja ordenada en el estante correcto para que cualquiera la encuentre.'
+cuandoAplicarlo: 'Cuando los datos llegan crudos y desordenados de varias fuentes y hay que catalogarlos, limpiarlos y convertirlos a un formato analítico.'
+casosDeUso:
+  - 'Registrar el esquema de los archivos de S3 para poder consultarlos con Athena'
+  - 'Convertir CSV a Parquet particionado para abaratar las consultas'
+  - 'Unir datos de RDS, S3 y una API en un mismo conjunto analítico'
+  - 'Ejecutar transformaciones periódicas sin administrar un clúster de Spark'
+
+conceptosClave:
+  - termino: 'Catálogo de datos'
+    definicion: 'El registro central de tablas y esquemas. Lo comparten Athena, Redshift Spectrum y EMR.'
+  - termino: 'Rastreador (crawler)'
+    definicion: 'El proceso que recorre una fuente, deduce su esquema y crea o actualiza las tablas del catálogo.'
+  - termino: 'Trabajo (job)'
+    definicion: 'La transformación en sí, escrita en PySpark o Scala, que Glue ejecuta sin que tú operes el clúster.'
+  - termino: 'DynamicFrame'
+    definicion: 'La estructura de Glue parecida a un DataFrame de Spark, pero tolerante a esquemas irregulares.'
+  - termino: 'Glue Studio'
+    definicion: 'El editor visual que arma la transformación arrastrando pasos y genera el código correspondiente.'
+
+modeloDePrecios: 'Por unidad de procesamiento de datos y por segundo de ejecución de los trabajos y rastreadores, con un mínimo por ejecución. El catálogo cobra por objeto almacenado y por petición, con un nivel gratuito amplio.'
+capaGratuita: 'El primer millón de objetos almacenados y de peticiones al catálogo son gratuitos. Los trabajos y rastreadores se cobran desde el primer segundo.'
+trampasDeCosto:
+  - 'Trabajos con más unidades de procesamiento de las necesarias: el costo escala directamente con ellas.'
+  - 'Rastreadores programados cada hora sobre datos que cambian una vez al día.'
+  - 'Trabajos que fallan y se reintentan solos sin límite: cada intento se cobra completo.'
+
+alternativas:
+  - servicio: 'Amazon EMR'
+    slug: 'analitica/emr'
+    porque: 'si necesitas control fino del clúster de Spark o bibliotecas que Glue no incluye.'
+  - servicio: 'AWS Lambda'
+    slug: 'computo/lambda'
+    porque: 'si la transformación es pequeña y por evento, arrancar Spark es desproporcionado.'
+  - servicio: 'Amazon MWAA'
+    slug: 'integracion-y-mensajeria/mwaa'
+    porque: 'si lo que falta es orquestar muchos pasos dependientes y el equipo ya usa Airflow.'
+
+serviciosRelacionados:
+  - 'analitica/athena'
+  - 'almacenamiento/s3'
+  - 'bases-de-datos/redshift'
+  - 'analitica/lake-formation'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Data Engineer – Associate'
+  - 'AWS Certified Data Analytics – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de AWS Glue'
+    url: 'https://docs.aws.amazon.com/glue/'
+  - titulo: 'Precios de AWS Glue'
+    url: 'https://aws.amazon.com/glue/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+En cualquier proyecto de datos, la parte que consume el tiempo no es el análisis sino lo anterior:
+averiguar qué contiene cada archivo, unificar formatos, corregir tipos y dejar todo en un lugar
+consultable. Glue es el servicio que AWS dedica a ese trabajo.
+
+Tiene dos mitades que conviene distinguir. El **catálogo de datos** es un registro de esquemas que
+comparten Athena, Redshift y EMR: es lo que permite escribir SQL sobre archivos sueltos de S3. Los
+**trabajos** son transformaciones en Spark que Glue ejecuta sin que nadie administre un clúster.
+
+## Cómo funciona
+
+1. Un **rastreador** recorre los datos —S3, RDS, DynamoDB— y deduce su esquema.
+2. El esquema se registra en el **catálogo**, y desde ese momento Athena puede consultarlo.
+3. Un **trabajo** lee esas tablas, aplica la transformación y escribe el resultado, normalmente en
+   Parquet particionado.
+4. El trabajo se dispara por horario, por evento o desde un flujo de Step Functions.
+5. Los marcadores de trabajo recuerdan qué se procesó ya, para no repetir el mismo dato.
+
+## Manos a la obra
+
+- Sube unos cuantos CSV a una carpeta de S3 y lanza un rastreador sobre ella.
+- Revisa la tabla que creó en el catálogo y consúltala con Athena sin haber escrito ningún esquema.
+- Crea en Glue Studio un trabajo visual que convierta esos CSV a Parquet particionado por fecha.
+- Consulta la tabla nueva con Athena y compara los datos escaneados con los de la consulta original.
+- Programa el trabajo con horario diario y activa los marcadores para no reprocesar lo ya hecho.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="De archivos crudos a tablas consultables"
+  descripcion="Los archivos CSV llegan a Amazon S3 sin ningún esquema declarado. Un rastreador de AWS Glue los recorre, deduce sus columnas y tipos, y registra la tabla en el catálogo de datos. Un trabajo de Glue lee esos archivos, los limpia y los reescribe en formato Parquet particionado en otro prefijo de S3. Desde ahí, Amazon Athena consulta la versión optimizada con SQL, escaneando mucho menos y costando bastante menos que sobre los CSV originales."
+  nodos={[
+    { id: 'crudo', etiqueta: 'Amazon S3', sub: 'CSV crudos', categoria: 'almacenamiento' },
+    { id: 'glue', etiqueta: 'AWS Glue', sub: 'cataloga y transforma', categoria: 'analitica' },
+    { id: 'parquet', etiqueta: 'Amazon S3', sub: 'Parquet', categoria: 'almacenamiento' },
+    { id: 'athena', etiqueta: 'Amazon Athena', sub: 'consulta', categoria: 'analitica' },
+  ]}
+  flujos={[
+    { de: 'crudo', a: 'glue', etiqueta: 'rastrea' },
+    { de: 'glue', a: 'parquet', etiqueta: 'transforma' },
+    { de: 'parquet', a: 'athena', etiqueta: 'consulta' },
+  ]}
+/>
+
+Ese salto de CSV a Parquet particionado parece un detalle de formato y es, en la práctica, la
+diferencia entre un análisis que cuesta centavos y uno que cuesta decenas de dólares.

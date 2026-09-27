@@ -1,0 +1,113 @@
+---
+nombre: 'AWS WAF'
+nombreCompleto: 'Web Application Firewall'
+categoria: 'seguridad-identidad'
+nivel: 'intermedio'
+resumenCorto: 'Firewall de aplicación web: filtra las peticiones maliciosas antes de que lleguen a tu sitio o a tu API.'
+analogia: 'Es el control de seguridad del aeropuerto: no revisa a dónde va cada quien, sino qué lleva encima, y detiene lo que no debería pasar por la puerta.'
+cuandoAplicarlo: 'Cuando una aplicación está expuesta a internet y hace falta bloquear inyecciones, rastreadores abusivos o tráfico de países o direcciones concretas.'
+casosDeUso:
+  - 'Bloquear intentos de inyección SQL y de secuencias de comandos entre sitios'
+  - 'Limitar cuántas peticiones puede hacer una misma dirección IP por minuto'
+  - 'Filtrar tráfico por país o por reputación de la dirección de origen'
+  - 'Frenar el llenado automatizado de formularios de registro'
+
+conceptosClave:
+  - termino: 'Web ACL'
+    definicion: 'El conjunto de reglas que se asocia a un recurso: CloudFront, un balanceador, API Gateway o AppSync.'
+  - termino: 'Grupo de reglas administradas'
+    definicion: 'Conjuntos mantenidos por AWS o por socios que cubren las vulnerabilidades más comunes sin escribir nada.'
+  - termino: 'Regla basada en tasa'
+    definicion: 'Bloquea a quien supere un número de peticiones en cinco minutos. Es la defensa más simple contra el abuso.'
+  - termino: 'Modo de conteo'
+    definicion: 'Aplica la regla sin bloquear, solo contando coincidencias. Es la forma correcta de estrenar cualquier regla.'
+  - termino: 'Declaración de coincidencia'
+    definicion: 'Qué parte de la petición se inspecciona: la ruta, las cabeceras, el cuerpo, la cadena de consulta.'
+
+modeloDePrecios: 'Una tarifa mensual por cada Web ACL y por cada regla, más un costo por millón de peticiones inspeccionadas. Los grupos de reglas administradas de socios se cobran aparte.'
+capaGratuita: 'No entra en la capa gratuita. Un Web ACL con unas pocas reglas tiene un costo mensual pequeño pero constante.'
+trampasDeCosto:
+  - 'Activar muchos grupos de reglas administradas "por si acaso": cada uno suma su tarifa mensual.'
+  - 'Un Web ACL asociado a un recurso que ya no existe sigue facturando.'
+  - 'Inspeccionar el cuerpo completo de peticiones muy grandes eleva el costo por petición.'
+
+alternativas:
+  - servicio: 'AWS Shield'
+    slug: 'seguridad-identidad/shield'
+    porque: 'si el problema es un ataque volumétrico de denegación de servicio y no el contenido de las peticiones.'
+  - servicio: 'Grupos de seguridad y listas de control de acceso'
+    slug: 'redes-y-entrega-de-contenido/vpc'
+    porque: 'si el filtrado es por dirección y puerto, la red resuelve el caso sin inspeccionar HTTP.'
+  - servicio: 'AWS Network Firewall'
+    slug: 'seguridad-identidad/network-firewall'
+    porque: 'si hay que filtrar todo el tráfico de salida de la VPC y no solo las peticiones web entrantes.'
+
+serviciosRelacionados:
+  - 'redes-y-entrega-de-contenido/cloudfront'
+  - 'redes-y-entrega-de-contenido/elb'
+  - 'integracion-y-mensajeria/api-gateway'
+  - 'seguridad-identidad/shield'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Security – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de AWS WAF'
+    url: 'https://docs.aws.amazon.com/waf/'
+  - titulo: 'Precios de AWS WAF'
+    url: 'https://aws.amazon.com/waf/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Un grupo de seguridad decide si una conexión puede establecerse; WAF decide si una petición HTTP
+concreta merece ser atendida. Trabaja una capa más arriba: mira la ruta, las cabeceras, los
+parámetros y el cuerpo, y aplica reglas sobre ese contenido.
+
+Lo más práctico de su diseño son los **grupos de reglas administradas**. AWS mantiene conjuntos que
+cubren las vulnerabilidades más habituales — inyección SQL, secuencias de comandos entre sitios,
+entradas maliciosas conocidas — y activarlos es cuestión de una casilla, sin escribir expresiones
+regulares propias.
+
+## Cómo funciona
+
+1. Creas un **Web ACL** y lo asocias a CloudFront, a un balanceador, a API Gateway o a AppSync.
+2. Añades **grupos de reglas administradas** y, si hace falta, reglas propias.
+3. Cada regla se estrena en **modo de conteo**, para ver qué bloquearía sin romper nada.
+4. Una vez revisadas las coincidencias legítimas, se pasan las reglas a modo de bloqueo.
+5. Las peticiones bloqueadas se registran, y desde ahí se ajustan las excepciones necesarias.
+
+## Manos a la obra
+
+- Crea un Web ACL asociado a una distribución de CloudFront de pruebas.
+- Activa el grupo de reglas administradas básicas de AWS **en modo de conteo**.
+- Lanza una petición con una cadena típica de inyección SQL en un parámetro y encuéntrala contada.
+- Añade una regla basada en tasa de 100 peticiones en cinco minutos y pruébala con un bucle.
+- Pasa a modo de bloqueo y comprueba la respuesta 403 desde el cliente.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Filtrar antes de que la petición llegue a la aplicación"
+  descripcion="El tráfico legítimo y el tráfico malicioso llegan por igual a Amazon CloudFront. El Web ACL de AWS WAF inspecciona cada petición contra sus reglas: las que coinciden con un patrón de inyección o superan el límite de tasa se bloquean con un 403, y solo las que pasan el filtro llegan al balanceador de carga y a la aplicación. La aplicación nunca ve las peticiones bloqueadas, así que el filtrado no consume su capacidad."
+  nodos={[
+    { id: 'trafico', etiqueta: 'Tráfico', sub: 'legítimo y no', tipo: 'externo' },
+    { id: 'cloudfront', etiqueta: 'CloudFront', sub: 'borde', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 'waf', etiqueta: 'AWS WAF', sub: 'inspecciona', categoria: 'seguridad-identidad' },
+    { id: 'alb', etiqueta: 'Load Balancer', sub: 'aplicación', categoria: 'redes-y-entrega-de-contenido' },
+  ]}
+  flujos={[
+    { de: 'trafico', a: 'cloudfront', etiqueta: 'HTTPS' },
+    { de: 'cloudfront', a: 'waf', etiqueta: 'evalúa' },
+    { de: 'waf', a: 'alb', etiqueta: 'solo lo sano' },
+  ]}
+/>
+
+La regla de oro al implantarlo es no saltarse el modo de conteo: un WAF mal ajustado bloquea a
+usuarios reales, y ese fallo es más caro que el ataque que se quería evitar.

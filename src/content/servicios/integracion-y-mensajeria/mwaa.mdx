@@ -1,0 +1,22 @@
+---
+nombre: 'Amazon Managed Workflows for Apache Airflow (MWAA)'
+categoria: 'integracion-y-mensajeria'
+nivel: 'avanzado'
+resumenCorto: 'Apache Airflow administrado para orquestar canalizaciones de datos definidas como código en Python.'
+cuandoAplicarlo: 'Cuando el equipo de datos ya escribe DAG de Airflow y no quiere mantener el planificador, la base de metadatos ni los trabajadores.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon Managed Workflows for Apache Airflow (MWAA)'
+    url: 'https://aws.amazon.com/managed-workflows-for-apache-airflow/'
+  - titulo: 'Precios de Amazon Managed Workflows for Apache Airflow (MWAA)'
+    url: 'https://aws.amazon.com/managed-workflows-for-apache-airflow/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+MWAA levanta un entorno de Airflow que lee los DAG desde un bucket de S3 y escala los trabajadores según la carga, con registros en CloudWatch e integración con IAM.
+
+Frente a Step Functions, la diferencia es cultural: Airflow es el estándar en ingeniería de datos y sus flujos se escriben en Python, mientras que Step Functions es nativo de AWS y se declara en JSON.

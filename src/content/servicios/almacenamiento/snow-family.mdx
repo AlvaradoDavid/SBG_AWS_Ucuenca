@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Snow Family'
+categoria: 'almacenamiento'
+nivel: 'intermedio'
+resumenCorto: 'Dispositivos físicos que AWS envía por correo para mover grandes volúmenes de datos o computar sin conexión.'
+cuandoAplicarlo: 'Cuando hay que trasladar decenas de terabytes y la conexión a internet disponible tardaría meses en subirlos.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Snow Family'
+    url: 'https://aws.amazon.com/snow/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+AWS envía un equipo robusto, tú copias los datos localmente, lo devuelves y el contenido aparece en S3. La aritmética es sencilla: mover 100 TB por una conexión de 100 Mbps toma meses; por correo, días.
+
+Algunos modelos también ejecutan instancias EC2 y funciones Lambda en el propio dispositivo, lo que sirve para recolectar y procesar datos en sitios sin conectividad — barcos, minas, estaciones de campo.
+
+**Nota:** La familia se ha reducido: AWS retiró Snowmobile el 14 de marzo de 2024 y varios modelos de Snowball Edge el 12 de noviembre de 2025. Conviene confirmar qué dispositivos siguen disponibles antes de planificar un traslado.

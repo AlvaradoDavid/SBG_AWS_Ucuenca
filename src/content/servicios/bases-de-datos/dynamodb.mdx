@@ -1,0 +1,104 @@
+---
+nombre: 'Amazon DynamoDB'
+categoria: 'bases-de-datos'
+nivel: 'intermedio'
+resumenCorto: 'Base de datos NoSQL totalmente gestionada, con latencia de milisegundos a cualquier escala.'
+analogia: 'Es un casillero gigante: si sabes el número del casillero, abrirlo es instantáneo sin importar cuántos casilleros haya. Pero buscar "todos los casilleros con algo rojo adentro" es caro.'
+cuandoAplicarlo: 'Cuando necesitas guardar y consultar datos con acceso predecible por clave —"dame el usuario X"— a alta velocidad y sin administrar servidores de base de datos.'
+casosDeUso:
+  - 'Guardar sesiones de usuario o carritos de compra'
+  - 'Tablas de estado para aplicaciones serverless, junto a Lambda'
+  - 'Datos de alto volumen con lecturas y escrituras simples y muy frecuentes'
+  - 'Registro de asistencia a eventos del club'
+
+conceptosClave:
+  - termino: 'Partition key'
+    definicion: 'La clave principal por la que DynamoDB distribuye y localiza los datos. Elegirla mal es el error de diseño más común.'
+  - termino: 'Sort key'
+    definicion: 'Clave secundaria opcional que permite ordenar y filtrar dentro de una misma partition key.'
+  - termino: 'Item'
+    definicion: 'Un registro de la tabla. A diferencia de SQL, cada item puede tener atributos distintos.'
+  - termino: 'On-demand vs. Provisioned'
+    definicion: 'Dos modos de capacidad: pagar por petición realizada, o reservar capacidad fija por hora.'
+
+modeloDePrecios: 'En modo on-demand, por lectura y escritura realizada. En modo provisioned, por capacidad reservada por hora. Más el almacenamiento por GB.'
+capaGratuita: '25 GB de almacenamiento y 25 unidades de capacidad de lectura y escritura al mes, de forma permanente (no expira a los 12 meses).'
+trampasDeCosto:
+  - 'Usar Scan en lugar de Query: Scan lee la tabla entera y se cobra por todo lo leído, no por lo que devuelve.'
+  - 'Dejar capacidad provisionada alta después de una prueba de carga.'
+  - 'Crear índices secundarios globales que no se usan: cada uno duplica el costo de escritura.'
+
+alternativas:
+  - servicio: 'Amazon RDS'
+    porque: 'si tus datos tienen relaciones complejas y necesitas consultas flexibles tipo SQL con joins y agregaciones.'
+  - servicio: 'Amazon S3'
+    slug: 'almacenamiento/s3'
+    porque: 'si en realidad estás guardando archivos completos y no registros que se consultan por clave.'
+
+serviciosRelacionados:
+  - 'computo/lambda'
+  - 'seguridad-identidad/iam'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon DynamoDB'
+    url: 'https://docs.aws.amazon.com/dynamodb/'
+  - titulo: 'Precios de Amazon DynamoDB'
+    url: 'https://aws.amazon.com/dynamodb/pricing/'
+
+actualizado: 2026-08-06
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+DynamoDB es una base de datos NoSQL (clave-valor y documentos) completamente gestionada: no hay un
+servidor que administrar, ni versiones que actualizar, y escala automáticamente para soportar desde
+unas pocas consultas por segundo hasta millones.
+
+A cambio de esa simplicidad operativa, pide que diseñes tus tablas pensando **primero en cómo vas a
+consultarlas**. No funciona como una base de datos relacional, donde modelas los datos y después
+escribes cualquier consulta que se te ocurra.
+
+## Cómo funciona
+
+1. Creas una tabla y defines su **partition key** (y opcionalmente una **sort key**).
+2. Insertas *items*: registros con los atributos que quieras, sin esquema fijo.
+3. Consultas con **Query** cuando conoces la clave — rápido y barato — o con **Scan** cuando no
+   la conoces, que recorre toda la tabla y conviene evitar.
+4. DynamoDB reparte los datos internamente entre particiones sin que tú lo administres.
+
+## Manos a la obra
+
+- Crea una tabla `AsistenciaEventos` con partition key `email` y sort key `fechaEvento`.
+- Inserta tres items desde la consola.
+- Haz un Query por un email concreto y observa lo rápido y barato que resulta.
+- Haz un Scan con un filtro y compara las unidades de lectura consumidas: esa diferencia es la
+  lección más importante del servicio.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Registro de asistencia a un evento"
+  descripcion="Un socio del club envía su email desde un formulario. API Gateway recibe la petición e invoca una función Lambda, que escribe un item en la tabla de DynamoDB usando el email como partition key y la fecha del evento como sort key. Todo sin servidores propios y con costo prácticamente nulo al volumen de un club universitario."
+  nodos={[
+    { id: 'socio', etiqueta: 'Socio', sub: 'formulario', tipo: 'externo' },
+    { id: 'apigw', etiqueta: 'API Gateway', sub: 'endpoint HTTP', categoria: 'integracion-y-mensajeria' },
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'valida y escribe', categoria: 'computo' },
+    { id: 'ddb', etiqueta: 'DynamoDB', sub: 'AsistenciaEventos', categoria: 'bases-de-datos' },
+  ]}
+  flujos={[
+    { de: 'socio', a: 'apigw', etiqueta: 'POST email' },
+    { de: 'apigw', a: 'lambda', etiqueta: 'invoca' },
+    { de: 'lambda', a: 'ddb', etiqueta: 'PutItem' },
+  ]}
+/>
+
+La clave del diseño está en la tabla: con `email` como partition key y `fechaEvento` como sort key,
+consultar «a qué eventos vino esta persona» es un Query barato. Sin esa decisión, sería un Scan.

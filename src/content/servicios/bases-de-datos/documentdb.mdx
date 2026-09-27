@@ -1,0 +1,22 @@
+---
+nombre: 'Amazon DocumentDB'
+categoria: 'bases-de-datos'
+nivel: 'intermedio'
+resumenCorto: 'Base de datos de documentos administrada, compatible con la API de MongoDB y con el almacenamiento distribuido de Aurora.'
+cuandoAplicarlo: 'Cuando una aplicación ya está escrita contra MongoDB y quieres dejar de administrar el clúster sin reescribir el código de acceso a datos.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon DocumentDB'
+    url: 'https://aws.amazon.com/documentdb/'
+  - titulo: 'Precios de Amazon DocumentDB'
+    url: 'https://aws.amazon.com/documentdb/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+DocumentDB guarda documentos JSON y responde a los mismos controladores y consultas que MongoDB, pero por debajo usa el motor de almacenamiento distribuido de Aurora: seis copias del dato repartidas en tres zonas de disponibilidad, con respaldo continuo hacia S3.
+
+No es MongoDB: la compatibilidad cubre las operaciones más usadas, así que antes de migrar conviene probar las consultas reales de la aplicación.

@@ -1,0 +1,114 @@
+---
+nombre: 'AWS Step Functions'
+categoria: 'integracion-y-mensajeria'
+nivel: 'avanzado'
+resumenCorto: 'Orquesta procesos de varios pasos como una máquina de estados, con reintentos y manejo de errores declarados.'
+analogia: 'Es el guion de una obra de teatro: define quién entra en cada escena, qué pasa si alguien se equivoca y cómo sigue la función, en vez de dejar que cada actor improvise.'
+cuandoAplicarlo: 'Cuando un proceso tiene varios pasos con condiciones, reintentos, esperas o intervención humana, y encadenar funciones Lambda a mano se vuelve frágil.'
+casosDeUso:
+  - 'Procesar un pedido: validar, cobrar, reservar inventario y notificar, con reversión si algo falla'
+  - 'Canalizaciones de datos con pasos que dependen del resultado del anterior'
+  - 'Flujos con aprobación humana en medio, que esperan días sin consumir cómputo'
+  - 'Coordinar tareas largas de ECS, Glue o SageMaker desde un mismo lugar'
+
+conceptosClave:
+  - termino: 'Máquina de estados'
+    definicion: 'La definición del flujo completo: sus pasos, sus transiciones y sus condiciones.'
+  - termino: 'Estado'
+    definicion: 'Cada paso. Puede invocar un servicio, decidir por una condición, esperar, o correr ramas en paralelo.'
+  - termino: 'Flujo estándar y flujo exprés'
+    definicion: 'El estándar dura hasta un año y guarda el historial completo; el exprés es para volúmenes altos y corta duración.'
+  - termino: 'Reintento y captura'
+    definicion: 'La política de errores se declara en el flujo, no se programa dentro de cada función.'
+  - termino: 'Integración directa'
+    definicion: 'Step Functions llama a más de doscientos servicios de AWS sin necesidad de una función Lambda intermedia.'
+
+modeloDePrecios: 'Los flujos estándar se cobran por transición de estado; los exprés, por número de ejecuciones y por duración y memoria consumidas.'
+capaGratuita: '4.000 transiciones de estado al mes de forma permanente en los flujos estándar.'
+trampasDeCosto:
+  - 'Bucles de reintento sin límite: cada vuelta cuenta transiciones y puede dispararse sin que nadie lo note.'
+  - 'Usar flujos estándar para procesos de altísima frecuencia y corta duración, donde el exprés es mucho más barato.'
+  - 'Descomponer en veinte estados lo que cabría en tres: cada transición se factura.'
+
+alternativas:
+  - servicio: 'Amazon EventBridge'
+    slug: 'integracion-y-mensajeria/eventbridge'
+    porque: 'si los componentes solo deben reaccionar a eventos y no hay un orden que alguien deba garantizar.'
+  - servicio: 'Amazon MWAA'
+    slug: 'integracion-y-mensajeria/mwaa'
+    porque: 'si el equipo de datos ya escribe sus flujos en Airflow y quiere mantener ese ecosistema.'
+  - servicio: 'Lógica dentro de una función Lambda'
+    slug: 'computo/lambda'
+    porque: 'si el proceso son dos pasos sencillos, una máquina de estados añade más ceremonia que valor.'
+
+serviciosRelacionados:
+  - 'computo/lambda'
+  - 'integracion-y-mensajeria/eventbridge'
+  - 'integracion-y-mensajeria/sqs'
+  - 'bases-de-datos/dynamodb'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+  - 'AWS Certified DevOps Engineer – Professional'
+
+enlaces:
+  - titulo: 'Documentación oficial de AWS Step Functions'
+    url: 'https://docs.aws.amazon.com/step-functions/'
+  - titulo: 'Precios de AWS Step Functions'
+    url: 'https://aws.amazon.com/step-functions/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Cuando un proceso tiene varios pasos, la tentación es que cada función Lambda llame a la siguiente.
+Funciona hasta el primer error: entonces hay que decidir dónde se reintenta, cómo se sabe en qué
+paso quedó todo y qué se deshace. Esa lógica termina repartida y duplicada por todo el código.
+
+Step Functions saca esa coordinación fuera. El flujo se declara como una **máquina de estados** en
+JSON, con sus condiciones, sus reintentos y su manejo de errores. Cada función vuelve a ocuparse solo
+de su tarea, y la consola muestra gráficamente por dónde va cada ejecución y dónde falló.
+
+## Cómo funciona
+
+1. Declaras la máquina de estados: los pasos, el orden y las condiciones entre ellos.
+2. Cada **estado** invoca un servicio —Lambda, ECS, Glue, SageMaker, DynamoDB— o toma una decisión.
+3. Los estados en paralelo ejecutan ramas a la vez; el estado de mapa recorre una lista de elementos.
+4. Los **reintentos** y las **capturas** se declaran por estado, sin escribir esa lógica en el código.
+5. La ejecución queda registrada paso a paso, con su entrada y su salida, lo que hace visible el fallo.
+
+## Manos a la obra
+
+- Crea una máquina de estados con dos funciones Lambda encadenadas, la segunda con un fallo forzado.
+- Ejecuta el flujo y observa el gráfico: el paso que falló aparece marcado en rojo.
+- Añade una política de reintento con tres intentos y retroceso exponencial, sin tocar el código.
+- Añade un estado de decisión que enrute según un campo del resultado anterior.
+- Prueba un estado de espera de un minuto: no consume cómputo mientras espera.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un proceso de inscripción con pasos y reintentos"
+  descripcion="Una inscripción entra en una máquina de estados de AWS Step Functions. El primer paso invoca una función de AWS Lambda que valida los datos; si la validación falla, el flujo captura el error y termina de forma controlada. Si tiene éxito, el segundo paso guarda la inscripción en Amazon DynamoDB y el tercero publica un aviso en Amazon SNS para notificar al equipo. El orden, los reintentos y el manejo de errores están declarados en el flujo, no repartidos por el código de cada función."
+  nodos={[
+    { id: 'inicio', etiqueta: 'Inscripción', tipo: 'externo' },
+    { id: 'sfn', etiqueta: 'Step Functions', sub: 'máquina de estados', categoria: 'integracion-y-mensajeria' },
+    { id: 'valida', etiqueta: 'AWS Lambda', sub: 'valida', categoria: 'computo' },
+    { id: 'ddb', etiqueta: 'Amazon DynamoDB', sub: 'guarda', categoria: 'bases-de-datos' },
+    { id: 'sns', etiqueta: 'Amazon SNS', sub: 'notifica', categoria: 'integracion-y-mensajeria' },
+  ]}
+  flujos={[
+    { de: 'inicio', a: 'sfn', etiqueta: 'inicia' },
+    { de: 'sfn', a: 'valida', etiqueta: 'paso 1' },
+    { de: 'valida', a: 'ddb', etiqueta: 'paso 2' },
+    { de: 'ddb', a: 'sns', etiqueta: 'paso 3' },
+  ]}
+/>
+
+La ventaja que más se nota en la práctica no es técnica sino de diagnóstico: cuando algo falla, la
+consola dice exactamente en qué paso, con qué entrada y con qué error.

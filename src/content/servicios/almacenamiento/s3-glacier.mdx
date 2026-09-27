@@ -1,0 +1,109 @@
+---
+nombre: 'Amazon S3 Glacier'
+categoria: 'almacenamiento'
+nivel: 'intermedio'
+resumenCorto: 'Clases de almacenamiento de S3 para archivar datos a muy bajo costo, a cambio de esperar para recuperarlos.'
+analogia: 'Es el archivo muerto del sótano: guardar cajas ahí cuesta casi nada, pero si necesitas una carpeta hay que bajar a buscarla y eso toma su tiempo.'
+cuandoAplicarlo: 'Cuando hay datos que se deben conservar durante años por norma o por seguridad, pero que casi nunca se van a leer.'
+casosDeUso:
+  - 'Respaldos anuales que solo se tocarían ante un desastre'
+  - 'Fotos y video en bruto de eventos pasados que ya no se publican'
+  - 'Registros y evidencia que una norma obliga a conservar durante años'
+  - 'Conjuntos de datos científicos que se consultan de forma excepcional'
+
+conceptosClave:
+  - termino: 'Glacier Instant Retrieval'
+    definicion: 'Archivo con acceso en milisegundos. Más barato que S3 estándar, pensado para lo que se lee un par de veces al año.'
+  - termino: 'Glacier Flexible Retrieval'
+    definicion: 'Recuperación en minutos u horas según la urgencia que se pida. El punto medio clásico del archivado.'
+  - termino: 'Glacier Deep Archive'
+    definicion: 'El almacenamiento más barato de AWS. La recuperación tarda hasta doce horas.'
+  - termino: 'Restauración'
+    definicion: 'La petición explícita que devuelve el objeto a un estado accesible durante un número de días.'
+  - termino: 'Duración mínima'
+    definicion: 'Cada clase factura un mínimo de días —90 o 180 según la clase— aunque el objeto se borre antes.'
+
+modeloDePrecios: 'Por gigabyte al mes, con precios que bajan mucho en las clases más frías. Se cobra además por cada petición de restauración y por los datos recuperados.'
+capaGratuita: 'No hay capa gratuita propia. La capa gratuita de S3 cubre la clase estándar; las clases de archivo cobran desde el primer gigabyte.'
+trampasDeCosto:
+  - 'Borrar antes de la duración mínima no ahorra: se factura igual el periodo completo de 90 o 180 días.'
+  - 'Archivar millones de archivos pequeños sale caro: cada objeto lleva metadatos con costo propio; conviene agruparlos.'
+  - 'Restaurar de forma acelerada un volumen grande de datos puede costar más que haber usado S3 estándar todo el año.'
+
+alternativas:
+  - servicio: 'Amazon S3'
+    slug: 'almacenamiento/s3'
+    porque: 'si los datos se leen con cierta frecuencia, el ahorro del archivo se lo comen los costos de recuperación.'
+  - servicio: 'AWS Backup'
+    slug: 'almacenamiento/backup'
+    porque: 'si lo que buscas es una política de respaldos administrada, y no archivar objetos concretos.'
+
+serviciosRelacionados:
+  - 'almacenamiento/s3'
+  - 'almacenamiento/backup'
+  - 'gestion-financiera/cost-explorer'
+  - 'seguridad-identidad/kms'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de las clases de almacenamiento de S3'
+    url: 'https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html'
+  - titulo: 'Precios de Amazon S3 Glacier'
+    url: 'https://aws.amazon.com/s3/glacier/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Glacier ya no es un servicio aparte: son tres clases de almacenamiento dentro de S3. Se usan los
+mismos buckets, las mismas API y los mismos permisos; lo único que cambia es cuánto cuesta guardar
+un objeto y cuánto tarda en estar disponible cuando se pide.
+
+El intercambio es explícito y vale la pena entenderlo antes de decidir: Deep Archive puede costar
+una fracción mínima de lo que cuesta la clase estándar, pero recuperar un objeto tarda horas y se
+paga aparte. Para datos que se leen todas las semanas, archivar sale **más caro**, no más barato.
+
+## Cómo funciona
+
+1. Subes los objetos a un bucket normal de **Amazon S3**.
+2. Eliges la clase al subir, o dejas que una **regla de ciclo de vida** los mueva sola con el tiempo:
+   estándar los primeros 30 días, infrecuente después, archivo al cabo de un año.
+3. El objeto archivado sigue listado en el bucket, pero su contenido no se puede leer directamente.
+4. Cuando hace falta, se pide una **restauración** indicando cuántos días debe estar disponible.
+5. Pasado ese plazo, el objeto vuelve a su estado archivado sin que nadie intervenga.
+
+## Manos a la obra
+
+- Sube un archivo a un bucket y cambia su clase a Glacier Flexible Retrieval desde la consola.
+- Intenta descargarlo: verás el error que indica que el objeto está archivado.
+- Pide una restauración estándar y observa cuánto tarda en estar disponible.
+- Crea una regla de ciclo de vida que mueva a la clase infrecuente lo que supere los 30 días.
+- Revisa en la calculadora de precios cuánto costaría archivar 100 GB durante un año en cada clase.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="El viaje de un archivo hacia el almacenamiento frío"
+  descripcion="Las fotos de un evento se suben a Amazon S3 en la clase estándar, donde se consultan durante las primeras semanas. Una regla de ciclo de vida las mueve después a la clase de acceso infrecuente y, pasado un año, a Amazon S3 Glacier Deep Archive, que es el almacenamiento más barato de AWS. Cuando alguien necesita una foto antigua, pide una restauración y el objeto vuelve a estar disponible durante los días que se indiquen. Nadie mueve archivos a mano: la política lo hace sola."
+  nodos={[
+    { id: 'club', etiqueta: 'Club', sub: 'sube fotos', tipo: 'externo' },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'clase estándar', categoria: 'almacenamiento' },
+    { id: 'ia', etiqueta: 'S3 Infrecuente', sub: 'a los 30 días', categoria: 'almacenamiento' },
+    { id: 'glacier', etiqueta: 'Deep Archive', sub: 'al año', categoria: 'almacenamiento' },
+  ]}
+  flujos={[
+    { de: 'club', a: 's3', etiqueta: 'sube' },
+    { de: 's3', a: 'ia', etiqueta: 'a 30 días' },
+    { de: 'ia', a: 'glacier', etiqueta: 'archiva' },
+  ]}
+/>
+
+Para el club esta es la forma de conservar el material en bruto de todos los eventos sin que el
+archivo histórico se vuelva una partida creciente en la factura.

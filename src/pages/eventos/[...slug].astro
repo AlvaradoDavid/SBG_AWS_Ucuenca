@@ -1,0 +1,60 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import GaleriaEvento from '../../components/GaleriaEvento.astro';
+import { getCollection, render } from 'astro:content';
+import { fotosDeEvento } from '../../lib/fotos';
+import { fechaLarga } from '../../lib/fechas';
+
+export async function getStaticPaths() {
+  const eventos = await getCollection('eventos');
+  return eventos.map((evento) => ({
+    params: { slug: evento.id },
+    props: { evento },
+  }));
+}
+
+const { evento } = Astro.props;
+const { Content } = await render(evento);
+const fotos = fotosDeEvento(evento.data.carpetaFotos);
+
+const fecha = fechaLarga(evento.data.fecha);
+---
+
+<Layout title={evento.data.titulo} description={evento.data.resumen}>
+  <article class="mx-auto max-w-6xl px-6 py-12" data-pagefind-body>
+    <a href="/eventos" class="font-mono text-xs uppercase tracking-widest text-tinta-500 transition hover:text-tinta-900">
+      ← Eventos
+    </a>
+
+    <header class="mt-6 max-w-3xl border-b border-tinta-200 pb-8">
+      <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">
+        {fecha}
+        {evento.data.lugar && <span> · {evento.data.lugar}</span>}
+      </p>
+      <h1 class="mt-4 font-display text-4xl font-bold tracking-tight text-tinta-900">
+        {evento.data.titulo}
+      </h1>
+      <p class="mt-4 text-lg leading-relaxed text-tinta-600">{evento.data.resumen}</p>
+      {evento.data.asistentes && (
+        <p class="mt-4 inline-block rounded-full bg-tinta-100 px-3 py-1 text-sm font-bold text-tinta-700">
+          {evento.data.asistentes} asistentes
+        </p>
+      )}
+    </header>
+
+    <div class="prose prose-tinta mt-8 max-w-3xl prose-headings:font-display prose-headings:font-bold">
+      <Content />
+    </div>
+
+    {fotos.length > 0 && (
+      <section class="mt-12">
+        <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">
+          {fotos.length} fotos
+        </p>
+        <div class="mt-4">
+          <GaleriaEvento fotos={fotos} titulo={evento.data.titulo} />
+        </div>
+      </section>
+    )}
+  </article>
+</Layout>

@@ -1,0 +1,69 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { etiquetaDeCategoria, colorDeCategoria, etiquetaDeNivel } from '../lib/categorias';
+
+interface Props {
+  servicio: CollectionEntry<'servicios'>;
+}
+const { servicio } = Astro.props;
+const color = colorDeCategoria(servicio.data.categoria);
+---
+
+<a
+  href={`/servicios/${servicio.id}`}
+  data-categoria={servicio.data.categoria}
+  data-nivel={servicio.data.nivel}
+  style={`--color-cat: ${color}`}
+  class="tarjeta-servicio servicio-tarjeta group relative flex flex-col overflow-hidden rounded-xl border border-tinta-200 bg-white"
+>
+  <span class="block h-1 w-full bg-[var(--color-cat)]"></span>
+  <!-- Halo del color de la categoría: aparece al pasar el cursor y da profundidad
+       sin teñir el texto, que se mantiene en la escala neutra. -->
+  <span
+    aria-hidden="true"
+    class="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[var(--color-cat)] opacity-0 blur-3xl transition-opacity duration-300 group-hover:opacity-25"
+  ></span>
+
+  <div class="relative flex flex-1 flex-col p-6">
+    <div class="flex items-center gap-2">
+      <span class="punto-categoria bg-[var(--color-cat)]"></span>
+      <span class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">
+        {etiquetaDeCategoria(servicio.data.categoria)}
+      </span>
+    </div>
+    <h3 class="mt-3 font-display text-lg font-bold text-tinta-900">{servicio.data.nombre}</h3>
+    {servicio.data.nombreCompleto && (
+      <p class="mt-0.5 text-xs text-tinta-400">{servicio.data.nombreCompleto}</p>
+    )}
+    <p class="mt-3 flex-1 text-sm leading-relaxed text-tinta-600">{servicio.data.resumenCorto}</p>
+    <div class="mt-4 flex items-center justify-between">
+      <span class="rounded-full bg-tinta-100 px-2.5 py-1 text-[11px] font-bold text-tinta-600">
+        {etiquetaDeNivel(servicio.data.nivel)}
+      </span>
+      <span class="text-sm font-bold text-tinta-900 transition group-hover:translate-x-0.5">
+        Ver ficha →
+      </span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .tarjeta-servicio {
+    transition:
+      transform 200ms ease-out,
+      box-shadow 200ms ease-out,
+      border-color 200ms ease-out;
+  }
+  .tarjeta-servicio:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--color-cat) 45%, transparent);
+    box-shadow:
+      0 10px 30px -12px color-mix(in srgb, var(--color-cat) 40%, transparent),
+      0 4px 12px -6px rgb(22 29 38 / 0.12);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tarjeta-servicio:hover {
+      transform: none;
+    }
+  }
+</style>

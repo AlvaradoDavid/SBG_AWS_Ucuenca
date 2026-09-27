@@ -1,0 +1,115 @@
+---
+nombre: 'Amazon SNS'
+nombreCompleto: 'Simple Notification Service'
+categoria: 'integracion-y-mensajeria'
+nivel: 'intermedio'
+resumenCorto: 'Mensajería de publicación y suscripción: un mensaje publicado llega a todos los interesados a la vez.'
+analogia: 'Es la lista de correo del club: quien publica escribe una sola vez y el mensaje llega a todas las personas suscritas, sin que el remitente sepa quiénes son.'
+cuandoAplicarlo: 'Cuando un mismo evento debe avisar a varios destinos a la vez, o cuando hace falta enviar notificaciones a personas por correo o SMS.'
+casosDeUso:
+  - 'Avisar a varios sistemas de que se registró una inscripción nueva'
+  - 'Enviar las alarmas de CloudWatch por correo al equipo'
+  - 'Disparar varias funciones Lambda con un mismo evento'
+  - 'Repartir mensajes a varias colas de SQS con el patrón de distribución en abanico'
+
+conceptosClave:
+  - termino: 'Tema (topic)'
+    definicion: 'El canal al que se publica. Quien publica no sabe ni le importa quién está suscrito.'
+  - termino: 'Suscripción'
+    definicion: 'Cada destino conectado al tema: una cola de SQS, una función Lambda, un correo, un HTTP, un SMS.'
+  - termino: 'Distribución en abanico (fan-out)'
+    definicion: 'El patrón de un mensaje publicado que llega a muchos suscriptores en paralelo.'
+  - termino: 'Filtro de suscripción'
+    definicion: 'La regla que hace que un suscriptor reciba solo los mensajes que cumplen ciertos atributos.'
+  - termino: 'Tema FIFO'
+    definicion: 'La variante que garantiza orden y entrega única, a costa de menor rendimiento.'
+
+modeloDePrecios: 'Por millón de publicaciones y por entregas realizadas, con precios distintos según el destino. Las entregas hacia SQS y Lambda son muy baratas; el SMS es, de lejos, lo más caro.'
+capaGratuita: 'Un millón de publicaciones al mes y un millón de entregas HTTP, más 1.000 correos, de forma permanente.'
+trampasDeCosto:
+  - 'Las notificaciones por SMS se cobran por mensaje y por país: una prueba en bucle puede costar más que todo lo demás junto.'
+  - 'Suscribir una función Lambda sin filtros a un tema con mucho tráfico: se paga cada invocación, útil o no.'
+  - 'Un mensaje que falla y se reintenta muchas veces multiplica el número de entregas facturadas.'
+
+alternativas:
+  - servicio: 'Amazon SQS'
+    slug: 'integracion-y-mensajeria/sqs'
+    porque: 'si el mensaje debe procesarlo un solo consumidor y esperar en cola hasta que pueda atenderlo.'
+  - servicio: 'Amazon EventBridge'
+    slug: 'integracion-y-mensajeria/eventbridge'
+    porque: 'si el enrutamiento depende del contenido del evento y hay muchas reglas distintas.'
+  - servicio: 'AWS End User Messaging'
+    slug: 'aplicaciones-de-negocio/end-user-messaging'
+    porque: 'si el objetivo real es enviar SMS o notificaciones a personas a gran escala.'
+
+serviciosRelacionados:
+  - 'integracion-y-mensajeria/sqs'
+  - 'integracion-y-mensajeria/eventbridge'
+  - 'computo/lambda'
+  - 'administracion-y-gobernanza/cloudwatch'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon SNS'
+    url: 'https://docs.aws.amazon.com/sns/'
+  - titulo: 'Precios de Amazon SNS'
+    url: 'https://aws.amazon.com/sns/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+SNS resuelve un problema de acoplamiento. Cuando ocurre algo importante — se registró una persona,
+se subió un archivo, terminó un proceso — suele haber varios sistemas interesados, y escribir en el
+código «avisa a este, luego a este otro» convierte cada sistema nuevo en un cambio de código.
+
+Con SNS, quien produce el evento lo **publica en un tema** y se desentiende. Los interesados se
+**suscriben** al tema. Añadir un consumidor nuevo no toca ni una línea del productor. Es el patrón
+de publicación y suscripción, y es la base de las arquitecturas orientadas a eventos.
+
+## Cómo funciona
+
+1. Creas un **tema** y le das permisos de publicación a quien corresponda.
+2. Los destinos se **suscriben**: colas de SQS, funciones Lambda, correos, puntos HTTP, SMS.
+3. Un productor publica un mensaje una sola vez.
+4. SNS lo entrega **en paralelo** a todos los suscriptores, con reintentos si alguno falla.
+5. Los **filtros de suscripción** permiten que cada destino reciba solo lo que le interesa.
+
+## Manos a la obra
+
+- Crea un tema y suscribe tu correo. Confirma la suscripción desde el mensaje que llega.
+- Publica un mensaje desde la consola y compruébalo en la bandeja de entrada.
+- Suscribe además una cola de SQS al mismo tema y observa que el mensaje llega a los dos destinos.
+- Añade un filtro por atributo para que la cola reciba solo los mensajes marcados como urgentes.
+- **No hagas pruebas masivas por SMS**: es el canal que puede quemar créditos en minutos.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un evento, tres destinos"
+  descripcion="Cuando alguien se inscribe a un evento del club, la función de AWS Lambda publica un único mensaje en un tema de Amazon SNS. El tema lo entrega en paralelo a tres suscriptores: una cola de Amazon SQS que procesa la inscripción con calma, una segunda función Lambda que actualiza las estadísticas, y un correo que avisa al equipo organizador. El productor no sabe cuántos suscriptores hay, así que añadir uno nuevo no exige tocar su código."
+  nodos={[
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'publica', categoria: 'computo' },
+    { id: 'sns', etiqueta: 'Amazon SNS', sub: 'tema', categoria: 'integracion-y-mensajeria' },
+    { id: 'sqs', etiqueta: 'Amazon SQS', sub: 'cola de trabajo', categoria: 'integracion-y-mensajeria', fila: 0 },
+    { id: 'stats', etiqueta: 'AWS Lambda', sub: 'estadísticas', categoria: 'computo', fila: 1 },
+    { id: 'correo', etiqueta: 'Equipo', sub: 'correo', tipo: 'externo', fila: 2 },
+  ]}
+  flujos={[
+    { de: 'lambda', a: 'sns', etiqueta: 'publica' },
+    { de: 'sns', a: 'sqs' },
+    { de: 'sns', a: 'stats', etiqueta: 'entrega' },
+    { de: 'sns', a: 'correo' },
+  ]}
+/>
+
+La combinación de SNS con SQS — publicar en un tema que entrega a varias colas — es tan común que
+tiene nombre propio: distribución en abanico, y aparece en casi todos los exámenes de certificación.

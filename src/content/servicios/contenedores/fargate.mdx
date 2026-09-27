@@ -1,0 +1,109 @@
+---
+nombre: 'AWS Fargate'
+categoria: 'contenedores'
+nivel: 'intermedio'
+resumenCorto: 'Motor de cómputo sin servidores para contenedores: ejecutas tareas de ECS o pods de EKS sin administrar instancias.'
+analogia: 'Es la diferencia entre comprar el horno y alquilar el horno encendido por minutos: sigues cocinando tú, pero nadie te pide que lo mantengas ni que decidas de qué tamaño comprarlo.'
+cuandoAplicarlo: 'Cuando quieres correr contenedores y no quieres dimensionar, parchear ni escalar las máquinas donde corren.'
+casosDeUso:
+  - 'Servicios web en contenedor con tráfico irregular'
+  - 'Trabajos por lotes que aparecen unas horas al día'
+  - 'Entornos de prueba efímeros que se crean y destruyen por rama'
+  - 'Aplicaciones de club o de clase, donde no hay quien administre servidores'
+
+conceptosClave:
+  - termino: 'Tarea de Fargate'
+    definicion: 'Un contenedor en ejecución con su propia CPU, memoria e interfaz de red aisladas.'
+  - termino: 'Configuración de tarea'
+    definicion: 'La pareja CPU y memoria que se elige de una lista fija de combinaciones válidas.'
+  - termino: 'Modo de red awsvpc'
+    definicion: 'Cada tarea recibe su propia interfaz de red dentro de tu VPC, con su propio grupo de seguridad.'
+  - termino: 'Fargate Spot'
+    definicion: 'Capacidad con gran descuento que AWS puede reclamar con dos minutos de aviso, para cargas interrumpibles.'
+
+modeloDePrecios: 'Por segundo, según la CPU y la memoria que la tarea reserva, con un mínimo de un minuto. No hay costo cuando no hay tareas corriendo.'
+capaGratuita: 'Fargate no tiene capa gratuita. Cada tarea encendida cuesta desde el primer minuto, aunque no reciba tráfico.'
+trampasDeCosto:
+  - 'Un servicio de ECS con tareas deseadas mayores que cero mantiene el gasto veinticuatro horas al día.'
+  - 'Se paga lo reservado, no lo consumido: pedir 1 vCPU para un proceso que usa el 5% cuesta igual que usarla entera.'
+  - 'Olvidar Fargate Spot en cargas interrumpibles: se está pagando el precio completo sin necesidad.'
+
+alternativas:
+  - servicio: 'Amazon EC2'
+    slug: 'computo/ec2'
+    porque: 'si la carga es constante y grande, administrar instancias propias suele salir más barato por unidad de cómputo.'
+  - servicio: 'AWS Lambda'
+    slug: 'computo/lambda'
+    porque: 'si la ejecución dura segundos y responde a eventos, Lambda cobra por milisegundo y escala a cero de verdad.'
+
+serviciosRelacionados:
+  - 'contenedores/ecs'
+  - 'contenedores/eks'
+  - 'contenedores/ecr'
+  - 'computo/lambda'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de AWS Fargate'
+    url: 'https://docs.aws.amazon.com/AmazonECS/latest/userguide/what-is-fargate.html'
+  - titulo: 'Precios de AWS Fargate'
+    url: 'https://aws.amazon.com/fargate/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Fargate no es un orquestador: es el motor que ejecuta los contenedores que ECS o EKS deciden correr.
+Sin él, un clúster necesita instancias EC2 que alguien debe dimensionar, parchear, vigilar y escalar.
+Con él, esa capa simplemente desaparece de la vista y de la factura.
+
+El cambio es de modelo mental. Se deja de pensar en «tengo tres máquinas y en ellas caben tantos
+contenedores» y se pasa a «necesito esta tarea con esta CPU y esta memoria». La capacidad la pone AWS
+para cada tarea, aislada de las demás.
+
+## Cómo funciona
+
+1. En la definición de tarea eliges `FARGATE` como tipo de compatibilidad y una combinación válida de
+   CPU y memoria.
+2. Al lanzar la tarea, AWS aprovisiona el cómputo aislado necesario. No hay una instancia visible en
+   tu cuenta.
+3. La tarea recibe su propia interfaz de red dentro de tu VPC, con su grupo de seguridad.
+4. Cuando la tarea termina o se detiene, el cobro se detiene con ella.
+5. Si la carga tolera interrupciones, **Fargate Spot** hace el mismo trabajo con un descuento grande.
+
+## Manos a la obra
+
+- Toma una definición de tarea de ECS ya existente y crea una variante para Fargate con 0.25 vCPU.
+- Lánzala como tarea suelta, sin servicio, y observa que en la consola de EC2 no aparece ninguna
+  instancia nueva: no hay máquina que ver.
+- Revisa los registros en CloudWatch para confirmar que el contenedor arrancó.
+- Repite el lanzamiento con Fargate Spot y compara el precio en Cost Explorer al día siguiente.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="La misma tarea, con y sin servidores que administrar"
+  descripcion="Amazon ECS recibe la misma definición de tarea y puede ejecutarla de dos maneras. En el camino de arriba, la tarea corre sobre una instancia de Amazon EC2 que el equipo debe dimensionar, parchear y escalar. En el camino de abajo, la tarea corre sobre AWS Fargate, donde AWS aporta el cómputo aislado y no hay ninguna instancia visible en la cuenta. La aplicación es idéntica en los dos casos; lo que cambia es quién se ocupa de la máquina."
+  nodos={[
+    { id: 'def', etiqueta: 'Definición', sub: 'de tarea', categoria: 'contenedores' },
+    { id: 'ecs', etiqueta: 'Amazon ECS', sub: 'orquesta', categoria: 'contenedores' },
+    { id: 'ec2', etiqueta: 'Sobre EC2', sub: 'tú administras', categoria: 'computo', fila: 0 },
+    { id: 'fargate', etiqueta: 'AWS Fargate', sub: 'AWS administra', categoria: 'contenedores', fila: 1 },
+  ]}
+  flujos={[
+    { de: 'def', a: 'ecs', etiqueta: 'declara' },
+    { de: 'ecs', a: 'ec2', etiqueta: 'opción 1' },
+    { de: 'ecs', a: 'fargate', etiqueta: 'opción 2' },
+  ]}
+/>
+
+La decisión entre las dos ramas es económica y operativa, no técnica: con carga constante y alguien
+que administre las máquinas, EC2 sale más barato; sin eso, Fargate casi siempre gana.

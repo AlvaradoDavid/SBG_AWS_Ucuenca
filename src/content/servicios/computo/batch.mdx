@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Batch'
+categoria: 'computo'
+nivel: 'intermedio'
+resumenCorto: 'Ejecuta miles de trabajos por lotes en contenedores, aprovisionando y apagando el cómputo necesario de forma automática.'
+cuandoAplicarlo: 'Cuando tienes cargas de trabajo largas y paralelizables — simulaciones, renderizado, procesamiento científico — que no encajan en los 15 minutos de Lambda.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Batch'
+    url: 'https://aws.amazon.com/batch/'
+  - titulo: 'Precios de AWS Batch'
+    url: 'https://aws.amazon.com/batch/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Batch recibe una cola de trabajos, decide cuántas instancias EC2 o tareas de Fargate hacen falta, las levanta, ejecuta los contenedores y apaga todo al terminar. Tú describes el trabajo y los recursos que necesita; la planificación de capacidad la resuelve el servicio.
+
+Se integra con Spot Instances, lo que lo vuelve la opción barata para investigación universitaria: cargas tolerantes a interrupción a una fracción del precio bajo demanda.

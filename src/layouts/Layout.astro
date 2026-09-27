@@ -1,0 +1,68 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { club } from '../lib/categorias';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = `${club.nombre} – ${club.universidad}: comunidad enfocada en cloud computing, innovación y tecnologías AWS.`,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/marca/program-icon-amber.svg" />
+    <title>{title} · {club.nombreCorto}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={`${title} · ${club.nombreCorto}`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_EC" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body class="bg-white font-sans text-tinta-900 antialiased">
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-marca-grey focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
+    >
+      Saltar al contenido
+    </a>
+    <Nav />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Reveal progresivo. Se activa solo si hay JS y el usuario no pidió
+      // reducir movimiento, para que el contenido nunca quede invisible.
+      const quiereMenosMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const objetivos = document.querySelectorAll('[data-reveal]');
+
+      if (!quiereMenosMovimiento && objetivos.length > 0) {
+        document.documentElement.classList.add('reveal-activo');
+        const observer = new IntersectionObserver(
+          (entradas) => {
+            entradas.forEach((entrada) => {
+              if (entrada.isIntersecting) {
+                entrada.target.classList.add('es-visible');
+                observer.unobserve(entrada.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -10% 0px' }
+        );
+        objetivos.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>

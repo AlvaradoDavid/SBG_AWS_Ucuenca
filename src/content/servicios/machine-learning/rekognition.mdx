@@ -1,0 +1,116 @@
+---
+nombre: 'Amazon Rekognition'
+categoria: 'machine-learning'
+nivel: 'intermedio'
+resumenCorto: 'Análisis de imágenes y video por API: detecta objetos, texto, rostros y contenido inapropiado sin entrenar nada.'
+analogia: 'Es preguntarle a alguien que ya sabe mirar: le enseñas la foto y te dice qué hay en ella, sin que tengas que enseñarle antes qué es un perro.'
+cuandoAplicarlo: 'Cuando hay que extraer información de imágenes o video y la tarea es común — reconocer objetos, leer texto, moderar contenido — sin necesidad de un modelo propio.'
+casosDeUso:
+  - 'Etiquetar automáticamente las fotos de los eventos del club'
+  - 'Leer el texto que aparece dentro de una imagen o de un cartel'
+  - 'Moderar contenido subido por usuarios antes de publicarlo'
+  - 'Buscar en una colección de fotos aquellas en las que aparece una persona concreta'
+
+conceptosClave:
+  - termino: 'Etiqueta'
+    definicion: 'Cada objeto, escena o concepto detectado, con su nivel de confianza en porcentaje.'
+  - termino: 'Umbral de confianza'
+    definicion: 'El mínimo por debajo del cual se descarta una detección. Ajustarlo es la decisión de diseño principal.'
+  - termino: 'Colección'
+    definicion: 'El índice de vectores faciales que permite buscar coincidencias entre imágenes.'
+  - termino: 'Moderación de contenido'
+    definicion: 'La detección de material inapropiado, con categorías jerárquicas para decidir qué se bloquea.'
+  - termino: 'Análisis de video'
+    definicion: 'El procesamiento asíncrono de un video de S3, que devuelve las detecciones con su marca de tiempo.'
+
+modeloDePrecios: 'Por imagen procesada y por minuto de video analizado, con el precio bajando por volumen. Almacenar vectores faciales en una colección tiene un costo mensual pequeño.'
+capaGratuita: '5.000 imágenes al mes y 1.000 unidades de vectores faciales almacenados, durante los primeros 12 meses.'
+trampasDeCosto:
+  - 'Analizar cada foto varias veces por no guardar el resultado: cada llamada se factura de nuevo.'
+  - 'Procesar video largo completo cuando bastaría con muestrear fotogramas.'
+  - 'Llamar a varias API distintas —etiquetas, texto, moderación— sobre la misma imagen sin necesitarlas todas.'
+
+alternativas:
+  - servicio: 'Amazon Textract'
+    slug: 'machine-learning/textract'
+    porque: 'si lo que hay que leer son documentos con formularios y tablas, no texto suelto dentro de una foto.'
+  - servicio: 'Amazon SageMaker AI'
+    slug: 'machine-learning/sagemaker-ai'
+    porque: 'si hay que reconocer objetos específicos de un dominio que un modelo general no conoce.'
+  - servicio: 'Amazon Bedrock'
+    slug: 'machine-learning/bedrock'
+    porque: 'si además de detectar hace falta razonar o describir la imagen en lenguaje natural.'
+
+serviciosRelacionados:
+  - 'almacenamiento/s3'
+  - 'computo/lambda'
+  - 'machine-learning/textract'
+  - 'bases-de-datos/dynamodb'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified AI Practitioner'
+  - 'AWS Certified Machine Learning – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Rekognition'
+    url: 'https://docs.aws.amazon.com/rekognition/'
+  - titulo: 'Precios de Amazon Rekognition'
+    url: 'https://aws.amazon.com/rekognition/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Rekognition es un buen ejemplo de la diferencia entre construir y consumir aprendizaje automático.
+Entrenar un modelo capaz de reconocer miles de objetos exige datos, cómputo y meses de trabajo;
+llamar a esta API son tres líneas de código y unos centavos.
+
+La contrapartida es que solo sabe lo que ya aprendió. Reconoce categorías generales — personas,
+vehículos, animales, texto — pero no distingue el modelo de una pieza industrial concreta. Cuando el
+dominio es específico, el camino es entrenar un modelo propio.
+
+## Cómo funciona
+
+1. Envías la imagen, o indicas su ubicación en un bucket de **S3**.
+2. Eliges la operación: etiquetas, texto, rostros, moderación, comparación entre caras.
+3. La respuesta llega en segundos, con cada detección acompañada de su **confianza**.
+4. Tu código decide qué hacer según el **umbral**: aceptar, descartar o enviar a revisión humana.
+5. En video, el análisis es asíncrono: se lanza el trabajo y el resultado llega por SNS.
+
+## Manos a la obra
+
+- Sube una foto de un evento del club a un bucket y llama a la detección de etiquetas desde la CLI.
+- Observa el JSON con las etiquetas y sus porcentajes de confianza.
+- Conecta una función Lambda al evento de objeto creado del bucket para etiquetar cada foto nueva y
+  guardar el resultado en DynamoDB.
+- Prueba la lectura de texto sobre la foto de un cartel.
+- Sube algo borroso o ambiguo y observa cómo caen los porcentajes: ahí se entiende por qué el umbral
+  importa.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Etiquetar automáticamente las fotos de un evento"
+  descripcion="Alguien del club sube una foto al bucket de Amazon S3. El objeto nuevo dispara una función de AWS Lambda que envía la imagen a Amazon Rekognition, el cual devuelve las etiquetas detectadas con su nivel de confianza. La función guarda esas etiquetas en una tabla de Amazon DynamoDB, junto a la ruta de la foto, de modo que después se puede buscar por contenido sin volver a analizar la imagen. Analizar una vez y guardar el resultado es lo que mantiene bajo el costo."
+  nodos={[
+    { id: 'club', etiqueta: 'Club', sub: 'sube foto', tipo: 'externo' },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'fotos', categoria: 'almacenamiento' },
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'orquesta', categoria: 'computo' },
+    { id: 'rek', etiqueta: 'Rekognition', sub: 'etiqueta', categoria: 'machine-learning', fila: 0 },
+    { id: 'ddb', etiqueta: 'Amazon DynamoDB', sub: 'guarda', categoria: 'bases-de-datos', fila: 1 },
+  ]}
+  flujos={[
+    { de: 'club', a: 's3', etiqueta: 'sube' },
+    { de: 's3', a: 'lambda', etiqueta: 'objeto nuevo' },
+    { de: 'lambda', a: 'rek', etiqueta: 'analiza' },
+    { de: 'lambda', a: 'ddb', etiqueta: 'guarda' },
+  ]}
+/>
+
+Para la galería de eventos de este sitio, el patrón permitiría buscar «stand», «charla» o «pizarra»
+sin que nadie haya etiquetado una sola foto a mano.

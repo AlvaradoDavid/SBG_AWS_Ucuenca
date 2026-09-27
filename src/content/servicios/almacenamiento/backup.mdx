@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Backup'
+categoria: 'almacenamiento'
+nivel: 'intermedio'
+resumenCorto: 'Servicio central para programar, cifrar y retener copias de seguridad de muchos servicios de AWS desde un solo lugar.'
+cuandoAplicarlo: 'Cuando hay que garantizar y demostrar que existen respaldos de EBS, RDS, DynamoDB o EFS bajo una política común.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Backup'
+    url: 'https://aws.amazon.com/backup/'
+  - titulo: 'Precios de AWS Backup'
+    url: 'https://aws.amazon.com/backup/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+En vez de programar instantáneas servicio por servicio, defines un plan de respaldo — frecuencia, ventana, retención, cifrado, copia a otra región — y lo asignas por etiquetas a los recursos que deba cubrir.
+
+Incluye una bóveda con bloqueo de escritura, pensada para que ni siquiera un administrador comprometido pueda borrar los respaldos, y un panel de cumplimiento que muestra qué recursos quedaron fuera del plan.

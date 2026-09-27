@@ -1,0 +1,114 @@
+---
+nombre: 'Amazon CloudWatch'
+categoria: 'administracion-y-gobernanza'
+nivel: 'fundamental'
+resumenCorto: 'Métricas, registros y alarmas de todo lo que corre en AWS: el sitio donde se mira cuando algo va mal.'
+analogia: 'Es el tablero del auto: velocidad, temperatura y nivel de combustible en un vistazo, más la luz que se enciende antes de que el problema sea grave.'
+cuandoAplicarlo: 'Desde el primer recurso que se crea. Toda función Lambda, instancia EC2 o base de datos ya está publicando métricas y registros ahí.'
+casosDeUso:
+  - 'Ver por qué falló una función Lambda leyendo sus registros'
+  - 'Avisar por correo cuando el uso de CPU o el gasto superan un umbral'
+  - 'Disparar el escalado automático de un grupo de instancias'
+  - 'Construir un panel con el estado general de la aplicación'
+
+conceptosClave:
+  - termino: 'Métrica'
+    definicion: 'Una serie temporal de valores: uso de CPU, invocaciones, errores, latencia. Cada servicio publica las suyas.'
+  - termino: 'Registro (log)'
+    definicion: 'El texto que emite la aplicación, agrupado en flujos dentro de un grupo de registros.'
+  - termino: 'Alarma'
+    definicion: 'La regla que vigila una métrica y actúa cuando cruza un umbral: notificar, escalar o detener algo.'
+  - termino: 'Logs Insights'
+    definicion: 'El lenguaje de consulta para buscar y agregar dentro de los registros sin exportarlos a otro sitio.'
+  - termino: 'Métrica personalizada'
+    definicion: 'La que publica tu propia aplicación, por ejemplo inscripciones por minuto.'
+
+modeloDePrecios: 'Por métrica personalizada al mes, por gigabyte de registros ingeridos y almacenados, por alarma, y por consulta de Logs Insights. Las métricas básicas de los servicios son gratuitas.'
+capaGratuita: '10 métricas personalizadas, 10 alarmas, 5 GB de registros ingeridos y 3 paneles al mes, de forma permanente.'
+trampasDeCosto:
+  - 'Registros muy verbosos en producción: la ingesta por gigabyte es la partida que más crece sin que nadie la mire.'
+  - 'Grupos de registros sin política de retención: guardan para siempre y se pagan cada mes.'
+  - 'Métricas personalizadas con muchas dimensiones distintas: cada combinación cuenta como una métrica.'
+
+alternativas:
+  - servicio: 'Amazon Managed Grafana'
+    slug: 'administracion-y-gobernanza/managed-grafana'
+    porque: 'si el equipo ya construye sus paneles en Grafana y quiere unificar varias fuentes.'
+  - servicio: 'AWS X-Ray'
+    slug: 'herramientas-de-desarrollador/x-ray'
+    porque: 'si la pregunta es en qué punto de una arquitectura distribuida se fue el tiempo.'
+  - servicio: 'Amazon OpenSearch Service'
+    slug: 'analitica/opensearch'
+    porque: 'si el análisis de registros es intensivo y hace falta búsqueda interactiva sobre mucho volumen.'
+
+serviciosRelacionados:
+  - 'computo/lambda'
+  - 'computo/ec2'
+  - 'integracion-y-mensajeria/sns'
+  - 'administracion-y-gobernanza/cloudtrail'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified SysOps Administrator – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon CloudWatch'
+    url: 'https://docs.aws.amazon.com/cloudwatch/'
+  - titulo: 'Precios de Amazon CloudWatch'
+    url: 'https://aws.amazon.com/cloudwatch/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+CloudWatch es el primer lugar al que se va cuando algo no funciona, y también el que hace posible
+enterarse antes de que alguien se queje. Recoge dos cosas distintas que conviene no mezclar:
+**métricas**, que son números en el tiempo, y **registros**, que son texto.
+
+Casi todos los servicios publican sus métricas sin configuración alguna. Lo que sí hay que decidir es
+qué vigilar: una alarma bien puesta sobre la métrica correcta vale más que un panel lleno de gráficos
+que nadie mira.
+
+## Cómo funciona
+
+1. Los servicios publican **métricas** automáticamente; la aplicación puede añadir las suyas.
+2. Los registros llegan a **grupos de registros**, con una política de retención que conviene fijar.
+3. Una **alarma** vigila una métrica durante un número de periodos y cambia de estado al cruzar el umbral.
+4. Al saltar, la alarma actúa: publica en **SNS**, escala un grupo de instancias o detiene un recurso.
+5. **Logs Insights** permite consultar los registros con un lenguaje propio, sin sacarlos de ahí.
+
+## Manos a la obra
+
+- Invoca una función Lambda que falle y localiza el error en su grupo de registros.
+- Escribe una consulta de Logs Insights que cuente los errores por minuto.
+- Crea una alarma sobre los errores de esa función que publique en un tema de SNS suscrito a tu correo.
+- Provoca los fallos necesarios para verla saltar y volver a estado normal.
+- **Fija una retención de una o dos semanas** en los grupos de registros de práctica.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="De la métrica al aviso en el correo"
+  descripcion="Una función de AWS Lambda publica automáticamente sus métricas y sus registros en Amazon CloudWatch. Una alarma vigila la métrica de errores y, cuando supera el umbral durante dos periodos seguidos, publica un mensaje en un tema de Amazon SNS. El tema notifica por correo al equipo del club. Nadie tuvo que revisar un panel: el aviso llega solo, y los registros quedan disponibles para averiguar la causa."
+  nodos={[
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'aplicación', categoria: 'computo' },
+    { id: 'cw', etiqueta: 'CloudWatch', sub: 'métricas y logs', categoria: 'administracion-y-gobernanza' },
+    { id: 'alarma', etiqueta: 'Alarma', sub: 'umbral de errores', categoria: 'administracion-y-gobernanza' },
+    { id: 'sns', etiqueta: 'Amazon SNS', sub: 'notifica', categoria: 'integracion-y-mensajeria' },
+    { id: 'equipo', etiqueta: 'Equipo', sub: 'correo', tipo: 'externo' },
+  ]}
+  flujos={[
+    { de: 'lambda', a: 'cw', etiqueta: 'publica' },
+    { de: 'cw', a: 'alarma', etiqueta: 'evalúa' },
+    { de: 'alarma', a: 'sns', etiqueta: 'dispara' },
+    { de: 'sns', a: 'equipo', etiqueta: 'avisa' },
+  ]}
+/>
+
+La alarma más rentable de una cuenta de club no es técnica: es la del gasto. Un presupuesto con aviso
+al 50% evita la mayoría de los sustos con créditos.

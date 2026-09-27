@@ -1,0 +1,20 @@
+---
+nombre: 'Amazon Verified Permissions'
+categoria: 'seguridad-identidad'
+nivel: 'avanzado'
+resumenCorto: 'Motor de autorización para tus propias aplicaciones: las reglas de quién puede hacer qué se declaran fuera del código.'
+cuandoAplicarlo: 'Cuando la lógica de permisos de la aplicación está dispersa en condicionales y auditarla o cambiarla resulta arriesgado.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon Verified Permissions'
+    url: 'https://aws.amazon.com/verified-permissions/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Las políticas se escriben en Cedar, un lenguaje declarativo, y la aplicación pregunta al servicio si una acción está permitida en vez de decidirlo con código propio. Los permisos pasan a ser datos versionables y auditables.
+
+Se integra bien con Cognito, que aporta la identidad, mientras Verified Permissions aporta la decisión.

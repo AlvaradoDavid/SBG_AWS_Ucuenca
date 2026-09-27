@@ -1,0 +1,112 @@
+---
+nombre: 'Amazon EBS'
+nombreCompleto: 'Elastic Block Store'
+categoria: 'almacenamiento'
+nivel: 'fundamental'
+resumenCorto: 'Discos virtuales que se conectan a una instancia EC2 y sobreviven a sus reinicios y a su terminación.'
+analogia: 'Es el disco duro externo de la instancia: se enchufa a una máquina a la vez, se puede desenchufar y llevar a otra, y lo que guarda no desaparece al apagar el equipo.'
+cuandoAplicarlo: 'Cuando una instancia EC2 necesita almacenamiento persistente para su sistema operativo, una base de datos o cualquier dato que deba sobrevivir a un reinicio.'
+casosDeUso:
+  - 'El volumen raíz desde el que arranca una instancia EC2'
+  - 'El almacenamiento de una base de datos que corre sobre EC2'
+  - 'Discos de datos que se conservan al reemplazar la instancia'
+  - 'Copias puntuales del estado completo de un servidor mediante instantáneas'
+
+conceptosClave:
+  - termino: 'Volumen'
+    definicion: 'El disco en sí. Vive en una zona de disponibilidad concreta y solo se conecta a instancias de esa zona.'
+  - termino: 'Tipo de volumen'
+    definicion: 'Define rendimiento y precio: gp3 de propósito general, io2 para alta exigencia, st1 y sc1 magnéticos y baratos.'
+  - termino: 'IOPS'
+    definicion: 'Operaciones de entrada y salida por segundo. En gp3 se configuran aparte del tamaño, lo que abarata mucho.'
+  - termino: 'Instantánea (snapshot)'
+    definicion: 'Copia incremental del volumen guardada en S3. La primera es completa; las siguientes solo guardan lo que cambió.'
+  - termino: 'Cifrado'
+    definicion: 'Se activa con una casilla y usa KMS. Cifra el volumen, sus instantáneas y el tráfico hacia la instancia.'
+
+modeloDePrecios: 'Por gigabyte aprovisionado al mes, se use o no el espacio, más el costo de las IOPS y el rendimiento adicionales en algunos tipos. Las instantáneas se cobran aparte por gigabyte almacenado.'
+capaGratuita: '30 GB de almacenamiento gp2 o gp3, 2 millones de operaciones y 1 GB de instantáneas al mes durante los primeros 12 meses.'
+trampasDeCosto:
+  - 'Terminar la instancia sin borrar sus volúmenes de datos: el disco huérfano sigue cobrando cada mes.'
+  - 'Aprovisionar 500 GB "para no quedarse corto": se paga el espacio reservado, no el ocupado.'
+  - 'Instantáneas automáticas sin política de retención: se acumulan durante años sin que nadie las revise.'
+
+alternativas:
+  - servicio: 'Amazon EFS'
+    slug: 'almacenamiento/efs'
+    porque: 'si varias instancias deben leer y escribir los mismos archivos a la vez, EBS no sirve: es de una sola máquina.'
+  - servicio: 'Amazon S3'
+    slug: 'almacenamiento/s3'
+    porque: 'si lo que guardas son objetos —fotos, respaldos, archivos de usuario— y no necesitas un sistema de archivos.'
+  - servicio: 'Almacén de instancia'
+    porque: 'si el dato es temporal y de altísimo rendimiento, el disco físico de la instancia es más rápido y no cuesta aparte.'
+
+serviciosRelacionados:
+  - 'computo/ec2'
+  - 'almacenamiento/s3'
+  - 'almacenamiento/backup'
+  - 'seguridad-identidad/kms'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified SysOps Administrator – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon EBS'
+    url: 'https://docs.aws.amazon.com/ebs/'
+  - titulo: 'Precios de Amazon EBS'
+    url: 'https://aws.amazon.com/ebs/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Toda instancia EC2 que arranca desde un sistema operativo tiene debajo un volumen de EBS, aunque
+quien la lanza nunca haya oído el nombre. Esa es su primera característica: es la capa de disco
+por defecto del cómputo en AWS.
+
+La segunda es la que genera facturas sorpresa. El volumen tiene un ciclo de vida **independiente**
+de la instancia: se puede desconectar de una máquina y conectar a otra, y sobrevive a la terminación
+de la instancia si nadie marcó lo contrario. Un disco olvidado sigue cobrando cada mes.
+
+## Cómo funciona
+
+1. Creas un **volumen** en la misma zona de disponibilidad que la instancia, con su tipo y tamaño.
+2. Lo **conectas** a la instancia, donde aparece como un dispositivo de bloque más.
+3. Le das formato y lo montas como cualquier disco de Linux o Windows.
+4. Programas **instantáneas** hacia S3; son incrementales, así que la segunda y siguientes son baratas.
+5. Si la instancia falla, desconectas el volumen y lo conectas a otra: los datos siguen ahí.
+
+## Manos a la obra
+
+- Crea un volumen gp3 de 1 GB y conéctalo a una instancia t3.micro en la misma zona.
+- Dale formato, móntalo y escribe un archivo con la fecha.
+- Toma una instantánea, **termina la instancia** y comprueba que el volumen sigue existiendo.
+- Crea un volumen nuevo a partir de la instantánea y conéctalo a otra instancia: el archivo está ahí.
+- **Borra los dos volúmenes y la instantánea al terminar** — este es el paso que más se olvida.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un volumen que sobrevive a su instancia"
+  descripcion="Una instancia de Amazon EC2 tiene conectado un volumen de Amazon EBS, que es donde viven sus datos. El volumen envía instantáneas incrementales a Amazon S3, gestionadas de forma automática por el servicio. Cuando la instancia se termina, el volumen y sus instantáneas siguen existiendo y se pueden conectar a una instancia nueva, lo que permite recuperar el estado completo del servidor."
+  nodos={[
+    { id: 'ec2', etiqueta: 'Amazon EC2', sub: 'instancia', categoria: 'computo' },
+    { id: 'ebs', etiqueta: 'Amazon EBS', sub: 'volumen gp3', categoria: 'almacenamiento' },
+    { id: 'snap', etiqueta: 'Instantánea', sub: 'incremental', categoria: 'almacenamiento' },
+    { id: 'nueva', etiqueta: 'Instancia nueva', sub: 'restaurada', categoria: 'computo' },
+  ]}
+  flujos={[
+    { de: 'ec2', a: 'ebs', etiqueta: 'escribe' },
+    { de: 'ebs', a: 'snap', etiqueta: 'respalda' },
+    { de: 'snap', a: 'nueva', etiqueta: 'restaura' },
+  ]}
+/>
+
+Un volumen solo se conecta a una instancia a la vez y solo dentro de su zona de disponibilidad. Esas
+dos restricciones son las que empujan hacia EFS o S3 en cuanto la arquitectura crece.

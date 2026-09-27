@@ -1,0 +1,115 @@
+---
+nombre: 'Amazon EventBridge'
+categoria: 'integracion-y-mensajeria'
+nivel: 'intermedio'
+resumenCorto: 'Bus de eventos que enruta lo que ocurre en AWS, en tus aplicaciones o en un SaaS hacia quien deba reaccionar.'
+analogia: 'Es la central de radio de una ciudad: todos los servicios reportan lo que pasa en la misma frecuencia, y cada equipo tiene una regla que le dice qué avisos le corresponden.'
+cuandoAplicarlo: 'Cuando muchas cosas distintas ocurren y muchos componentes deben reaccionar según el contenido del evento, no según quién lo produjo.'
+casosDeUso:
+  - 'Reaccionar a cambios de estado de recursos de AWS, como una instancia que se detiene'
+  - 'Ejecutar una tarea programada, sustituyendo a un cron'
+  - 'Conectar eventos de una aplicación SaaS con procesos propios'
+  - 'Comunicar microservicios sin que ninguno conozca a los demás'
+
+conceptosClave:
+  - termino: 'Bus de eventos'
+    definicion: 'El canal por donde circulan los eventos. El bus por defecto ya recibe los de todos los servicios de AWS.'
+  - termino: 'Evento'
+    definicion: 'Un JSON que describe algo que pasó, con origen, tipo y detalle.'
+  - termino: 'Regla'
+    definicion: 'El patrón que selecciona qué eventos interesan y a qué destinos se envían.'
+  - termino: 'Destino (target)'
+    definicion: 'Adónde va el evento: Lambda, SQS, SNS, Step Functions, una API externa y varias decenas más.'
+  - termino: 'Programador (Scheduler)'
+    definicion: 'La función de EventBridge que ejecuta acciones en un horario o intervalo, con precisión y a gran escala.'
+
+modeloDePrecios: 'Por millón de eventos publicados en un bus propio. Los eventos que generan los servicios de AWS en el bus por defecto no se cobran. El programador y las canalizaciones tienen su propio precio.'
+capaGratuita: 'Los eventos emitidos por los servicios de AWS son gratuitos. Solo se facturan los eventos propios y los de terceros, y a un precio muy bajo.'
+trampasDeCosto:
+  - 'Publicar eventos muy detallados a alta frecuencia desde la aplicación: son los que sí se facturan.'
+  - 'Reglas demasiado amplias que invocan Lambda para eventos que después se descartan dentro del código.'
+  - 'Reenvío de eventos entre regiones o cuentas, que se cobra como publicación nueva.'
+
+alternativas:
+  - servicio: 'Amazon SNS'
+    slug: 'integracion-y-mensajeria/sns'
+    porque: 'si solo hace falta avisar a varios suscriptores fijos y no enrutar según el contenido.'
+  - servicio: 'Amazon SQS'
+    slug: 'integracion-y-mensajeria/sqs'
+    porque: 'si el objetivo es amortiguar la carga con una cola, no distribuir eventos entre destinos.'
+  - servicio: 'AWS Step Functions'
+    slug: 'integracion-y-mensajeria/step-functions'
+    porque: 'si lo que se necesita es orquestar pasos en un orden concreto y no reaccionar a eventos sueltos.'
+
+serviciosRelacionados:
+  - 'integracion-y-mensajeria/sns'
+  - 'integracion-y-mensajeria/sqs'
+  - 'integracion-y-mensajeria/step-functions'
+  - 'computo/lambda'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+  - 'AWS Certified DevOps Engineer – Professional'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon EventBridge'
+    url: 'https://docs.aws.amazon.com/eventbridge/'
+  - titulo: 'Precios de Amazon EventBridge'
+    url: 'https://aws.amazon.com/eventbridge/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+EventBridge es el sistema nervioso de una cuenta de AWS. Todos los servicios publican en su bus por
+defecto lo que va ocurriendo — una instancia cambió de estado, una compilación terminó, un objeto se
+creó — y cualquiera puede escribir una **regla** para reaccionar a eso.
+
+La diferencia con SNS es el criterio de enrutamiento. En SNS, el productor elige el tema y los
+suscriptores reciben todo lo que llega ahí. En EventBridge, el productor solo describe lo que pasó,
+y son las reglas las que deciden, por el **contenido** del evento, quién debe enterarse.
+
+## Cómo funciona
+
+1. Un servicio de AWS, una aplicación propia o un SaaS publica un **evento** en un bus.
+2. Las **reglas** comparan el evento con un patrón: origen, tipo, valores concretos del detalle.
+3. Las reglas que coinciden envían el evento a sus **destinos**, con transformación del contenido si
+   hace falta.
+4. Los destinos reaccionan: una función Lambda, una máquina de estados, una cola, una API externa.
+5. El **programador** cubre el caso del tiempo: ejecutar algo cada hora, cada lunes o en una fecha fija.
+
+## Manos a la obra
+
+- Crea una regla en el bus por defecto que capture el evento de una instancia EC2 al detenerse.
+- Envía ese evento a una función Lambda que lo escriba en los registros y detén una instancia real.
+- Publica un evento propio con la CLI y escribe una regla que filtre por un campo del detalle.
+- Crea una tarea programada con el programador que invoque una función cada cinco minutos.
+- Revisa el JSON completo del evento en CloudWatch Logs: entender su forma es media batalla.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un bus de eventos con reglas por contenido"
+  descripcion="Amazon S3 y una aplicación propia publican sus eventos en el bus de Amazon EventBridge. Dos reglas examinan el contenido de cada evento: la primera envía los que corresponden a archivos nuevos a una función de AWS Lambda que los procesa, y la segunda envía los eventos de inscripción a una cola de Amazon SQS. Ninguno de los productores sabe quién va a reaccionar, y añadir una regla nueva no exige modificar su código."
+  nodos={[
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'archivo nuevo', categoria: 'almacenamiento', fila: 0 },
+    { id: 'app', etiqueta: 'Aplicación', sub: 'inscripción', tipo: 'externo', fila: 1 },
+    { id: 'bus', etiqueta: 'EventBridge', sub: 'bus de eventos', categoria: 'integracion-y-mensajeria' },
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'procesa', categoria: 'computo', fila: 0 },
+    { id: 'sqs', etiqueta: 'Amazon SQS', sub: 'encola', categoria: 'integracion-y-mensajeria', fila: 1 },
+  ]}
+  flujos={[
+    { de: 's3', a: 'bus', etiqueta: 'evento' },
+    { de: 'app', a: 'bus' },
+    { de: 'bus', a: 'lambda', etiqueta: 'regla 1' },
+    { de: 'bus', a: 'sqs', etiqueta: 'regla 2' },
+  ]}
+/>
+
+Cuando el número de servicios crece, esta forma de conectar es la que evita el enredo: cada
+componente publica lo que le pasa y nadie llama directamente a nadie.

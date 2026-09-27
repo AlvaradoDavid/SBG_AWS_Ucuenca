@@ -1,0 +1,114 @@
+---
+nombre: 'AWS CloudFormation'
+categoria: 'administracion-y-gobernanza'
+nivel: 'intermedio'
+resumenCorto: 'Infraestructura como código: declaras los recursos en una plantilla y AWS los crea, actualiza y borra por ti.'
+analogia: 'Es la receta escrita en vez del cocinero que se acuerda: cualquiera la lee, se repite igual todas las veces y se puede corregir revisando el texto.'
+cuandoAplicarlo: 'Cuando la infraestructura debe poder recrearse desde cero, replicarse en otro entorno o revisarse antes de aplicarse.'
+casosDeUso:
+  - 'Levantar entornos idénticos de desarrollo, pruebas y producción'
+  - 'Versionar la infraestructura junto al código de la aplicación'
+  - 'Borrar de una sola vez todo lo creado para un taller'
+  - 'Revisar en una solicitud de cambios qué recursos se van a modificar'
+
+conceptosClave:
+  - termino: 'Plantilla'
+    definicion: 'El archivo YAML o JSON que describe los recursos deseados y sus relaciones.'
+  - termino: 'Pila (stack)'
+    definicion: 'La instancia desplegada de una plantilla. Borrar la pila borra todo lo que creó.'
+  - termino: 'Conjunto de cambios'
+    definicion: 'La vista previa de qué se crearía, modificaría o destruiría antes de aplicar una actualización.'
+  - termino: 'Reversión'
+    definicion: 'Si algo falla a mitad del despliegue, CloudFormation deshace lo hecho y vuelve al estado anterior.'
+  - termino: 'Desviación (drift)'
+    definicion: 'La diferencia entre lo que dice la plantilla y lo que alguien cambió a mano en la consola.'
+
+modeloDePrecios: 'CloudFormation es gratuito para los recursos propios de AWS. Solo se paga la infraestructura que crea. Los tipos de recurso de terceros tienen un costo por operación.'
+capaGratuita: 'El servicio no consume capa gratuita: lo que se factura son los recursos declarados en la plantilla.'
+trampasDeCosto:
+  - 'Una pila creada para un taller y no borrada: sigue costando todo lo que hay dentro.'
+  - 'Recursos con política de retención que sobreviven al borrado de la pila y quedan facturando en silencio.'
+  - 'Copiar plantillas de ejemplo sin revisar qué crean: algunas incluyen NAT Gateways o balanceadores.'
+
+alternativas:
+  - servicio: 'AWS CDK'
+    slug: 'herramientas-de-desarrollador/cdk'
+    porque: 'si prefieres declarar la infraestructura en TypeScript o Python: por debajo genera CloudFormation.'
+  - servicio: 'Terraform'
+    porque: 'si la organización trabaja con varias nubes y quiere una sola herramienta para todas.'
+  - servicio: 'AWS SAM'
+    slug: 'computo/serverless-application-repository'
+    porque: 'si el proyecto es serverless: es una extensión de CloudFormation con sintaxis más corta.'
+
+serviciosRelacionados:
+  - 'herramientas-de-desarrollador/cdk'
+  - 'administracion-y-gobernanza/service-catalog'
+  - 'herramientas-de-desarrollador/codepipeline'
+  - 'seguridad-identidad/iam'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified DevOps Engineer – Professional'
+
+enlaces:
+  - titulo: 'Documentación oficial de AWS CloudFormation'
+    url: 'https://docs.aws.amazon.com/cloudformation/'
+  - titulo: 'Precios de AWS CloudFormation'
+    url: 'https://aws.amazon.com/cloudformation/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Crear recursos a mano en la consola es la forma más rápida de empezar y la peor de mantener: nadie
+recuerda exactamente qué se hizo, no se puede repetir en otra cuenta y no queda rastro revisable de
+por qué existe cada cosa.
+
+CloudFormation cambia el enfoque. Se declara **el estado deseado** en una plantilla y el servicio
+calcula qué crear, cambiar o borrar para llegar a él. La infraestructura pasa a ser un archivo en el
+repositorio, con su historial, su revisión por pares y su capacidad de recrearse desde cero.
+
+## Cómo funciona
+
+1. Escribes una **plantilla** que describe los recursos y sus dependencias.
+2. Creas una **pila** a partir de ella; CloudFormation resuelve el orden de creación.
+3. Para modificar algo, editas la plantilla y generas un **conjunto de cambios** que muestra qué va a
+   pasar antes de aplicarlo.
+4. Si un recurso falla al crearse, el servicio **revierte** todo lo hecho en esa operación.
+5. Borrar la pila borra todos sus recursos, que es la forma más segura de terminar una práctica.
+
+## Manos a la obra
+
+- Escribe una plantilla mínima que cree un bucket de S3 y despliégala como pila.
+- Añade una política al bucket, genera el conjunto de cambios y léelo antes de aplicar.
+- Cambia algo del bucket a mano desde la consola y ejecuta la detección de desviación.
+- Borra la pila y comprueba que el bucket desaparece con ella.
+- Guarda la plantilla en el repositorio del club: eso es infraestructura como código.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="De la plantilla a los recursos creados"
+  descripcion="El equipo escribe una plantilla y la guarda en el repositorio junto al código. AWS CloudFormation lee esa plantilla, calcula el orden de dependencias y crea la pila con todos sus recursos: una instancia de Amazon EC2, un bucket de Amazon S3 y los roles de AWS IAM que los conectan. Si algo falla durante el despliegue, CloudFormation revierte lo creado. Borrar la pila elimina los tres recursos de una sola vez, sin que nadie tenga que recordar qué se creó."
+  nodos={[
+    { id: 'equipo', etiqueta: 'Equipo', sub: 'plantilla YAML', tipo: 'externo' },
+    { id: 'cfn', etiqueta: 'CloudFormation', sub: 'crea la pila', categoria: 'administracion-y-gobernanza' },
+    { id: 'ec2', etiqueta: 'Amazon EC2', sub: 'instancia', categoria: 'computo', fila: 0 },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'bucket', categoria: 'almacenamiento', fila: 1 },
+    { id: 'iam', etiqueta: 'AWS IAM', sub: 'roles', categoria: 'seguridad-identidad', fila: 2 },
+  ]}
+  flujos={[
+    { de: 'equipo', a: 'cfn', etiqueta: 'declara' },
+    { de: 'cfn', a: 'ec2' },
+    { de: 'cfn', a: 's3', etiqueta: 'aprovisiona' },
+    { de: 'cfn', a: 'iam' },
+  ]}
+/>
+
+Para un club, la ventaja práctica es doble: el taller se repite igual en cada cuenta, y al terminar
+se borra todo con una sola acción en lugar de ir recurso por recurso.

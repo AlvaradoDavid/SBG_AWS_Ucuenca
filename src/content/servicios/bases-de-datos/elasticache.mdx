@@ -1,0 +1,113 @@
+---
+nombre: 'Amazon ElastiCache'
+categoria: 'bases-de-datos'
+nivel: 'intermedio'
+resumenCorto: 'Caché en memoria administrada, compatible con Redis y Memcached, para responder en microsegundos.'
+analogia: 'Es la libreta que tienes al lado del teclado: en vez de bajar al archivo cada vez que alguien pregunta lo mismo, lo anotaste y lo lees al instante.'
+cuandoAplicarlo: 'Cuando la misma consulta cara se repite muchas veces, o cuando hace falta guardar datos efímeros —sesiones, contadores, colas de espera— con latencia mínima.'
+casosDeUso:
+  - 'Guardar el resultado de consultas pesadas para no repetirlas contra la base de datos'
+  - 'Almacenar sesiones de usuario fuera de las instancias de la aplicación'
+  - 'Marcadores y contadores en tiempo real de un juego o una votación'
+  - 'Limitar la tasa de peticiones de una API por usuario'
+
+conceptosClave:
+  - termino: 'Nodo'
+    definicion: 'La unidad de cómputo y memoria de la caché. Su tipo determina cuántos datos caben.'
+  - termino: 'Clúster'
+    definicion: 'El conjunto de nodos. En Redis puede tener réplicas y repartir los datos entre fragmentos.'
+  - termino: 'TTL'
+    definicion: 'El tiempo de vida de cada clave. Es lo que evita servir datos viejos indefinidamente.'
+  - termino: 'Política de expulsión'
+    definicion: 'Qué borra la caché cuando se llena la memoria: lo menos usado recientemente, lo más antiguo, o nada.'
+  - termino: 'Aparte de la caché (cache-aside)'
+    definicion: 'El patrón habitual: la aplicación busca en la caché; si no está, consulta la base y guarda el resultado.'
+
+modeloDePrecios: 'Por hora de nodo encendido, según su tipo, más la transferencia entre zonas. La modalidad sin servidores cobra por datos almacenados y por peticiones.'
+capaGratuita: '750 horas al mes de un nodo cache.t2.micro o cache.t3.micro durante los primeros 12 meses.'
+trampasDeCosto:
+  - 'Un clúster olvidado encendido: la caché no escala a cero, cobra por hora igual que una instancia.'
+  - 'Dimensionar por miedo a quedarse corto: la memoria es la parte cara del precio del nodo.'
+  - 'Usar ElastiCache como base de datos principal, cuando lo que se necesita —persistencia durable— lo da MemoryDB.'
+
+alternativas:
+  - servicio: 'Amazon MemoryDB for Redis'
+    slug: 'bases-de-datos/memorydb'
+    porque: 'si los datos en memoria son la fuente de verdad y no pueden perderse ante un reinicio.'
+  - servicio: 'DynamoDB Accelerator'
+    slug: 'bases-de-datos/dynamodb'
+    porque: 'si lo que quieres acelerar es específicamente DynamoDB, su caché propia se integra sin cambiar el código.'
+  - servicio: 'CloudFront'
+    slug: 'redes-y-entrega-de-contenido/cloudfront'
+    porque: 'si lo repetido son respuestas HTTP completas, cachear en el borde evita incluso llegar a la aplicación.'
+
+serviciosRelacionados:
+  - 'bases-de-datos/rds'
+  - 'bases-de-datos/memorydb'
+  - 'bases-de-datos/dynamodb'
+  - 'computo/ec2'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+  - 'AWS Certified Database – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon ElastiCache'
+    url: 'https://docs.aws.amazon.com/elasticache/'
+  - titulo: 'Precios de Amazon ElastiCache'
+    url: 'https://aws.amazon.com/elasticache/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Una consulta a disco tarda milisegundos; una consulta a memoria, microsegundos. ElastiCache existe
+para explotar esa diferencia de tres órdenes de magnitud en el caso más común de todos: la misma
+pregunta repetida muchísimas veces.
+
+Administra dos motores conocidos. **Redis** es el que se usa casi siempre, porque además de claves y
+valores ofrece estructuras de datos, publicación y suscripción, y réplicas. **Memcached** es más
+simple y sirve cuando solo hace falta una caché plana que se reparta entre nodos.
+
+## Cómo funciona
+
+1. Creas un clúster dentro de tu VPC, en subredes privadas y con su grupo de seguridad.
+2. La aplicación se conecta con cualquier cliente estándar de Redis o Memcached.
+3. Se aplica el patrón **aparte de la caché**: buscar en la caché, y si no está, consultar la base de
+   datos y guardar el resultado con un **TTL**.
+4. Cuando la memoria se llena, la **política de expulsión** decide qué claves se descartan.
+5. La invalidación es la parte difícil: un dato que cambió en la base de datos debe borrarse de la
+   caché, o los usuarios verán información vieja.
+
+## Manos a la obra
+
+- Crea un clúster Redis de un solo nodo `cache.t3.micro` dentro de tu VPC.
+- Desde una instancia EC2 de la misma red, conéctate con `redis-cli` y guarda un par de claves.
+- Implementa el patrón aparte de la caché en un script: mide el tiempo de la primera consulta y el de
+  la segunda.
+- Fija un TTL de 60 segundos y observa la clave desaparecer sola.
+- **Borra el clúster al terminar**: en memoria no queda nada que valga la pena conservar.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Una caché delante de la base de datos"
+  descripcion="La aplicación que corre en Amazon EC2 consulta primero a Amazon ElastiCache. Si la clave está en la caché, responde en microsegundos y ahí termina el recorrido. Si no está, la aplicación consulta a Amazon RDS, obtiene el dato y lo guarda en la caché con un tiempo de vida, de modo que la siguiente petición idéntica ya no llegue a la base de datos. Ese patrón, llamado aparte de la caché, es el que descarga el trabajo repetitivo de la base relacional."
+  nodos={[
+    { id: 'app', etiqueta: 'Amazon EC2', sub: 'aplicación', categoria: 'computo' },
+    { id: 'cache', etiqueta: 'ElastiCache', sub: 'Redis', categoria: 'bases-de-datos' },
+    { id: 'rds', etiqueta: 'Amazon RDS', sub: 'datos reales', categoria: 'bases-de-datos' },
+  ]}
+  flujos={[
+    { de: 'app', a: 'cache', etiqueta: '1. consulta' },
+    { de: 'cache', a: 'rds', etiqueta: '2. si falta' },
+  ]}
+/>
+
+La caché nunca es la fuente de verdad: es una copia acelerada y desechable. Si perderla rompe la
+aplicación, el servicio que se necesitaba era MemoryDB.

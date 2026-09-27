@@ -1,0 +1,22 @@
+---
+nombre: 'AWS CodeBuild'
+categoria: 'herramientas-de-desarrollador'
+nivel: 'intermedio'
+resumenCorto: 'Servicio de compilación y pruebas que se paga por minuto de ejecución, sin servidores de integración que mantener.'
+cuandoAplicarlo: 'Cuando hace falta compilar, probar y empaquetar en cada cambio y no se quiere administrar un servidor de compilación.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS CodeBuild'
+    url: 'https://aws.amazon.com/codebuild/'
+  - titulo: 'Precios de AWS CodeBuild'
+    url: 'https://aws.amazon.com/codebuild/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+CodeBuild lee un archivo `buildspec.yml` del repositorio, levanta un contenedor con el entorno indicado, ejecuta los comandos y guarda los artefactos en S3. Escala en paralelo tantas compilaciones como haga falta.
+
+Es la pieza de ejecución de un canal de despliegue; CodePipeline es quien decide cuándo se invoca.

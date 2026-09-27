@@ -1,0 +1,22 @@
+---
+nombre: 'Amazon EC2 Auto Scaling'
+categoria: 'computo'
+nivel: 'intermedio'
+resumenCorto: 'Mantiene un grupo de instancias EC2 en el tamaño correcto: reemplaza las que fallan y agrega o quita según la demanda.'
+cuandoAplicarlo: 'Cuando una aplicación en EC2 debe sobrevivir a la caída de una instancia o absorber picos de tráfico sin intervención manual.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon EC2 Auto Scaling'
+    url: 'https://aws.amazon.com/ec2/autoscaling/'
+  - titulo: 'Precios de Amazon EC2 Auto Scaling'
+    url: 'https://aws.amazon.com/ec2/autoscaling/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Defines un Auto Scaling Group con una plantilla de lanzamiento, un mínimo, un máximo y una capacidad deseada. Si una instancia falla la verificación de estado, el grupo la termina y levanta otra; si la métrica de CPU o de peticiones supera el umbral, agrega instancias.
+
+Es la pieza que convierte a EC2 en algo tolerante a fallos y la razón por la que el estado de la aplicación nunca debe vivir en el disco de una instancia. Se combina siempre con un balanceador de carga.

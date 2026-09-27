@@ -1,0 +1,114 @@
+---
+nombre: 'Amazon Aurora'
+categoria: 'bases-de-datos'
+nivel: 'intermedio'
+resumenCorto: 'Motor compatible con PostgreSQL y MySQL, rediseñado por AWS para dar mucho más rendimiento y disponibilidad.'
+analogia: 'Es el mismo idioma con una infraestructura distinta debajo: tu aplicación sigue hablando PostgreSQL, pero el almacenamiento se reparte en seis copias por tres zonas sin que nadie lo administre.'
+cuandoAplicarlo: 'Cuando ya usas PostgreSQL o MySQL y necesitas más rendimiento, réplicas rápidas o tolerancia a fallos que RDS estándar no alcanza.'
+casosDeUso:
+  - 'Aplicaciones con muchas lecturas que necesitan varias réplicas casi al día'
+  - 'Sistemas que no pueden permitirse una ventana de indisponibilidad larga'
+  - 'Cargas con tráfico impredecible, usando la modalidad sin servidores'
+  - 'Entornos de prueba clonados a partir de producción sin copiar los datos'
+
+conceptosClave:
+  - termino: 'Clúster'
+    definicion: 'La unidad de Aurora: una instancia de escritura, varias de lectura y un volumen de almacenamiento común.'
+  - termino: 'Volumen compartido'
+    definicion: 'El almacenamiento distribuido que guarda seis copias del dato en tres zonas y crece solo hasta 128 TB.'
+  - termino: 'Punto de conexión'
+    definicion: 'Los nombres de host que Aurora mantiene: uno para escritura y otro que reparte las lecturas entre réplicas.'
+  - termino: 'Aurora Serverless'
+    definicion: 'La modalidad que ajusta la capacidad de forma automática y continua según la carga real.'
+  - termino: 'Clonación rápida'
+    definicion: 'Crear una copia del clúster en minutos sin duplicar el almacenamiento, ideal para entornos de prueba.'
+
+modeloDePrecios: 'Por hora de instancia, más el almacenamiento realmente usado y las operaciones de entrada y salida. En la modalidad sin servidores se paga por capacidad consumida en lugar de por instancia.'
+capaGratuita: 'Aurora no entra en la capa gratuita de 12 meses de RDS. Cualquier clúster empieza a cobrar desde la primera hora.'
+trampasDeCosto:
+  - 'Crear un clúster para una práctica pensando que aplica la capa gratuita de RDS: no aplica.'
+  - 'Aurora Serverless con una capacidad mínima alta nunca baja de ahí, aunque no llegue tráfico.'
+  - 'Cada réplica de lectura añadida se factura como una instancia completa más.'
+
+alternativas:
+  - servicio: 'Amazon RDS'
+    slug: 'bases-de-datos/rds'
+    porque: 'si el proyecto es pequeño o educativo: RDS entra en la capa gratuita y Aurora no.'
+  - servicio: 'Amazon DynamoDB'
+    slug: 'bases-de-datos/dynamodb'
+    porque: 'si el modelo de acceso es por clave y no necesitas uniones ni SQL.'
+
+serviciosRelacionados:
+  - 'bases-de-datos/rds'
+  - 'bases-de-datos/dynamodb'
+  - 'seguridad-identidad/secrets-manager'
+  - 'migracion/dms'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Solutions Architect – Professional'
+  - 'AWS Certified Database – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Aurora'
+    url: 'https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html'
+  - titulo: 'Precios de Amazon Aurora'
+    url: 'https://aws.amazon.com/rds/aurora/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Aurora es lo que ocurre cuando se rediseña una base de datos relacional asumiendo desde el principio
+que corre en la nube. Mantiene la compatibilidad con PostgreSQL y MySQL — la aplicación no cambia —
+pero sustituye la capa de almacenamiento por un sistema distribuido propio.
+
+Ese cambio es el que explica todo lo demás. El almacenamiento guarda seis copias repartidas en tres
+zonas de disponibilidad y es común a todas las instancias del clúster, así que añadir una réplica de
+lectura no implica copiar datos y la conmutación ante un fallo se mide en decenas de segundos.
+
+## Cómo funciona
+
+1. Creas un **clúster** con una instancia de escritura y, si quieres, varias de lectura.
+2. Todas comparten el mismo **volumen distribuido**, que crece solo conforme entran datos.
+3. La aplicación escribe en el punto de conexión de escritura y lee en el de lectura, que reparte
+   las consultas entre las réplicas disponibles.
+4. Ante un fallo de la instancia de escritura, una réplica asume ese papel automáticamente.
+5. En la modalidad **sin servidores**, la capacidad sube y baja sola con la carga, sin instancias fijas.
+
+## Manos a la obra
+
+- Crea un clúster de Aurora PostgreSQL con la instancia más pequeña disponible y **una alarma de
+  presupuesto antes de empezar**: aquí no hay capa gratuita.
+- Carga una tabla con datos de ejemplo y añade una réplica de lectura.
+- Compara el tiempo de creación de esa réplica con el de una réplica en RDS estándar.
+- Usa la clonación rápida para crear un entorno de prueba y comprueba que tarda minutos.
+- **Borra el clúster completo al terminar**, incluidas las instantáneas finales.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un clúster de Aurora con lecturas repartidas"
+  descripcion="La aplicación escribe contra el punto de conexión de escritura de Amazon Aurora y envía sus consultas de lectura al punto de conexión de lectura, que las reparte entre dos réplicas. Las tres instancias comparten el mismo volumen distribuido de Aurora, que mantiene seis copias del dato repartidas en tres zonas de disponibilidad. Como el almacenamiento es común, añadir una réplica no copia datos y la conmutación ante fallo es rápida."
+  nodos={[
+    { id: 'app', etiqueta: 'Aplicación', tipo: 'externo' },
+    { id: 'writer', etiqueta: 'Aurora', sub: 'escritura', categoria: 'bases-de-datos' },
+    { id: 'reader1', etiqueta: 'Réplica', sub: 'lectura', categoria: 'bases-de-datos', fila: 0 },
+    { id: 'reader2', etiqueta: 'Réplica', sub: 'lectura', categoria: 'bases-de-datos', fila: 1 },
+    { id: 'volumen', etiqueta: 'Volumen Aurora', sub: '6 copias, 3 zonas', categoria: 'almacenamiento' },
+  ]}
+  flujos={[
+    { de: 'app', a: 'writer', etiqueta: 'escribe' },
+    { de: 'writer', a: 'reader1', etiqueta: 'lecturas' },
+    { de: 'writer', a: 'reader2' },
+    { de: 'reader1', a: 'volumen', etiqueta: 'compartido' },
+  ]}
+/>
+
+La regla práctica para elegir entre Aurora y RDS es honesta: en un proyecto de club o de clase,
+RDS con la capa gratuita casi siempre gana; Aurora empieza a tener sentido cuando hay tráfico real
+y la indisponibilidad cuesta dinero.

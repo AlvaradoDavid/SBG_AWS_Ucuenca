@@ -1,0 +1,115 @@
+---
+nombre: 'Amazon SQS'
+nombreCompleto: 'Simple Queue Service'
+categoria: 'integracion-y-mensajeria'
+nivel: 'intermedio'
+resumenCorto: 'Colas de mensajes administradas que desacoplan a quien produce trabajo de quien lo procesa.'
+analogia: 'Es el ticket de la panadería: quien llega deja su pedido y se va; quien atiende lo toma cuando puede. Si hay mucha gente, la fila crece, pero no se pierde ningún pedido.'
+cuandoAplicarlo: 'Cuando el trabajo puede procesarse más tarde, cuando los picos de carga superan a la capacidad de proceso, o cuando un fallo del consumidor no debe perder peticiones.'
+casosDeUso:
+  - 'Procesar en segundo plano los videos o imágenes que suben los usuarios'
+  - 'Absorber un pico de inscripciones sin tumbar el sistema que las registra'
+  - 'Separar el envío de correos de la petición web que lo origina'
+  - 'Reintentar automáticamente el trabajo que falló, sin perderlo'
+
+conceptosClave:
+  - termino: 'Cola estándar'
+    definicion: 'Rendimiento prácticamente ilimitado, con entrega al menos una vez y sin garantía estricta de orden.'
+  - termino: 'Cola FIFO'
+    definicion: 'Garantiza el orden y evita duplicados, a costa de un rendimiento menor.'
+  - termino: 'Tiempo de visibilidad'
+    definicion: 'El plazo en que un mensaje tomado queda oculto para los demás consumidores mientras se procesa.'
+  - termino: 'Cola de mensajes fallidos'
+    definicion: 'La cola aparte donde acaban los mensajes que fallaron demasiadas veces, para revisarlos sin bloquear la principal.'
+  - termino: 'Sondeo largo'
+    definicion: 'Esperar hasta veinte segundos por mensajes nuevos en vez de preguntar sin parar, lo que reduce costo y latencia.'
+
+modeloDePrecios: 'Por millón de peticiones a la API. Cada envío, recepción y borrado cuenta como petición. Las colas FIFO cuestan algo más que las estándar.'
+capaGratuita: 'Un millón de peticiones al mes de forma permanente, sin límite de 12 meses.'
+trampasDeCosto:
+  - 'Sondeo corto en bucle: preguntar por mensajes cada pocos milisegundos genera millones de peticiones facturables sin trabajo real.'
+  - 'No configurar una cola de mensajes fallidos: un mensaje envenenado se reintenta indefinidamente y consume peticiones e invocaciones.'
+  - 'Tiempo de visibilidad menor que la duración real del proceso: el mismo mensaje se procesa dos veces y se paga dos veces.'
+
+alternativas:
+  - servicio: 'Amazon SNS'
+    slug: 'integracion-y-mensajeria/sns'
+    porque: 'si el mismo mensaje debe llegar a varios destinos a la vez, no a un único consumidor.'
+  - servicio: 'Amazon EventBridge'
+    slug: 'integracion-y-mensajeria/eventbridge'
+    porque: 'si el enrutamiento depende del contenido y hay muchos productores y consumidores distintos.'
+  - servicio: 'Amazon MQ'
+    slug: 'integracion-y-mensajeria/mq'
+    porque: 'si la aplicación existente ya habla JMS o AMQP y no se quiere reescribir su capa de mensajería.'
+
+serviciosRelacionados:
+  - 'integracion-y-mensajeria/sns'
+  - 'computo/lambda'
+  - 'contenedores/ecs'
+  - 'integracion-y-mensajeria/step-functions'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon SQS'
+    url: 'https://docs.aws.amazon.com/sqs/'
+  - titulo: 'Precios de Amazon SQS'
+    url: 'https://aws.amazon.com/sqs/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Una cola parece una pieza modesta y es una de las decisiones de arquitectura con mayor efecto. Sin
+ella, si el sistema que procesa se cae o se satura, las peticiones se pierden y quien las envió se
+queda esperando. Con ella, el trabajo se acumula y se procesa cuando hay capacidad.
+
+SQS aporta además dos garantías que a mano cuestan mucho: un mensaje tomado por un consumidor queda
+**invisible** para los demás mientras se procesa, y si el proceso falla, el mensaje **reaparece** para
+que otro lo intente. Nada se pierde en silencio.
+
+## Cómo funciona
+
+1. Creas una cola, **estándar** si el orden no importa o **FIFO** si sí.
+2. El productor envía mensajes con `SendMessage` y sigue con lo suyo.
+3. El consumidor pide mensajes; los que recibe quedan ocultos durante el **tiempo de visibilidad**.
+4. Al terminar, el consumidor **borra** el mensaje. Si no lo borra, el mensaje reaparece y se reintenta.
+5. Tras varios intentos fallidos, el mensaje pasa a la **cola de mensajes fallidos** para revisarlo.
+
+## Manos a la obra
+
+- Crea una cola estándar y envía tres mensajes desde la consola.
+- Recíbelos con la CLI **sin borrarlos** y observa cómo reaparecen pasado el tiempo de visibilidad.
+- Conecta una función Lambda como consumidor de la cola y comprueba que se invoca sola.
+- Configura una cola de mensajes fallidos con un máximo de tres intentos y provoca un fallo a propósito.
+- Activa el sondeo largo y compara el número de peticiones en las métricas de CloudWatch.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Una cola que absorbe el pico de trabajo"
+  descripcion="Los visitantes suben fotos a través de una API que corre en AWS Lambda. En vez de procesarlas en el momento, la función deja un mensaje por cada foto en una cola de Amazon SQS y responde de inmediato. Una segunda función Lambda consume la cola a su ritmo y guarda el resultado en Amazon S3. Si la segunda función falla o se satura, los mensajes esperan en la cola en lugar de perderse, y los mensajes que fallan repetidamente terminan en una cola de mensajes fallidos para revisarlos aparte."
+  nodos={[
+    { id: 'visitante', etiqueta: 'Visitante', tipo: 'externo' },
+    { id: 'api', etiqueta: 'AWS Lambda', sub: 'recibe', categoria: 'computo' },
+    { id: 'sqs', etiqueta: 'Amazon SQS', sub: 'cola', categoria: 'integracion-y-mensajeria' },
+    { id: 'worker', etiqueta: 'AWS Lambda', sub: 'procesa', categoria: 'computo', fila: 0 },
+    { id: 'dlq', etiqueta: 'Cola fallidos', sub: 'tras 3 intentos', categoria: 'integracion-y-mensajeria', fila: 1 },
+  ]}
+  flujos={[
+    { de: 'visitante', a: 'api', etiqueta: 'sube foto' },
+    { de: 'api', a: 'sqs', etiqueta: 'encola' },
+    { de: 'sqs', a: 'worker', etiqueta: 'consume' },
+    { de: 'sqs', a: 'dlq', etiqueta: 'si falla' },
+  ]}
+/>
+
+La pregunta que resuelve la cola es siempre la misma: ¿qué pasa cuando llegan más peticiones de las
+que el sistema puede atender? Sin cola, se pierden; con cola, esperan.

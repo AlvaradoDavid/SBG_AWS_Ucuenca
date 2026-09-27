@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Cloud Map'
+categoria: 'redes-y-entrega-de-contenido'
+nivel: 'avanzado'
+resumenCorto: 'Registro de descubrimiento de servicios: cada recurso publica su ubicación y las aplicaciones la consultan por nombre.'
+cuandoAplicarlo: 'Cuando las direcciones de los componentes cambian con cada despliegue y llevarlas en archivos de configuración deja de ser viable.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Cloud Map'
+    url: 'https://aws.amazon.com/cloud-map/'
+  - titulo: 'Precios de AWS Cloud Map'
+    url: 'https://aws.amazon.com/cloud-map/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Cloud Map mantiene un directorio de recursos con nombres lógicos — `pagos.produccion` — que resuelven a la dirección actual de contenedores, funciones o colas, con verificación de estado para no devolver instancias caídas.
+
+ECS lo usa por debajo para el descubrimiento entre servicios, así que muchas veces se utiliza sin haberlo configurado a mano.

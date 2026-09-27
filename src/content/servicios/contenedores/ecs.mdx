@@ -1,0 +1,117 @@
+---
+nombre: 'Amazon ECS'
+nombreCompleto: 'Elastic Container Service'
+categoria: 'contenedores'
+nivel: 'intermedio'
+resumenCorto: 'Orquestador de contenedores propio de AWS: ejecuta y escala tus contenedores sin instalar un plano de control.'
+analogia: 'Es el jefe de turno de un restaurante: tú dices cuántos platos de cada tipo deben estar listos a la vez, y él reparte el trabajo entre las cocinas disponibles y repone al que se quema.'
+cuandoAplicarlo: 'Cuando tu aplicación ya está en contenedores y necesitas que alguien decida dónde correrlos, los reinicie si fallan y los escale con el tráfico, sin la complejidad de Kubernetes.'
+casosDeUso:
+  - 'Ejecutar una API en contenedor detrás de un balanceador de carga'
+  - 'Procesar trabajos de una cola con tareas que aparecen y desaparecen'
+  - 'Migrar una aplicación de EC2 a contenedores sin adoptar Kubernetes'
+  - 'Correr tareas programadas que no justifican una máquina encendida'
+
+conceptosClave:
+  - termino: 'Definición de tarea'
+    definicion: 'La receta: qué imagen se ejecuta, con cuánta CPU y memoria, con qué variables y qué rol de IAM.'
+  - termino: 'Tarea'
+    definicion: 'Una instancia en ejecución de esa receta. Es la unidad que ECS levanta, vigila y reemplaza.'
+  - termino: 'Servicio'
+    definicion: 'El que mantiene un número deseado de tareas corriendo: si una muere, levanta otra.'
+  - termino: 'Clúster'
+    definicion: 'La agrupación lógica donde corren las tareas, sea sobre instancias EC2 tuyas o sobre Fargate.'
+  - termino: 'Tipo de lanzamiento'
+    definicion: 'Decide quién pone las máquinas: EC2, si administras las instancias, o Fargate, si no quieres verlas.'
+
+modeloDePrecios: 'ECS no cobra por sí mismo. Se paga lo que hay debajo: las instancias EC2 del clúster, o la CPU y memoria por segundo si las tareas corren en Fargate.'
+capaGratuita: 'El orquestador es gratuito siempre. Fargate no tiene capa gratuita propia, así que la práctica sale desde el primer segundo de tarea encendida.'
+trampasDeCosto:
+  - 'Dejar un servicio con tareas deseadas mayores que cero después de un taller: ECS las mantendrá vivas indefinidamente.'
+  - 'Pedir 2 GB de memoria "por si acaso" en la definición de tarea: en Fargate se paga la memoria reservada, no la usada.'
+  - 'Un balanceador de carga olvidado delante del servicio sigue costando aunque no llegue tráfico.'
+
+alternativas:
+  - servicio: 'Amazon EKS'
+    slug: 'contenedores/eks'
+    porque: 'si el equipo ya trabaja con Kubernetes o necesita su ecosistema de herramientas y portabilidad entre nubes.'
+  - servicio: 'AWS Lambda'
+    slug: 'computo/lambda'
+    porque: 'si la carga es puntual y por eventos: mantener un contenedor esperando es desperdicio.'
+  - servicio: 'AWS App Runner'
+    slug: 'computo/app-runner'
+    porque: 'si solo quieres publicar una aplicación web en contenedor y no te interesa configurar red ni clúster.'
+
+serviciosRelacionados:
+  - 'contenedores/fargate'
+  - 'contenedores/ecr'
+  - 'computo/ec2'
+  - 'seguridad-identidad/iam'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+  - 'AWS Certified DevOps Engineer – Professional'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon ECS'
+    url: 'https://docs.aws.amazon.com/ecs/'
+  - titulo: 'Precios de Amazon ECS'
+    url: 'https://aws.amazon.com/ecs/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Amazon ECS responde a una pregunta concreta: ya tienes la aplicación metida en un contenedor,
+¿quién decide en qué máquina corre, qué pasa si esa máquina se cae y cómo se pasa de tres copias a
+diez cuando llega el tráfico? Esa función se llama orquestación, y ECS es la respuesta propia de AWS.
+
+Su gran diferencia frente a Kubernetes es la superficie que hay que aprender. ECS tiene tres
+conceptos — definición de tarea, tarea y servicio — y está integrado de fábrica con IAM, los
+balanceadores, CloudWatch y las redes de la VPC. No hay plano de control que instalar ni actualizar.
+
+## Cómo funciona
+
+1. Publicas la imagen de tu contenedor en un registro, normalmente **Amazon ECR**.
+2. Escribes una **definición de tarea**: qué imagen, cuánta CPU y memoria, qué puertos y qué rol.
+3. Creas un **servicio** que diga cuántas copias quieres corriendo y detrás de qué balanceador.
+4. Eliges dónde corre: sobre **EC2**, si quieres administrar las instancias, o sobre **Fargate**,
+   si prefieres no verlas.
+5. ECS coloca las tareas, vigila su estado y reemplaza las que fallan sin que nadie intervenga.
+
+## Manos a la obra
+
+- Sube una imagen sencilla a ECR (un `nginx` con una página propia sirve de sobra).
+- Crea una definición de tarea de Fargate con 0.25 vCPU y 512 MB, el mínimo posible.
+- Crea un servicio con dos tareas deseadas y ponle delante un Application Load Balancer.
+- Termina una de las tareas a mano desde la consola y observa cómo ECS levanta otra sola.
+- **Pon el servicio en cero tareas al terminar** y borra el balanceador: es lo que sigue cobrando.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Una API en contenedores detrás de un balanceador"
+  descripcion="Un visitante llega por HTTPS a un Application Load Balancer, que reparte las peticiones entre dos tareas de Amazon ECS ejecutándose sobre AWS Fargate. Las dos tareas arrancan desde la misma imagen almacenada en Amazon ECR, y ECS se encarga de mantener vivo el número de copias que se le pidió. Ninguna de las dos tareas guarda estado: si una muere, la siguiente sirve igual."
+  nodos={[
+    { id: 'visitante', etiqueta: 'Visitante', tipo: 'externo' },
+    { id: 'alb', etiqueta: 'Load Balancer', sub: 'reparte tráfico', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 'ecr', etiqueta: 'Amazon ECR', sub: 'imagen', categoria: 'contenedores', fila: 1 },
+    { id: 'tarea1', etiqueta: 'Tarea de ECS', sub: 'en Fargate', categoria: 'contenedores', fila: 0 },
+    { id: 'tarea2', etiqueta: 'Tarea de ECS', sub: 'en Fargate', categoria: 'contenedores', fila: 1 },
+  ]}
+  flujos={[
+    { de: 'visitante', a: 'alb', etiqueta: 'HTTPS' },
+    { de: 'alb', a: 'tarea1' },
+    { de: 'alb', a: 'tarea2', etiqueta: 'reparte' },
+    { de: 'ecr', a: 'tarea1', etiqueta: 'imagen' },
+    { de: 'ecr', a: 'tarea2' },
+  ]}
+/>
+
+El servicio de ECS es quien sostiene el dibujo: el número de tareas que se ve es el que se declaró,
+y volverá a ser ese después de cualquier fallo.

@@ -1,0 +1,22 @@
+---
+nombre: 'Amazon EC2 Spot Instances'
+categoria: 'computo'
+nivel: 'intermedio'
+resumenCorto: 'Capacidad EC2 sobrante hasta un 90% más barata, a cambio de que AWS pueda reclamarla con dos minutos de aviso.'
+cuandoAplicarlo: 'Cuando la carga tolera interrupciones: procesamiento por lotes, entrenamiento de modelos, pruebas de integración, renderizado.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon EC2 Spot Instances'
+    url: 'https://aws.amazon.com/ec2/spot/'
+  - titulo: 'Precios de Amazon EC2 Spot Instances'
+    url: 'https://aws.amazon.com/ec2/spot/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Spot vende la capacidad ociosa de AWS con un descuento enorme. El precio varía con la oferta y la demanda, y cuando AWS necesita la máquina de vuelta envía una notificación de interrupción dos minutos antes de apagarla.
+
+Es la palanca de ahorro más grande que existe en cómputo, y la que hace viable entrenar modelos con créditos de estudiante. La regla de oro: nada que no puedas perder y reanudar debe correr en Spot.

@@ -1,0 +1,13 @@
+---
+interface Props {
+  etiqueta: string;
+  class?: string;
+}
+const { etiqueta, class: className = '' } = Astro.props;
+---
+
+<div
+  class={`flex items-center justify-center rounded-xl border border-dashed border-tinta-300 bg-tinta-50 px-4 text-center text-sm text-tinta-400 ${className}`}
+>
+  <span>{etiqueta}</span>
+</div>

@@ -1,0 +1,224 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import { etiquetaDeCategoria, colorDeCategoria, etiquetaDeNivel } from '../../lib/categorias';
+import { mesYAnio } from '../../lib/fechas';
+
+export async function getStaticPaths() {
+  const servicios = await getCollection('servicios');
+  return servicios.map((servicio) => ({
+    params: { slug: servicio.id },
+    props: { servicio, todos: servicios },
+  }));
+}
+
+const { servicio, todos } = Astro.props;
+const { Content } = await render(servicio);
+const d = servicio.data;
+const color = colorDeCategoria(d.categoria);
+
+const relacionados = (d.serviciosRelacionados ?? [])
+  .map((slug) => todos.find((s) => s.id === slug))
+  .filter((s): s is NonNullable<typeof s> => Boolean(s));
+
+const fechaLegible = mesYAnio(d.actualizado);
+---
+
+<Layout title={d.nombre} description={d.resumenCorto}>
+  <article class="mx-auto max-w-3xl px-6 py-12" data-pagefind-body>
+    <a href="/servicios" class="font-mono text-xs uppercase tracking-widest text-tinta-500 transition hover:text-tinta-900">
+      ← Catálogo
+    </a>
+
+    <!-- Encabezado -->
+    <header class="mt-6 border-b border-tinta-200 pb-8">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="inline-flex items-center gap-2">
+          <span class="punto-categoria" style={`background-color: ${color}`}></span>
+          <span class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">
+            {etiquetaDeCategoria(d.categoria)}
+          </span>
+        </span>
+        <span class="rounded-full bg-tinta-100 px-2.5 py-1 text-[11px] font-bold text-tinta-600">
+          {etiquetaDeNivel(d.nivel)}
+        </span>
+      </div>
+      <h1 class="mt-4 font-display text-4xl font-bold tracking-tight text-tinta-900">{d.nombre}</h1>
+      {d.nombreCompleto && <p class="mt-1 text-sm text-tinta-400">{d.nombreCompleto}</p>}
+      <p class="mt-4 text-lg leading-relaxed text-tinta-600">{d.resumenCorto}</p>
+    </header>
+
+    <!-- Analogía: lo primero que lee quien recién empieza -->
+    {d.analogia && (
+      <div class="mt-8 rounded-xl border-l-4 bg-tinta-50 p-6" style={`border-color: ${color}`}>
+        <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">En palabras simples</p>
+        <p class="mt-2 text-lg leading-relaxed text-tinta-800">{d.analogia}</p>
+      </div>
+    )}
+
+    <!-- Cuándo aplicarlo -->
+    <section class="mt-6 rounded-xl border border-tinta-200 p-6">
+      <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">Cuándo aplicarlo</p>
+      <p class="mt-2 leading-relaxed text-tinta-800">{d.cuandoAplicarlo}</p>
+      {d.casosDeUso && d.casosDeUso.length > 0 && (
+        <ul class="mt-4 space-y-2 border-t border-tinta-100 pt-4">
+          {d.casosDeUso.map((caso) => (
+            <li class="flex gap-3 text-sm text-tinta-700">
+              <span style={`color: ${color}`} class="font-bold">▸</span>
+              <span>{caso}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+
+    <!-- Conceptos clave -->
+    {d.conceptosClave && d.conceptosClave.length > 0 && (
+      <section class="mt-6 rounded-xl border border-tinta-200 p-6">
+        <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">
+          Vocabulario mínimo
+        </p>
+        <dl class="mt-4 space-y-3">
+          {d.conceptosClave.map((c) => (
+            <div class="border-b border-tinta-100 pb-3 last:border-0 last:pb-0">
+              <dt class="font-bold text-tinta-900">{c.termino}</dt>
+              <dd class="mt-0.5 text-sm leading-relaxed text-tinta-600">{c.definicion}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    )}
+
+    <!-- Costo: capa gratuita, modelo de precios y trampas -->
+    {(d.capaGratuita || d.modeloDePrecios || d.trampasDeCosto) && (
+      <section class="mt-6 rounded-xl border border-marca-amber/40 bg-marca-amber/5 p-6">
+        <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-600">
+          Costo y capa gratuita
+        </p>
+        <dl class="mt-4 grid gap-4 sm:grid-cols-2">
+          {d.modeloDePrecios && (
+            <div>
+              <dt class="text-xs font-bold uppercase tracking-wide text-tinta-500">Cómo se cobra</dt>
+              <dd class="mt-1 text-sm leading-relaxed text-tinta-800">{d.modeloDePrecios}</dd>
+            </div>
+          )}
+          {d.capaGratuita && (
+            <div>
+              <dt class="text-xs font-bold uppercase tracking-wide text-tinta-500">Capa gratuita</dt>
+              <dd class="mt-1 text-sm leading-relaxed text-tinta-800">{d.capaGratuita}</dd>
+            </div>
+          )}
+        </dl>
+        {d.trampasDeCosto && d.trampasDeCosto.length > 0 && (
+          <div class="mt-5 border-t border-marca-amber/30 pt-4">
+            <p class="text-xs font-bold uppercase tracking-wide text-tinta-500">
+              Cuidado con los créditos
+            </p>
+            <ul class="mt-2 space-y-1.5">
+              {d.trampasDeCosto.map((t) => (
+                <li class="flex gap-2 text-sm text-tinta-700">
+                  <span class="text-marca-amber">⚠</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+    )}
+
+    <!-- Cuerpo MDX: descripción, cómo funciona, laboratorio, diagrama -->
+    <div class="prose prose-tinta mt-10 max-w-none prose-headings:font-display prose-headings:font-bold prose-headings:text-tinta-900 prose-a:text-tinta-900 prose-a:underline prose-strong:text-tinta-900">
+      <Content />
+    </div>
+
+    <!-- Alternativas: cuándo NO usarlo -->
+    {d.alternativas && d.alternativas.length > 0 && (
+      <section class="mt-10 rounded-xl border border-tinta-200 p-6">
+        <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">
+          Cuándo NO es la mejor opción
+        </p>
+        <ul class="mt-4 space-y-3">
+          {d.alternativas.map((alt) => (
+            <li class="text-sm leading-relaxed text-tinta-700">
+              {alt.slug ? (
+                <a href={`/servicios/${alt.slug}`} class="font-bold text-tinta-900 underline">
+                  {alt.servicio}
+                </a>
+              ) : (
+                <span class="font-bold text-tinta-900">{alt.servicio}</span>
+              )}
+              <span> — {alt.porque}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <!-- Servicios relacionados: convierte el catálogo en una red -->
+    {relacionados.length > 0 && (
+      <section class="mt-6">
+        <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">
+          Se usa junto con
+        </p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          {relacionados.map((rel) => (
+            <a
+              href={`/servicios/${rel.id}`}
+              class="inline-flex items-center gap-2 rounded-full border border-tinta-200 px-3 py-1.5 text-sm text-tinta-700 transition hover:border-tinta-400 hover:text-tinta-900"
+            >
+              <span class="punto-categoria" style={`background-color: ${colorDeCategoria(rel.data.categoria)}`}></span>
+              {rel.data.nombre}
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Certificaciones + enlaces oficiales -->
+    <section class="mt-6 grid gap-6 sm:grid-cols-2">
+      {d.certificaciones && d.certificaciones.length > 0 && (
+        <div class="rounded-xl border border-tinta-200 p-6">
+          <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">
+            Aparece en certificaciones
+          </p>
+          <ul class="mt-3 space-y-1.5">
+            {d.certificaciones.map((cert) => (
+              <li class="text-sm text-tinta-700">{cert}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {d.enlaces && d.enlaces.length > 0 && (
+        <div class="rounded-xl border border-tinta-200 p-6">
+          <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">Para profundizar</p>
+          <ul class="mt-3 space-y-1.5">
+            {d.enlaces.map((e) => (
+              <li>
+                <a
+                  href={e.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sm text-tinta-700 underline transition hover:text-tinta-900"
+                >
+                  {e.titulo} ↗
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
+
+    <!-- Procedencia del contenido -->
+    <footer class="mt-10 border-t border-tinta-200 pt-6 text-xs text-tinta-400">
+      <p>
+        Última revisión: {fechaLegible}
+        {d.autor && <span> · Ficha por {d.autor}</span>}
+      </p>
+      <p class="mt-1">
+        AWS cambia con frecuencia. Si encuentras algo desactualizado, avísanos por nuestras redes.
+      </p>
+    </footer>
+  </article>
+</Layout>

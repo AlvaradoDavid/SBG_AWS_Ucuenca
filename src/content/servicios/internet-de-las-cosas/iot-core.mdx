@@ -1,0 +1,22 @@
+---
+nombre: 'AWS IoT Core'
+categoria: 'internet-de-las-cosas'
+nivel: 'intermedio'
+resumenCorto: 'Conecta millones de dispositivos a la nube por MQTT con autenticación por certificado y enrutamiento por reglas.'
+cuandoAplicarlo: 'Cuando hay sensores o dispositivos que deben enviar datos a la nube y recibir órdenes de vuelta de forma segura.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS IoT Core'
+    url: 'https://aws.amazon.com/iot-core/'
+  - titulo: 'Precios de AWS IoT Core'
+    url: 'https://aws.amazon.com/iot-core/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+IoT Core es el intermediario de mensajes: cada dispositivo se autentica con su propio certificado, publica en temas MQTT y el motor de reglas decide a dónde va cada mensaje — a DynamoDB, a Lambda, a Kinesis — con una sintaxis parecida a SQL.
+
+La sombra del dispositivo guarda su último estado conocido, así que la aplicación puede consultarlo o fijar el estado deseado aunque el dispositivo esté desconectado. Es el punto de entrada de casi toda arquitectura de IoT en AWS.

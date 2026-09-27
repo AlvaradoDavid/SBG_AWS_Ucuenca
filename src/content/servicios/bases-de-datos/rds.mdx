@@ -1,0 +1,114 @@
+---
+nombre: 'Amazon RDS'
+nombreCompleto: 'Relational Database Service'
+categoria: 'bases-de-datos'
+nivel: 'fundamental'
+resumenCorto: 'Bases de datos relacionales administradas: PostgreSQL, MySQL, MariaDB, Oracle y SQL Server sin operar el servidor.'
+analogia: 'Es contratar el servicio de mantenimiento del auto en lugar de aprender mecánica: sigues conduciendo tú, pero los cambios de aceite, los repuestos y las revisiones los hace otro.'
+cuandoAplicarlo: 'Cuando la aplicación necesita SQL y transacciones, y no quieres encargarte de instalar el motor, aplicar parches, programar respaldos ni configurar réplicas.'
+casosDeUso:
+  - 'La base de datos de una aplicación web o móvil con relaciones entre entidades'
+  - 'Migrar una base PostgreSQL o MySQL desde un servidor propio a la nube'
+  - 'Sistemas que requieren transacciones e integridad referencial estricta'
+  - 'Entornos de práctica donde se quiere SQL sin instalar nada'
+
+conceptosClave:
+  - termino: 'Instancia de base de datos'
+    definicion: 'El servidor administrado que ejecuta el motor. Su clase define CPU y memoria, igual que en EC2.'
+  - termino: 'Multi-AZ'
+    definicion: 'Una copia en espera en otra zona de disponibilidad que toma el relevo automáticamente si la principal falla.'
+  - termino: 'Réplica de lectura'
+    definicion: 'Una copia que solo atiende consultas de lectura, para descargar de trabajo a la principal.'
+  - termino: 'Grupo de parámetros'
+    definicion: 'La configuración del motor. Es donde se ajusta lo que en un servidor propio estaría en un archivo de configuración.'
+  - termino: 'Recuperación a un punto en el tiempo'
+    definicion: 'La capacidad de restaurar la base al estado exacto que tenía en un instante dentro del periodo de retención.'
+
+modeloDePrecios: 'Por hora de instancia encendida según su clase, más el almacenamiento aprovisionado, los respaldos que superen el tamaño de la base y la transferencia de datos. Multi-AZ duplica el costo de cómputo.'
+capaGratuita: '750 horas al mes de una instancia db.t3.micro o db.t4g.micro, 20 GB de almacenamiento y 20 GB de respaldos, durante los primeros 12 meses.'
+trampasDeCosto:
+  - 'Activar Multi-AZ en un entorno de práctica: duplica el costo sin aportar nada en ese contexto.'
+  - 'Dejar la instancia encendida tras el taller. Detenerla ayuda, pero RDS la reinicia automáticamente a los siete días.'
+  - 'Las instantáneas manuales sobreviven al borrado de la instancia y siguen cobrando hasta que alguien las elimine.'
+
+alternativas:
+  - servicio: 'Amazon Aurora'
+    slug: 'bases-de-datos/aurora'
+    porque: 'si necesitas mucho más rendimiento y disponibilidad con compatibilidad de PostgreSQL o MySQL.'
+  - servicio: 'Amazon DynamoDB'
+    slug: 'bases-de-datos/dynamodb'
+    porque: 'si el acceso es siempre por clave y quieres escalado sin servidores ni administración de capacidad.'
+  - servicio: 'PostgreSQL sobre EC2'
+    slug: 'computo/ec2'
+    porque: 'si necesitas extensiones o versiones que RDS no ofrece y aceptas administrar el motor tú.'
+
+serviciosRelacionados:
+  - 'bases-de-datos/aurora'
+  - 'bases-de-datos/dynamodb'
+  - 'computo/ec2'
+  - 'seguridad-identidad/secrets-manager'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Database – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon RDS'
+    url: 'https://docs.aws.amazon.com/rds/'
+  - titulo: 'Precios de Amazon RDS'
+    url: 'https://aws.amazon.com/rds/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+RDS ejecuta los mismos motores de base de datos que se instalarían en un servidor propio —
+PostgreSQL, MySQL, MariaDB, Oracle, SQL Server — y se queda con el trabajo que rodea al motor:
+instalación, parches, respaldos automáticos, réplicas, conmutación por error y monitoreo.
+
+La aplicación no nota la diferencia: se conecta con el mismo controlador y el mismo SQL de siempre,
+apuntando a un nombre de host que da AWS. Lo que cambia es que ya no hay nadie de guardia para
+aplicar una actualización de seguridad un domingo.
+
+## Cómo funciona
+
+1. Eliges **motor**, **versión** y **clase de instancia**, igual que se elige un tipo de EC2.
+2. RDS crea la instancia dentro de tu VPC, normalmente en subredes privadas.
+3. Un **grupo de seguridad** decide qué puede conectarse; lo habitual es permitir solo a la aplicación.
+4. Los **respaldos automáticos** y los registros de transacciones permiten restaurar a cualquier
+   instante del periodo de retención.
+5. Si activas **Multi-AZ**, AWS mantiene una copia sincrónica en otra zona y conmuta sola ante un fallo.
+
+## Manos a la obra
+
+- Crea una instancia `db.t3.micro` de PostgreSQL en modo de zona única, sin acceso público.
+- Guarda la contraseña en **AWS Secrets Manager** en lugar de escribirla en el código.
+- Conéctate desde una instancia EC2 de la misma VPC y crea una tabla de prueba.
+- Fuerza una restauración a un punto en el tiempo cinco minutos anterior y compara el resultado.
+- **Borra la instancia al terminar**, y revisa que no queden instantáneas manuales cobrando.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Una base de datos administrada con réplica en otra zona"
+  descripcion="La aplicación que corre en Amazon EC2 se conecta a la instancia principal de Amazon RDS, situada en una subred privada de la VPC. RDS mantiene una copia en espera en otra zona de disponibilidad mediante Multi-AZ y envía respaldos automáticos a Amazon S3. La aplicación obtiene la contraseña de AWS Secrets Manager, así que no hay credenciales escritas en el código. Si la instancia principal falla, la copia en espera toma su lugar sin cambiar el nombre de host al que apunta la aplicación."
+  nodos={[
+    { id: 'app', etiqueta: 'Amazon EC2', sub: 'aplicación', categoria: 'computo' },
+    { id: 'rds', etiqueta: 'Amazon RDS', sub: 'principal', categoria: 'bases-de-datos' },
+    { id: 'standby', etiqueta: 'Copia en espera', sub: 'otra zona', categoria: 'bases-de-datos', fila: 0 },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'respaldos', categoria: 'almacenamiento', fila: 1 },
+  ]}
+  flujos={[
+    { de: 'app', a: 'rds', etiqueta: 'SQL' },
+    { de: 'rds', a: 'standby', etiqueta: 'replica' },
+    { de: 'rds', a: 's3', etiqueta: 'respalda' },
+  ]}
+/>
+
+La copia en espera no atiende consultas: existe solo para tomar el relevo. Para repartir lecturas
+hace falta una réplica de lectura, que es un recurso distinto.

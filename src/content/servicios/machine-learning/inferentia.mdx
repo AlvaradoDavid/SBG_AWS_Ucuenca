@@ -1,0 +1,20 @@
+---
+nombre: 'AWS Inferentia'
+categoria: 'machine-learning'
+nivel: 'avanzado'
+resumenCorto: 'Chip diseñado por AWS para ejecutar inferencia de modelos con mejor relación entre costo y rendimiento que las GPU.'
+cuandoAplicarlo: 'Cuando un modelo ya entrenado atiende mucho tráfico y el costo por inferencia empieza a pesar en la factura.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Inferentia'
+    url: 'https://aws.amazon.com/machine-learning/inferentia/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Inferentia está detrás de las instancias Inf: hardware especializado únicamente en ejecutar modelos, no en entrenarlos. El compilador Neuron traduce los modelos de PyTorch o TensorFlow al chip, normalmente con cambios mínimos en el código.
+
+Su contraparte para entrenamiento es Trainium. La decisión es económica: a volumen alto, la diferencia de costo frente a GPU es considerable.

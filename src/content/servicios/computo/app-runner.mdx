@@ -1,0 +1,22 @@
+---
+nombre: 'AWS App Runner'
+categoria: 'computo'
+nivel: 'intermedio'
+resumenCorto: 'Despliega una aplicación web contenedorizada desde el código fuente o una imagen, sin configurar red ni servidores.'
+cuandoAplicarlo: 'Cuando quieres publicar una API o una web en contenedor y no quieres aprender ECS, balanceadores ni VPC para lograrlo.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS App Runner'
+    url: 'https://aws.amazon.com/apprunner/'
+  - titulo: 'Precios de AWS App Runner'
+    url: 'https://aws.amazon.com/apprunner/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+App Runner toma tu repositorio de código o una imagen de ECR y la convierte en un servicio web con HTTPS, escalado automático y despliegue continuo, sin que tú declares ni una subred. Es el punto intermedio entre Elastic Beanstalk y ECS: menos control que Fargate, pero muchísima menos configuración.
+
+Escala a cero instancias activas cuando no llega tráfico, aunque mantiene un cargo por el contenedor aprovisionado. Es una buena primera parada para llevar a la nube un proyecto de clase que ya tiene Dockerfile.

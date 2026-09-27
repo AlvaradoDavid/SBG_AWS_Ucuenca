@@ -1,0 +1,22 @@
+---
+nombre: 'AWS PrivateLink'
+categoria: 'redes-y-entrega-de-contenido'
+nivel: 'avanzado'
+resumenCorto: 'Acceso privado a servicios de AWS o de terceros desde tu VPC, sin exponer el tráfico a la internet pública.'
+cuandoAplicarlo: 'Cuando una instancia sin salida a internet debe llamar a S3, DynamoDB o a una API de un socio.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS PrivateLink'
+    url: 'https://aws.amazon.com/privatelink/'
+  - titulo: 'Precios de AWS PrivateLink'
+    url: 'https://aws.amazon.com/privatelink/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+PrivateLink crea un punto de conexión dentro de tu VPC que representa al servicio remoto. El tráfico viaja por la red de AWS y nunca atraviesa una puerta de enlace de internet, lo que elimina toda una clase de riesgo de exposición y reduce el costo de salida.
+
+Es una pieza recurrente en auditorías: permite demostrar que ciertos datos jamás salieron a internet.

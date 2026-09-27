@@ -1,0 +1,111 @@
+---
+nombre: 'Amazon ECR'
+nombreCompleto: 'Elastic Container Registry'
+categoria: 'contenedores'
+nivel: 'intermedio'
+resumenCorto: 'Registro privado de imágenes de contenedor, integrado con IAM y con análisis de vulnerabilidades incorporado.'
+analogia: 'Es la bodega de recetas ya empaquetadas: cada versión de tu aplicación queda guardada, etiquetada y lista para que cualquier cocina la saque y la ejecute igual.'
+cuandoAplicarlo: 'Cuando tus contenedores deben desplegarse en AWS y quieres que las imágenes vivan cerca del cómputo, con permisos de IAM y sin límites de descarga.'
+casosDeUso:
+  - 'Guardar las imágenes que ECS, EKS o App Runner van a ejecutar'
+  - 'Publicar una imagen nueva en cada fusión a la rama principal desde CodePipeline'
+  - 'Analizar automáticamente cada imagen en busca de vulnerabilidades conocidas'
+  - 'Replicar imágenes a varias regiones para desplegar cerca de cada usuario'
+
+conceptosClave:
+  - termino: 'Repositorio'
+    definicion: 'El contenedor lógico de todas las versiones de una misma imagen, con su política de acceso.'
+  - termino: 'Etiqueta'
+    definicion: 'El nombre de una versión concreta: `v1.2.0`, `latest`. Una imagen puede tener varias.'
+  - termino: 'Resumen (digest)'
+    definicion: 'El identificador criptográfico inmutable de la imagen. A diferencia de la etiqueta, nunca apunta a otro contenido.'
+  - termino: 'Política de ciclo de vida'
+    definicion: 'La regla que borra imágenes antiguas automáticamente para que el repositorio no crezca sin fin.'
+  - termino: 'Análisis de imágenes'
+    definicion: 'La revisión de vulnerabilidades conocidas en los paquetes de la imagen, que puede ejecutarse en cada subida.'
+
+modeloDePrecios: 'Por gigabyte almacenado al mes y por transferencia de datos hacia fuera de la región. Descargar imágenes desde dentro de la misma región no tiene costo de transferencia.'
+capaGratuita: '500 MB al mes de almacenamiento privado durante los primeros 12 meses, y 50 GB permanentes en el registro público.'
+trampasDeCosto:
+  - 'Publicar una imagen por cada compilación sin política de ciclo de vida: el repositorio crece hasta gigabytes de versiones muertas.'
+  - 'Imágenes base enormes: partir de una imagen ligera puede reducir diez veces el almacenamiento y el tiempo de arranque.'
+  - 'Descargar imágenes desde fuera de la región o desde otra nube paga transferencia de salida.'
+
+alternativas:
+  - servicio: 'Registros públicos de contenedores'
+    porque: 'si la imagen es pública y no necesitas permisos de IAM ni cercanía a la región, un registro público basta.'
+  - servicio: 'AWS CodeArtifact'
+    slug: 'herramientas-de-desarrollador/codeartifact'
+    porque: 'si lo que quieres almacenar son paquetes de npm, pip o Maven, no imágenes de contenedor.'
+
+serviciosRelacionados:
+  - 'contenedores/ecs'
+  - 'contenedores/eks'
+  - 'herramientas-de-desarrollador/codepipeline'
+  - 'seguridad-identidad/iam'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Developer – Associate'
+  - 'AWS Certified DevOps Engineer – Professional'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon ECR'
+    url: 'https://docs.aws.amazon.com/ecr/'
+  - titulo: 'Precios de Amazon ECR'
+    url: 'https://aws.amazon.com/ecr/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Un contenedor no se despliega desde el portátil de quien lo construyó: se publica en un registro, y
+desde ahí lo descarga quien vaya a ejecutarlo. Amazon ECR es ese registro dentro de AWS, y su valor
+está en tres detalles prácticos.
+
+El primero es el permiso: no hay usuario ni contraseña de registro, se usa IAM como en el resto de
+AWS. El segundo es la cercanía: descargar la imagen desde una tarea en la misma región es rápido y
+no paga transferencia. El tercero es el análisis de vulnerabilidades, que ocurre al publicar sin que
+nadie lo pida.
+
+## Cómo funciona
+
+1. Creas un **repositorio**, uno por cada aplicación o componente.
+2. Te autenticas con la CLI de AWS, que entrega un token temporal a Docker.
+3. Publicas la imagen con `docker push`, etiquetada con la versión.
+4. ECR **analiza** la imagen y reporta las vulnerabilidades conocidas de sus paquetes.
+5. ECS, EKS o App Runner descargan esa imagen usando el rol de ejecución de la tarea.
+6. Una **política de ciclo de vida** borra sola las versiones viejas que ya nadie usa.
+
+## Manos a la obra
+
+- Crea un repositorio privado y publica en él una imagen sencilla desde tu máquina.
+- Publica una segunda versión con otra etiqueta y compara los resúmenes: son distintos.
+- Activa el análisis al publicar y revisa el informe de vulnerabilidades de la imagen base.
+- Añade una política de ciclo de vida que conserve solo las diez versiones más recientes.
+- Despliega esa imagen en una tarea de ECS con Fargate para cerrar el círculo completo.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Del commit a la imagen desplegada"
+  descripcion="Una persona del equipo empuja código al repositorio y AWS CodeBuild construye la imagen del contenedor. La imagen se publica en Amazon ECR, que la analiza en busca de vulnerabilidades conocidas. Desde ahí, Amazon ECS descarga la imagen para ejecutar las tareas del servicio. El registro es el punto de encuentro entre la compilación y el despliegue: lo que se prueba es exactamente lo que se ejecuta."
+  nodos={[
+    { id: 'dev', etiqueta: 'Equipo', sub: 'git push', tipo: 'externo' },
+    { id: 'build', etiqueta: 'AWS CodeBuild', sub: 'construye', categoria: 'herramientas-de-desarrollador' },
+    { id: 'ecr', etiqueta: 'Amazon ECR', sub: 'guarda y analiza', categoria: 'contenedores' },
+    { id: 'ecs', etiqueta: 'Amazon ECS', sub: 'ejecuta', categoria: 'contenedores' },
+  ]}
+  flujos={[
+    { de: 'dev', a: 'build', etiqueta: 'cambio' },
+    { de: 'build', a: 'ecr', etiqueta: 'publica' },
+    { de: 'ecr', a: 'ecs', etiqueta: 'descarga' },
+  ]}
+/>
+
+El resumen de la imagen es lo que hace confiable esta cadena: desplegar por resumen y no por etiqueta
+garantiza que lo que llega a producción es el mismo contenido que se analizó.

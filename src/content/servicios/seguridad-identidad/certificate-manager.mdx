@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Certificate Manager'
+categoria: 'seguridad-identidad'
+nivel: 'fundamental'
+resumenCorto: 'Emite y renueva solo los certificados TLS públicos usados por CloudFront, los balanceadores y API Gateway, sin costo.'
+cuandoAplicarlo: 'Siempre que se sirva tráfico HTTPS desde un servicio de AWS con un dominio propio.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Certificate Manager'
+    url: 'https://aws.amazon.com/certificate-manager/'
+  - titulo: 'Precios de AWS Certificate Manager'
+    url: 'https://aws.amazon.com/certificate-manager/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+ACM emite el certificado tras validar la propiedad del dominio por DNS o correo, y lo renueva de forma automática antes del vencimiento. La clave privada nunca se descarga: el servicio la instala directamente en el recurso que la usa.
+
+Eso elimina de golpe la causa más común de caídas evitables — el certificado que expiró un domingo. Los certificados públicos son gratuitos; solo se paga por los privados de la autoridad certificadora propia.

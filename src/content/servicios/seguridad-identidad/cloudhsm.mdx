@@ -1,0 +1,22 @@
+---
+nombre: 'AWS CloudHSM'
+categoria: 'seguridad-identidad'
+nivel: 'avanzado'
+resumenCorto: 'Módulos de seguridad de hardware dedicados donde tú, y solo tú, controlas las claves criptográficas.'
+cuandoAplicarlo: 'Cuando una norma exige custodia exclusiva de las claves en hardware certificado FIPS y no basta con KMS.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS CloudHSM'
+    url: 'https://aws.amazon.com/cloudhsm/'
+  - titulo: 'Precios de AWS CloudHSM'
+    url: 'https://aws.amazon.com/cloudhsm/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+En KMS las claves viven en hardware compartido y administrado por AWS; en CloudHSM el módulo es tuyo y AWS no tiene acceso a su material criptográfico. Eso implica que también es tuya la responsabilidad de la copia de respaldo: si pierdes las credenciales, nadie puede recuperarlas.
+
+Se usa en banca, autoridades certificadoras y sistemas de pago, donde el requisito es explícito.

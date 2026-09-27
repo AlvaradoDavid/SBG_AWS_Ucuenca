@@ -1,0 +1,118 @@
+---
+nombre: 'Amazon Kinesis'
+categoria: 'analitica'
+nivel: 'avanzado'
+resumenCorto: 'Ingesta y procesamiento de datos en tiempo real: flujos continuos de eventos que varios consumidores leen a la vez.'
+analogia: 'Es una cinta transportadora que nunca se detiene: los datos van pasando, y cada equipo que trabaja al lado toma lo que necesita sin frenar la cinta ni estorbar a los demás.'
+cuandoAplicarlo: 'Cuando los datos llegan de forma continua y hay que procesarlos en segundos —telemetría, clics, sensores— en vez de esperar a un proceso por lotes nocturno.'
+casosDeUso:
+  - 'Recoger la telemetría de dispositivos y procesarla al instante'
+  - 'Analizar clics de una aplicación web mientras ocurren'
+  - 'Alimentar un panel en vivo durante un evento del club'
+  - 'Entregar flujos continuos a S3, Redshift u OpenSearch sin escribir código'
+
+conceptosClave:
+  - termino: 'Flujo de datos (Data Streams)'
+    definicion: 'El flujo crudo: guarda los eventos y varios consumidores independientes pueden leerlos.'
+  - termino: 'Firehose'
+    definicion: 'La variante que solo entrega: toma el flujo y lo deja en S3, Redshift u OpenSearch sin código.'
+  - termino: 'Fragmento (shard)'
+    definicion: 'La unidad de capacidad y paralelismo del flujo. Determina cuántos datos por segundo entran y salen.'
+  - termino: 'Clave de partición'
+    definicion: 'Decide en qué fragmento cae cada registro. Una clave mal elegida concentra la carga en uno solo.'
+  - termino: 'Retención'
+    definicion: 'Cuánto tiempo se conservan los eventos en el flujo: de 24 horas hasta un año.'
+
+modeloDePrecios: 'En Data Streams, por hora de fragmento y por millón de registros, o por capacidad usada en el modo bajo demanda. Firehose cobra por volumen de datos ingeridos.'
+capaGratuita: 'No entra en la capa gratuita. Un flujo con un solo fragmento tiene un costo por hora bajo pero continuo.'
+trampasDeCosto:
+  - 'Un flujo con fragmentos aprovisionados y sin tráfico sigue cobrando cada hora.'
+  - 'Ampliar la retención a un año multiplica el costo de almacenamiento del flujo.'
+  - 'Aprovisionar fragmentos de más por miedo al pico, cuando el modo bajo demanda se ajusta solo.'
+
+alternativas:
+  - servicio: 'Amazon MSK'
+    slug: 'analitica/msk'
+    porque: 'si el equipo ya trabaja con Kafka y quiere conservar su ecosistema y su portabilidad.'
+  - servicio: 'Amazon SQS'
+    slug: 'integracion-y-mensajeria/sqs'
+    porque: 'si cada mensaje lo procesa un solo consumidor y no hace falta releer el histórico del flujo.'
+  - servicio: 'Amazon EventBridge'
+    slug: 'integracion-y-mensajeria/eventbridge'
+    porque: 'si son eventos discretos que hay que enrutar, y no un flujo continuo de alto volumen.'
+
+serviciosRelacionados:
+  - 'almacenamiento/s3'
+  - 'computo/lambda'
+  - 'analitica/opensearch'
+  - 'internet-de-las-cosas/iot-core'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Data Engineer – Associate'
+  - 'AWS Certified Data Analytics – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Kinesis'
+    url: 'https://docs.aws.amazon.com/kinesis/'
+  - titulo: 'Precios de Amazon Kinesis'
+    url: 'https://aws.amazon.com/kinesis/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Kinesis es la familia de AWS para datos en movimiento. La diferencia con una cola es importante y se
+entiende mejor así: en SQS, un consumidor toma el mensaje y lo borra; en Kinesis, el evento **se
+queda** en el flujo durante el periodo de retención y varios consumidores independientes pueden
+leerlo, cada uno a su ritmo y desde su propia posición.
+
+Eso permite que un mismo flujo alimente a la vez un panel en vivo, un proceso de alertas y un
+archivado en S3 sin que ninguno interfiera con los demás. Si un consumidor falla y se recupera,
+retoma desde donde iba en lugar de perder lo ocurrido.
+
+## Cómo funciona
+
+1. Los productores —dispositivos, aplicaciones, IoT Core— escriben registros en el flujo, cada uno
+   con su **clave de partición**.
+2. La clave determina el **fragmento**, que es lo que da orden dentro de su partición y paralelismo
+   entre partes.
+3. Los consumidores leen desde su propia posición: Lambda, una aplicación propia o Firehose.
+4. **Firehose** cubre el caso más frecuente sin escribir código: dejar el flujo en S3, Redshift u
+   OpenSearch, con transformación opcional.
+5. Pasado el periodo de retención, los registros desaparecen del flujo.
+
+## Manos a la obra
+
+- Crea un flujo de datos bajo demanda para no tener que dimensionar fragmentos.
+- Publica registros con la CLI en un bucle y observa las métricas de entrada en CloudWatch.
+- Conecta una función Lambda como consumidor y escribe cada registro en los registros de la función.
+- Crea un flujo de Firehose hacia S3 y comprueba los archivos que aparecen cada pocos minutos.
+- **Borra el flujo al terminar**: es un recurso que cobra por tiempo, no por uso.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un flujo, tres consumidores independientes"
+  descripcion="Los dispositivos publican su telemetría de forma continua en un flujo de Amazon Kinesis Data Streams. Tres consumidores leen ese mismo flujo sin estorbarse: una función de AWS Lambda que detecta valores anómalos y alerta, un flujo de Amazon Data Firehose que archiva todo en Amazon S3, y un proceso que alimenta un panel en vivo. Cada consumidor mantiene su propia posición de lectura, así que si uno se detiene y vuelve, retoma donde iba sin perder eventos."
+  nodos={[
+    { id: 'dispositivos', etiqueta: 'Dispositivos', tipo: 'externo' },
+    { id: 'stream', etiqueta: 'Kinesis', sub: 'flujo de datos', categoria: 'analitica' },
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'alertas', categoria: 'computo', fila: 0 },
+    { id: 'firehose', etiqueta: 'Data Firehose', sub: 'archiva', categoria: 'analitica', fila: 1 },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'histórico', categoria: 'almacenamiento' },
+  ]}
+  flujos={[
+    { de: 'dispositivos', a: 'stream', etiqueta: 'telemetría' },
+    { de: 'stream', a: 'lambda', etiqueta: 'lee' },
+    { de: 'stream', a: 'firehose', etiqueta: 'lee' },
+    { de: 'firehose', a: 's3', etiqueta: 'entrega' },
+  ]}
+/>
+
+Cuando el requisito no es «procesar cada mensaje una vez» sino «que varios sistemas vean lo mismo en
+tiempo real», la respuesta es un flujo y no una cola.

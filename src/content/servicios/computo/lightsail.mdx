@@ -1,0 +1,110 @@
+---
+nombre: 'Amazon Lightsail'
+categoria: 'computo'
+nivel: 'fundamental'
+resumenCorto: 'Servidores virtuales con precio fijo mensual y todo incluido: la puerta de entrada más simple a AWS.'
+analogia: 'Es el plan de datos con tarifa plana frente al de consumo: sabes exactamente cuánto vas a pagar a fin de mes, aunque no puedas afinar cada detalle.'
+cuandoAplicarlo: 'Cuando necesitas un servidor pequeño y predecible — un blog, un sitio de la organización, un entorno de práctica — y la factura variable de EC2 genera más ansiedad que valor.'
+casosDeUso:
+  - 'Alojar un WordPress o un sitio institucional pequeño'
+  - 'Dar a cada persona del club su propio servidor de práctica con costo conocido'
+  - 'Publicar el prototipo de un proyecto sin diseñar una arquitectura'
+  - 'Correr una base de datos administrada sencilla sin configurar RDS'
+
+conceptosClave:
+  - termino: 'Instancia de Lightsail'
+    definicion: 'Un servidor virtual con CPU, memoria, disco SSD y transferencia mensual incluidos en un solo precio.'
+  - termino: 'Plano (blueprint)'
+    definicion: 'La imagen de partida: solo el sistema operativo, o con WordPress, LAMP o Node.js ya instalados.'
+  - termino: 'IP estática'
+    definicion: 'Una dirección fija que se asocia a la instancia y no cambia al reiniciarla. Es gratuita mientras esté asignada.'
+  - termino: 'Instantánea'
+    definicion: 'La copia del disco completo, para restaurar o clonar la instancia.'
+  - termino: 'Transferencia incluida'
+    definicion: 'Cada plan trae un volumen de datos de salida al mes; superarlo sí genera costo adicional.'
+
+modeloDePrecios: 'Precio fijo mensual por plan, con CPU, memoria, disco y transferencia incluidos. Es el modelo más predecible de todo el catálogo de AWS.'
+capaGratuita: 'Los planes más pequeños suelen ofrecer los primeros meses sin costo para cuentas nuevas. Conviene confirmar la oferta vigente en la página de precios.'
+trampasDeCosto:
+  - 'Una IP estática reservada y no asociada a ninguna instancia sí genera cargo: hay que liberarla.'
+  - 'Superar la transferencia incluida del plan se factura aparte, y en sitios con imágenes pesadas ocurre antes de lo esperado.'
+  - 'Las instantáneas se acumulan y se cobran por gigabyte al mes aunque la instancia ya no exista.'
+
+alternativas:
+  - servicio: 'Amazon EC2'
+    slug: 'computo/ec2'
+    porque: 'si necesitas tipos de instancia específicos, escalado automático o integración fina con el resto de servicios.'
+  - servicio: 'AWS Amplify / S3 + CloudFront'
+    slug: 'almacenamiento/s3'
+    porque: 'si el sitio es estático, un servidor encendido todo el mes es gasto innecesario.'
+  - servicio: 'AWS App Runner'
+    slug: 'computo/app-runner'
+    porque: 'si la aplicación está en contenedor y prefieres no administrar ningún servidor.'
+
+serviciosRelacionados:
+  - 'computo/ec2'
+  - 'almacenamiento/s3'
+  - 'redes-y-entrega-de-contenido/route-53'
+  - 'gestion-financiera/budgets'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Lightsail'
+    url: 'https://docs.aws.amazon.com/lightsail/'
+  - titulo: 'Precios de Amazon Lightsail'
+    url: 'https://aws.amazon.com/lightsail/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Lightsail existe porque la primera experiencia con EC2 puede ser abrumadora: hay que elegir tipo de
+instancia, VPC, subred, grupo de seguridad, volumen y modelo de compra antes de ver una página web
+funcionando. Lightsail comprime todo eso en una decisión — qué plan mensual — y una imagen de partida.
+
+El precio fijo es la característica que más importa a un club universitario con créditos limitados.
+Con EC2 hay que vigilar la factura; con Lightsail, el costo del mes se conoce el día que se crea la
+instancia. A cambio se pierde flexibilidad: menos tipos de máquina y menos integración fina.
+
+## Cómo funciona
+
+1. Eliges un **plano**: solo el sistema operativo, o una pila ya instalada como WordPress o LAMP.
+2. Eliges el **plan mensual**, que fija CPU, memoria, disco SSD y transferencia incluida.
+3. Lightsail crea la instancia con su red ya configurada y te da acceso por SSH desde el navegador.
+4. Asocias una **IP estática** y, si quieres, apuntas tu dominio con el DNS del propio servicio.
+5. Programas **instantáneas** para poder restaurar o clonar la instancia cuando haga falta.
+
+## Manos a la obra
+
+- Crea una instancia con el plano de WordPress en el plan más pequeño disponible.
+- Asocia una IP estática y entra por el cliente SSH del navegador, sin configurar llaves.
+- Publica una entrada y comprueba que responde desde la IP.
+- Toma una instantánea manual y restáurala como instancia nueva para ver el mecanismo.
+- **Borra las dos instancias, las instantáneas y libera la IP estática** al terminar la práctica.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un sitio pequeño alojado en Lightsail"
+  descripcion="Un visitante escribe el dominio del sitio, que Amazon Route 53 resuelve hacia la IP estática de una instancia de Amazon Lightsail. La instancia ejecuta el servidor web y la aplicación, y guarda instantáneas periódicas de su disco para poder restaurarla. Todo el conjunto tiene un precio mensual fijo conocido de antemano, que es la razón principal para elegir Lightsail en un proyecto pequeño."
+  nodos={[
+    { id: 'visitante', etiqueta: 'Visitante', tipo: 'externo' },
+    { id: 'dns', etiqueta: 'Amazon Route 53', sub: 'dominio', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 'lightsail', etiqueta: 'Amazon Lightsail', sub: 'IP estática', categoria: 'computo' },
+    { id: 'snap', etiqueta: 'Instantánea', sub: 'copia del disco', categoria: 'almacenamiento' },
+  ]}
+  flujos={[
+    { de: 'visitante', a: 'dns', etiqueta: 'dominio' },
+    { de: 'dns', a: 'lightsail', etiqueta: 'IP fija' },
+    { de: 'lightsail', a: 'snap', etiqueta: 'respaldo' },
+  ]}
+/>
+
+Cuando el proyecto crece y empieza a necesitar escalado automático o varias zonas de disponibilidad,
+la ruta natural es migrar a EC2: Lightsail incluso ofrece una exportación hacia allí.

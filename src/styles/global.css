@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ---------------------------------------------------------------
+   Tipografías oficiales del kit de marca (Amazon Ember)
+   Los .ttf vienen del kit entregado por AWS; se sirven localmente.
+   --------------------------------------------------------------- */
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmberDisplay_Rg.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_Bd.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amazon Ember Display';
+  src: url('/fonts/AmazonEmberDisplay_Bd.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amazon Ember Mono';
+  src: url('/fonts/AmazonEmberMono_Bd.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* ---------------------------------------------------------------
+   Paleta oficial AWS Student Builder Group
+   (extraída de los SVG del kit de marca)
+   --------------------------------------------------------------- */
+@theme {
+  --color-marca-amber: #ff9900;
+  --color-marca-blue: #42b4ff;
+  --color-marca-mint: #00e582;
+  --color-marca-purple: #ad5cff;
+  --color-marca-magenta: #ff57e9;
+  --color-marca-grey: #161d26;
+
+  /* Escala neutra derivada del Grey 850 de marca */
+  --color-tinta-50: #f6f7f9;
+  --color-tinta-100: #eceef2;
+  --color-tinta-200: #d8dce4;
+  --color-tinta-300: #b4bcca;
+  --color-tinta-400: #7d8798;
+  --color-tinta-500: #556072;
+  --color-tinta-600: #3d4756;
+  --color-tinta-700: #2a3340;
+  --color-tinta-800: #1e2630;
+  --color-tinta-900: #161d26;
+
+  --font-sans: 'Amazon Ember', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Amazon Ember Display', 'Amazon Ember', ui-sans-serif, sans-serif;
+  --font-mono: 'Amazon Ember Mono', ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Compensa la barra sticky para que los anclajes no queden bajo ella. */
+  scroll-padding-top: 5.5rem;
+}
+
+/* Punto de color por categoría — accesible porque el texto va en tinta,
+   el color de marca solo se usa como marcador visual. */
+.punto-categoria {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+/* Foco visible y consistente en todo el sitio. */
+:focus-visible {
+  outline: 2px solid var(--color-marca-amber);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* ---------------------------------------------------------------
+   Reveal al hacer scroll. Sin JS el contenido queda visible:
+   la clase .es-visible solo se retira cuando el observer arranca.
+   --------------------------------------------------------------- */
+[data-reveal] {
+  transition:
+    opacity 350ms ease-out,
+    transform 350ms ease-out;
+}
+.reveal-activo [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.reveal-activo [data-reveal].es-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal-activo [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

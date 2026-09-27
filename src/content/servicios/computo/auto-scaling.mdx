@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Auto Scaling'
+categoria: 'computo'
+nivel: 'intermedio'
+resumenCorto: 'Consola única para definir el escalado de varios servicios a la vez a partir de un objetivo de uso o de disponibilidad.'
+cuandoAplicarlo: 'Cuando una aplicación combina EC2, ECS, DynamoDB y Aurora, y quieres una sola política de escalado que los cubra a todos.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Auto Scaling'
+    url: 'https://aws.amazon.com/autoscaling/'
+  - titulo: 'Precios de AWS Auto Scaling'
+    url: 'https://aws.amazon.com/autoscaling/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+AWS Auto Scaling es la capa de planificación que se apoya en los escaladores de cada servicio. En vez de configurar por separado el Auto Scaling Group de EC2, la capacidad de DynamoDB y las réplicas de Aurora, defines una estrategia — optimizar costo, optimizar disponibilidad, o un punto medio — y AWS traduce esa intención a políticas por recurso.
+
+No se confunde con Amazon EC2 Auto Scaling, que es el que realmente agrega y quita instancias; este es el paraguas que coordina varios recursos.

@@ -1,0 +1,113 @@
+---
+nombre: 'AWS KMS'
+nombreCompleto: 'Key Management Service'
+categoria: 'seguridad-identidad'
+nivel: 'intermedio'
+resumenCorto: 'Crea y controla las claves de cifrado que usan los demás servicios, con permisos de IAM y registro de cada uso.'
+analogia: 'Es la caja fuerte de las llaves del edificio: las llaves nunca salen de ahí, tú solo pides que abran o cierren una puerta concreta, y queda anotado quién lo pidió y cuándo.'
+cuandoAplicarlo: 'Siempre que haya datos que cifrar en reposo — buckets, volúmenes, bases de datos, secretos — y haga falta controlar y auditar quién puede descifrarlos.'
+casosDeUso:
+  - 'Cifrar los objetos de un bucket de S3 con una clave propia y no con la de AWS'
+  - 'Cifrar volúmenes de EBS, instantáneas y bases de datos de RDS'
+  - 'Proteger secretos y parámetros de configuración'
+  - 'Demostrar en una auditoría quién descifró qué y en qué momento'
+
+conceptosClave:
+  - termino: 'Clave gestionada por el cliente'
+    definicion: 'La que tú creas y controlas: su política, su rotación y quién puede usarla.'
+  - termino: 'Clave gestionada por AWS'
+    definicion: 'La que crea el servicio automáticamente. No cuesta, pero no se puede ajustar su política.'
+  - termino: 'Cifrado de sobre'
+    definicion: 'El dato se cifra con una clave de datos, y esa clave se cifra con la de KMS. Es lo que permite cifrar archivos grandes.'
+  - termino: 'Política de clave'
+    definicion: 'El permiso que vive en la propia clave. Sin él, ni siquiera un administrador de la cuenta puede usarla.'
+  - termino: 'Rotación automática'
+    definicion: 'KMS genera material criptográfico nuevo cada año sin que cambie el identificador de la clave.'
+
+modeloDePrecios: 'Una tarifa mensual por cada clave gestionada por el cliente, más un costo por cada diez mil peticiones criptográficas. Las claves gestionadas por AWS no tienen costo mensual.'
+capaGratuita: '20.000 peticiones al mes de forma permanente. El cargo mensual por clave sí se aplica desde la primera clave propia.'
+trampasDeCosto:
+  - 'Crear una clave propia por cada recurso: cada una tiene su tarifa mensual, y a menudo bastaría una por entorno.'
+  - 'Aplicaciones que piden descifrar en cada operación en lugar de reutilizar la clave de datos: dispara el número de peticiones.'
+  - 'Claves programadas para borrado que nadie llega a eliminar: siguen cobrando durante el periodo de espera.'
+
+alternativas:
+  - servicio: 'AWS CloudHSM'
+    slug: 'seguridad-identidad/cloudhsm'
+    porque: 'si una norma exige que el material de la clave viva en un módulo de hardware dedicado y exclusivo.'
+  - servicio: 'Cifrado gestionado por el servicio'
+    porque: 'si no necesitas controlar la política de la clave, la opción por defecto ya cifra y no cuesta nada.'
+
+serviciosRelacionados:
+  - 'seguridad-identidad/iam'
+  - 'seguridad-identidad/secrets-manager'
+  - 'almacenamiento/s3'
+  - 'almacenamiento/ebs'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Security – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de AWS KMS'
+    url: 'https://docs.aws.amazon.com/kms/'
+  - titulo: 'Precios de AWS KMS'
+    url: 'https://aws.amazon.com/kms/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Cifrar es fácil; administrar las claves es lo difícil. Dónde se guardan, quién puede usarlas, cómo se
+rotan sin romper lo ya cifrado y cómo se demuestra ante un auditor quién descifró qué. KMS existe
+para responder exactamente esas preguntas.
+
+Su idea central es que **el material de la clave nunca sale del servicio**. Las aplicaciones no
+reciben la clave: le piden a KMS que cifre o descifre, y KMS comprueba los permisos de IAM y anota la
+operación en CloudTrail. Quien pierde el permiso pierde el acceso al dato, aunque tenga el archivo.
+
+## Cómo funciona
+
+1. Creas una **clave gestionada por el cliente** con su política, que define quién la administra y
+   quién puede usarla.
+2. Un servicio como S3, EBS o RDS se configura para cifrar con esa clave.
+3. Para archivos grandes se usa **cifrado de sobre**: KMS entrega una clave de datos, el servicio
+   cifra con ella y guarda esa clave ya cifrada junto al dato.
+4. Al leer, el servicio pide a KMS que descifre la clave de datos. Si el permiso no está, la lectura
+   falla aunque el archivo se pueda descargar.
+5. Cada operación queda registrada en **CloudTrail**, con quién la hizo y sobre qué recurso.
+
+## Manos a la obra
+
+- Crea una clave gestionada por el cliente y anota su tarifa mensual antes de seguir.
+- Crea un bucket de S3 que cifre con esa clave y sube un archivo.
+- Quita a tu propio usuario el permiso `kms:Decrypt` en la política de la clave e intenta descargarlo:
+  el objeto está ahí y aun así no se puede leer.
+- Restaura el permiso y revisa en CloudTrail los dos intentos, el fallido y el correcto.
+- **Programa el borrado de la clave al terminar** para que deje de generar cargo mensual.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Cifrado de sobre en un bucket de S3"
+  descripcion="Una aplicación sube un archivo a Amazon S3, que está configurado para cifrar con una clave de AWS KMS. S3 pide a KMS una clave de datos, cifra el objeto con ella y guarda esa clave ya cifrada junto al archivo. Cuando alguien intenta leer el objeto, S3 pide a KMS que descifre la clave de datos, y KMS comprueba antes los permisos de IAM de quien pregunta. Cada una de esas operaciones queda registrada en AWS CloudTrail, así que existe un rastro completo de quién descifró qué."
+  nodos={[
+    { id: 'app', etiqueta: 'Aplicación', tipo: 'externo' },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'objeto cifrado', categoria: 'almacenamiento' },
+    { id: 'kms', etiqueta: 'AWS KMS', sub: 'clave', categoria: 'seguridad-identidad' },
+    { id: 'trail', etiqueta: 'AWS CloudTrail', sub: 'registro', categoria: 'administracion-y-gobernanza' },
+  ]}
+  flujos={[
+    { de: 'app', a: 's3', etiqueta: 'sube' },
+    { de: 's3', a: 'kms', etiqueta: 'clave datos' },
+    { de: 'kms', a: 'trail', etiqueta: 'anota uso' },
+  ]}
+/>
+
+La consecuencia práctica es fuerte: con KMS, revocar un permiso equivale a revocar el acceso al dato,
+sin necesidad de mover ni volver a cifrar un solo archivo.

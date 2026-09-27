@@ -1,0 +1,114 @@
+---
+nombre: 'Amazon VPC'
+nombreCompleto: 'Virtual Private Cloud'
+categoria: 'redes-y-entrega-de-contenido'
+nivel: 'fundamental'
+resumenCorto: 'Tu propia red privada dentro de AWS: defines el rango de direcciones, las subredes y qué puede hablar con qué.'
+analogia: 'Es el plano eléctrico del edificio: nadie lo mira mientras todo funciona, pero determina qué habitación tiene corriente, cuál está aislada y por dónde entra la acometida de la calle.'
+cuandoAplicarlo: 'Siempre. Cada instancia EC2, base de datos RDS o tarea de ECS vive dentro de una VPC, aunque sea la que AWS crea por defecto.'
+casosDeUso:
+  - 'Separar los servidores web públicos de las bases de datos privadas'
+  - 'Aislar los entornos de desarrollo, prueba y producción entre sí'
+  - 'Conectar la red de AWS con la red de la universidad mediante VPN'
+  - 'Cumplir un requisito que exige que ciertos datos nunca salgan a internet'
+
+conceptosClave:
+  - termino: 'Subred'
+    definicion: 'Un trozo del rango de direcciones, siempre dentro de una sola zona de disponibilidad.'
+  - termino: 'Subred pública y privada'
+    definicion: 'Pública es la que tiene ruta hacia una puerta de enlace de internet; privada es la que no la tiene.'
+  - termino: 'Tabla de enrutamiento'
+    definicion: 'La lista de reglas que decide hacia dónde va cada paquete que sale de una subred.'
+  - termino: 'Grupo de seguridad'
+    definicion: 'Firewall con estado a nivel de recurso: si permites la entrada, la respuesta sale sin regla adicional.'
+  - termino: 'Lista de control de acceso de red'
+    definicion: 'Firewall sin estado a nivel de subred, con reglas de entrada y de salida independientes.'
+  - termino: 'NAT Gateway'
+    definicion: 'Permite que las subredes privadas salgan a internet sin que internet pueda entrar hacia ellas.'
+
+modeloDePrecios: 'La VPC, las subredes, las tablas de enrutamiento y los grupos de seguridad son gratuitos. Lo que cuesta son los componentes: NAT Gateway por hora y por gigabyte, VPN, puntos de conexión y tráfico entre zonas.'
+capaGratuita: 'La red en sí no consume capa gratuita. El NAT Gateway no está incluido en ella y es la fuente de gasto inesperado más habitual en cuentas de aprendizaje.'
+trampasDeCosto:
+  - 'Un NAT Gateway olvidado cuesta cada hora del mes aunque no pase un solo byte por él.'
+  - 'Tráfico entre zonas de disponibilidad: mover datos entre la zona A y la B se factura por gigabyte en ambos sentidos.'
+  - 'Direcciones IP elásticas reservadas y no asociadas a nada generan cargo.'
+
+alternativas:
+  - servicio: 'VPC por defecto'
+    porque: 'para aprender y para pruebas rápidas, la VPC que AWS crea en cada región ya viene con subredes públicas listas.'
+  - servicio: 'AWS PrivateLink'
+    slug: 'redes-y-entrega-de-contenido/privatelink'
+    porque: 'si lo único que falta es alcanzar un servicio de AWS de forma privada, no hace falta un NAT Gateway.'
+
+serviciosRelacionados:
+  - 'computo/ec2'
+  - 'redes-y-entrega-de-contenido/elb'
+  - 'redes-y-entrega-de-contenido/privatelink'
+  - 'bases-de-datos/rds'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Advanced Networking – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon VPC'
+    url: 'https://docs.aws.amazon.com/vpc/'
+  - titulo: 'Precios de Amazon VPC'
+    url: 'https://aws.amazon.com/vpc/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+La VPC es la capa que casi nadie estudia primero y que después explica la mitad de los problemas.
+Es una red privada tuya dentro de AWS: eliges su rango de direcciones, la partes en subredes y
+decides qué rutas existen entre ellas y hacia el exterior.
+
+La distinción fundamental es simple y tiene consecuencias enormes. Una subred es **pública** si su
+tabla de enrutamiento tiene una ruta hacia la puerta de enlace de internet, y **privada** si no la
+tiene. Ahí se decide qué queda expuesto y qué no; el resto son detalles.
+
+## Cómo funciona
+
+1. Defines la VPC con un rango de direcciones privadas, por ejemplo `10.0.0.0/16`.
+2. La divides en **subredes**, repartidas entre varias zonas de disponibilidad para tolerar fallos.
+3. Las subredes públicas se enrutan hacia una **puerta de enlace de internet**; las privadas, hacia un
+   **NAT Gateway** si necesitan salir, o hacia ninguna parte si no deben hacerlo.
+4. Los **grupos de seguridad** protegen cada recurso, y las listas de control de acceso protegen la
+   subred completa.
+5. Lo que va fuera de la VPC — otra VPC, la red del campus, un servicio de AWS — pasa por un
+   emparejamiento, un Transit Gateway, una VPN o un punto de conexión de PrivateLink.
+
+## Manos a la obra
+
+- Crea una VPC con el asistente: dos subredes públicas y dos privadas, **sin NAT Gateway**.
+- Lanza una instancia en la subred pública y comprueba que responde desde internet.
+- Lanza otra en la privada e intenta alcanzarla: no hay ruta, y ese es exactamente el punto.
+- Conéctate a la privada usando Session Manager de Systems Manager, sin abrir ningún puerto.
+- Revisa la tabla de enrutamiento de cada subred hasta ver de dónde sale la diferencia.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Subred pública y subred privada"
+  descripcion="Un visitante llega desde internet a la puerta de enlace de la VPC y alcanza la instancia de Amazon EC2 que vive en la subred pública, donde corre la aplicación web. Esa instancia consulta a la base de datos de Amazon RDS, que está en la subred privada y no tiene ninguna ruta hacia internet. La base de datos solo acepta conexiones del grupo de seguridad de la aplicación. Esa separación entre subred pública y privada es el patrón de red más repetido en AWS."
+  nodos={[
+    { id: 'visitante', etiqueta: 'Visitante', tipo: 'externo' },
+    { id: 'igw', etiqueta: 'Internet Gateway', sub: 'entrada a la VPC', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 'web', etiqueta: 'Amazon EC2', sub: 'subred pública', categoria: 'computo' },
+    { id: 'db', etiqueta: 'Amazon RDS', sub: 'subred privada', categoria: 'bases-de-datos' },
+  ]}
+  flujos={[
+    { de: 'visitante', a: 'igw', etiqueta: 'HTTPS' },
+    { de: 'igw', a: 'web', etiqueta: 'enruta' },
+    { de: 'web', a: 'db', etiqueta: 'SQL' },
+  ]}
+/>
+
+Que la base de datos no tenga camino de vuelta hacia internet no es un detalle de configuración: es
+la diferencia entre un incidente contenido y una filtración.

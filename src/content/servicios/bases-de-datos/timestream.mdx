@@ -1,0 +1,22 @@
+---
+nombre: 'Amazon Timestream'
+categoria: 'bases-de-datos'
+nivel: 'avanzado'
+resumenCorto: 'Base de datos de series temporales que mueve sola los datos antiguos a un nivel más barato conforme envejecen.'
+cuandoAplicarlo: 'Cuando se ingieren medidas con marca de tiempo — sensores, métricas, telemetría — y las consultas siempre son por ventana de tiempo.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon Timestream'
+    url: 'https://aws.amazon.com/timestream/'
+  - titulo: 'Precios de Amazon Timestream'
+    url: 'https://aws.amazon.com/timestream/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Timestream separa el almacenamiento en memoria, para lo reciente y consultado con frecuencia, del magnético, para el histórico. Tú defines cuánto vive el dato en cada nivel y el traslado ocurre solo.
+
+Su lenguaje incluye funciones propias de series temporales — interpolación, suavizado, agregación por ventana — que en SQL genérico serían consultas largas y costosas.

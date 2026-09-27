@@ -1,0 +1,113 @@
+---
+nombre: 'Amazon Bedrock'
+categoria: 'machine-learning'
+nivel: 'intermedio'
+resumenCorto: 'Acceso por API a modelos fundacionales de varios proveedores, sin administrar infraestructura ni descargar pesos.'
+analogia: 'Es el enchufe universal de los modelos de IA: cambiar de proveedor es cambiar el nombre del modelo en una línea, no rehacer la instalación eléctrica.'
+cuandoAplicarlo: 'Cuando la aplicación necesita generar o entender texto, imágenes o código, y no tiene sentido entrenar un modelo propio desde cero.'
+casosDeUso:
+  - 'Resumir documentos largos o generar borradores de texto'
+  - 'Responder preguntas sobre la documentación propia con recuperación aumentada'
+  - 'Clasificar y extraer información de textos libres'
+  - 'Asistentes conversacionales sobre datos de la organización'
+
+conceptosClave:
+  - termino: 'Modelo fundacional'
+    definicion: 'Un modelo grande ya entrenado y de propósito general, servido por API sin que tú lo alojes.'
+  - termino: 'Token'
+    definicion: 'La unidad de facturación: fragmentos de texto de entrada y de salida. El precio se cuenta por millar o por millón.'
+  - termino: 'Base de conocimientos'
+    definicion: 'La función que indexa documentos propios para que el modelo responda citando esas fuentes.'
+  - termino: 'Barrera de protección (guardrail)'
+    definicion: 'Las reglas que filtran temas y contenido no deseado en la entrada y en la salida del modelo.'
+  - termino: 'Agente'
+    definicion: 'La configuración que permite al modelo invocar API propias para completar una tarea de varios pasos.'
+
+modeloDePrecios: 'Por token de entrada y de salida, con precio distinto según el modelo. Existe además el rendimiento aprovisionado, que reserva capacidad por hora para cargas constantes.'
+capaGratuita: 'No hay capa gratuita general. Como se paga por token, las pruebas pequeñas cuestan centavos, pero el consumo crece rápido con textos largos.'
+trampasDeCosto:
+  - 'Enviar el documento completo en cada consulta en vez de recuperar solo los fragmentos relevantes.'
+  - 'Elegir el modelo más grande por costumbre: para clasificar o extraer datos, uno pequeño suele bastar y cuesta mucho menos.'
+  - 'Rendimiento aprovisionado contratado para un tráfico que no llegó: se paga por hora reservada.'
+
+alternativas:
+  - servicio: 'Amazon SageMaker AI'
+    slug: 'machine-learning/sagemaker-ai'
+    porque: 'si el caso exige un modelo propio entrenado con datos que ningún modelo general conoce.'
+  - servicio: 'Amazon Comprehend'
+    slug: 'machine-learning/comprehend'
+    porque: 'si la tarea es análisis de sentimiento o extracción de entidades, una API específica es más barata y predecible.'
+  - servicio: 'Amazon Q'
+    slug: 'machine-learning/q'
+    porque: 'si lo que se busca es un asistente ya construido y no una API sobre la que programar.'
+
+serviciosRelacionados:
+  - 'machine-learning/sagemaker-ai'
+  - 'machine-learning/nova'
+  - 'machine-learning/kendra'
+  - 'computo/lambda'
+
+certificaciones:
+  - 'AWS Certified AI Practitioner'
+  - 'AWS Certified Machine Learning Engineer – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Bedrock'
+    url: 'https://docs.aws.amazon.com/bedrock/'
+  - titulo: 'Precios de Amazon Bedrock'
+    url: 'https://aws.amazon.com/bedrock/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Bedrock es una API única delante de modelos de varios proveedores, incluidos los propios de Amazon.
+Los modelos corren en la infraestructura de AWS: no hay que descargar pesos, aprovisionar GPU ni
+mantener un servidor de inferencia, y los datos enviados no se usan para entrenar los modelos.
+
+Su ventaja de diseño es la portabilidad. Cambiar de modelo — porque salió uno mejor, más barato o más
+rápido — es cambiar un identificador en la llamada. Esa flexibilidad importa en un campo donde la
+mejor opción cambia cada pocos meses.
+
+## Cómo funciona
+
+1. Solicitas acceso a los modelos que quieras usar dentro de tu cuenta y región.
+2. La aplicación llama a la API con la instrucción y los parámetros de generación.
+3. Se factura por **tokens** de entrada y de salida, así que el tamaño del contexto es el costo.
+4. Una **base de conocimientos** indexa documentos propios y añade solo los fragmentos relevantes a
+   cada consulta, que es el patrón de recuperación aumentada.
+5. Las **barreras de protección** filtran temas y contenido, y los **agentes** permiten que el modelo
+   invoque API propias para completar tareas.
+
+## Manos a la obra
+
+- Solicita acceso a un par de modelos y prueba la misma instrucción en ambos desde el patio de juegos.
+- Llama a la API desde una función Lambda y devuelve la respuesta por API Gateway.
+- Compara el costo de la misma tarea con un modelo grande y con uno pequeño.
+- Crea una base de conocimientos con documentos del club y pregunta sobre ellos.
+- Configura una barrera de protección y comprueba cómo cambia la respuesta ante una entrada vetada.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Responder preguntas sobre documentos propios"
+  descripcion="Una persona hace una pregunta desde la aplicación web, que llega a Amazon API Gateway y de ahí a una función de AWS Lambda. La función consulta la base de conocimientos de Amazon Bedrock, que busca en los documentos indexados desde Amazon S3 los fragmentos relevantes y se los entrega al modelo fundacional junto con la pregunta. El modelo redacta la respuesta citando esas fuentes. El modelo no fue entrenado con los documentos del club: los recibe como contexto en cada consulta."
+  nodos={[
+    { id: 'persona', etiqueta: 'Persona', sub: 'pregunta', tipo: 'externo' },
+    { id: 'lambda', etiqueta: 'AWS Lambda', sub: 'orquesta', categoria: 'computo' },
+    { id: 'bedrock', etiqueta: 'Amazon Bedrock', sub: 'modelo', categoria: 'machine-learning' },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'documentos', categoria: 'almacenamiento' },
+  ]}
+  flujos={[
+    { de: 'persona', a: 'lambda', etiqueta: 'pregunta' },
+    { de: 'lambda', a: 'bedrock', etiqueta: 'consulta' },
+    { de: 's3', a: 'bedrock', etiqueta: 'contexto' },
+  ]}
+/>
+
+Ese patrón — recuperar primero, generar después — es el que permite que un modelo general responda
+con información que nunca vio durante su entrenamiento.

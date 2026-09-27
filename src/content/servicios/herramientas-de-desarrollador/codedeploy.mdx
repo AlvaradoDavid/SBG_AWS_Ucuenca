@@ -1,0 +1,22 @@
+---
+nombre: 'AWS CodeDeploy'
+categoria: 'herramientas-de-desarrollador'
+nivel: 'intermedio'
+resumenCorto: 'Automatiza el despliegue de una versión nueva en EC2, Lambda o ECS, con reversión automática si algo falla.'
+cuandoAplicarlo: 'Cuando publicar una versión debe ser un procedimiento repetible y reversible, no una copia de archivos a mano.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS CodeDeploy'
+    url: 'https://aws.amazon.com/codedeploy/'
+  - titulo: 'Precios de AWS CodeDeploy'
+    url: 'https://aws.amazon.com/codedeploy/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+CodeDeploy admite despliegues progresivos: azul y verde, donde la versión nueva convive con la anterior hasta que se confirma, o canario, donde se le entrega un porcentaje pequeño del tráfico. Si una alarma de CloudWatch se dispara, revierte solo.
+
+Es la diferencia entre desplegar con miedo un viernes y desplegar cuando haga falta.

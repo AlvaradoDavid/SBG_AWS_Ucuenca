@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Transfer Family'
+categoria: 'migracion'
+nivel: 'intermedio'
+resumenCorto: 'Puntos de acceso SFTP, FTPS, FTP y AS2 administrados que leen y escriben directamente en S3 o EFS.'
+cuandoAplicarlo: 'Cuando socios externos entregan archivos por SFTP y no se quiere mantener un servidor propio para recibirlos.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Transfer Family'
+    url: 'https://aws.amazon.com/aws-transfer-family/'
+  - titulo: 'Precios de AWS Transfer Family'
+    url: 'https://aws.amazon.com/aws-transfer-family/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+El servicio expone el protocolo de siempre a los socios, pero los archivos aterrizan en S3, donde ya pueden dispararse procesos con Lambda o EventBridge. La autenticación se resuelve con claves, un directorio o una función propia.
+
+Es la forma de modernizar la ingesta de archivos sin pedirle a nadie que cambie su forma de enviarlos.

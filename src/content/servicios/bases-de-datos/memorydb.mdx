@@ -1,0 +1,22 @@
+---
+nombre: 'Amazon MemoryDB for Redis'
+categoria: 'bases-de-datos'
+nivel: 'avanzado'
+resumenCorto: 'Base de datos en memoria compatible con Redis que además persiste de forma duradera en varias zonas de disponibilidad.'
+cuandoAplicarlo: 'Cuando necesitas la latencia de Redis pero los datos son la fuente de verdad y no pueden perderse ante un reinicio.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon MemoryDB for Redis'
+    url: 'https://aws.amazon.com/memorydb/'
+  - titulo: 'Precios de Amazon MemoryDB for Redis'
+    url: 'https://aws.amazon.com/memorydb/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+La diferencia con ElastiCache es exactamente esa: ElastiCache es una caché, y si se pierde, se repuebla desde la base de datos real. MemoryDB escribe cada cambio en un registro de transacciones distribuido antes de confirmarlo, así que sirve como base de datos principal.
+
+El precio es notablemente más alto que el de una caché; se justifica solo cuando la durabilidad es un requisito.

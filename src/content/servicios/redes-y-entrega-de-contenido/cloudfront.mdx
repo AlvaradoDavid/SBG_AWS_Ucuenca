@@ -1,0 +1,99 @@
+---
+nombre: 'Amazon CloudFront'
+categoria: 'redes-y-entrega-de-contenido'
+nivel: 'intermedio'
+resumenCorto: 'Red de entrega de contenido que acerca tu sitio a los visitantes y le pone HTTPS.'
+analogia: 'Es tener una copia de tu sitio en bodegas repartidas por todo el mundo: quien lo pide desde Cuenca lo recibe de la bodega más cercana, no del servidor original.'
+cuandoAplicarlo: 'Cuando quieres que tu sitio o tus archivos carguen rápido desde cualquier parte, con HTTPS y sin exponer directamente el origen que los almacena.'
+casosDeUso:
+  - 'Servir un sitio estático alojado en S3 con dominio propio y certificado TLS'
+  - 'Distribuir imágenes y videos pesados sin saturar el origen'
+  - 'Reducir el costo de transferencia de datos frente a servir todo desde S3'
+  - 'Proteger el origen para que nadie pueda acceder al bucket directamente'
+
+conceptosClave:
+  - termino: 'Distribución'
+    definicion: 'La configuración de CloudFront: qué origen sirve, con qué dominio y con qué reglas de caché.'
+  - termino: 'Edge location'
+    definicion: 'Cada uno de los puntos de presencia repartidos por el mundo donde se guarda la copia en caché.'
+  - termino: 'Origin Access Control (OAC)'
+    definicion: 'El mecanismo que permite que solo CloudFront lea el bucket S3, manteniéndolo privado.'
+  - termino: 'Invalidación'
+    definicion: 'La orden de borrar la caché para que los visitantes reciban la versión nueva tras un despliegue.'
+
+modeloDePrecios: 'Por GB transferido hacia internet y por número de peticiones, con precios que varían según la región del visitante.'
+capaGratuita: '1 TB de transferencia de datos y 10 millones de peticiones al mes, de forma permanente — más que suficiente para un sitio universitario.'
+trampasDeCosto:
+  - 'Invalidar rutas con comodín en cada despliegue: las primeras 1.000 invalidaciones al mes son gratis, después se cobran.'
+  - 'Configurar un TTL de caché muy bajo: cada visita vuelve al origen y se pierde el ahorro.'
+
+alternativas:
+  - servicio: 'S3 con website hosting directo'
+    slug: 'almacenamiento/s3'
+    porque: 'si es una prueba interna sin dominio propio y no te importa que no tenga HTTPS ni caché global.'
+
+serviciosRelacionados:
+  - 'almacenamiento/s3'
+  - 'seguridad-identidad/iam'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon CloudFront'
+    url: 'https://docs.aws.amazon.com/cloudfront/'
+  - titulo: 'Precios de Amazon CloudFront'
+    url: 'https://aws.amazon.com/cloudfront/pricing/'
+
+actualizado: 2026-08-06
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+CloudFront es la CDN de AWS: guarda copias de tu contenido en cientos de *edge locations* repartidas
+por el mundo, de modo que cada visitante lo recibe desde el punto más cercano en vez de viajar hasta
+la región donde vive el origen.
+
+Además de velocidad, aporta dos cosas que un bucket S3 solo no da: **HTTPS con certificado propio**
+(vía ACM) y la posibilidad de mantener el **bucket completamente privado**, ya que solo CloudFront
+tiene permiso para leerlo.
+
+## Cómo funciona
+
+1. Creas una **distribución** y le indicas un **origen** — en nuestro caso, el bucket S3 del sitio.
+2. Configuras **Origin Access Control** para que el bucket solo acepte peticiones de esa distribución.
+3. Asocias un certificado de **ACM** y, si lo hay, el dominio propio vía Route 53.
+4. En cada despliegue, se **invalida** la caché para que los visitantes reciban la versión nueva.
+
+## Manos a la obra
+
+- Crea una distribución apuntando a un bucket S3 privado con OAC.
+- Abre la URL de CloudFront: el sitio carga por HTTPS.
+- Intenta abrir la URL directa del objeto en S3: *Access Denied*.
+- Sube un cambio al bucket y recarga sin invalidar: seguirás viendo la versión vieja. Invalida y
+  recarga: ahí aparece. Ese experimento explica la caché mejor que cualquier definición.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="La capa de entrega de este sitio"
+  descripcion="El navegador resuelve primero el dominio consultando a Route 53. Con esa dirección pide la página a CloudFront por HTTPS. CloudFront responde desde su caché de borde y, solo si no la tiene, la busca en el bucket S3 privado mediante Origin Access Control. Nótese que Route 53 no está en el camino de los datos: solo traduce el nombre del dominio."
+  nodos={[
+    { id: 'navegador', etiqueta: 'Navegador', tipo: 'externo' },
+    { id: 'r53', etiqueta: 'Route 53', sub: 'DNS', categoria: 'redes-y-entrega-de-contenido', fila: 0 },
+    { id: 'cf', etiqueta: 'CloudFront', sub: 'edge location', categoria: 'redes-y-entrega-de-contenido', fila: 1 },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'bucket privado', categoria: 'almacenamiento' },
+  ]}
+  flujos={[
+    { de: 'navegador', a: 'r53', etiqueta: 'resuelve' },
+    { de: 'navegador', a: 'cf', etiqueta: 'GET HTTPS' },
+    { de: 'cf', a: 's3', etiqueta: 'si falta' },
+  ]}
+/>
+
+La flecha hacia S3 es la que menos se recorre: si la caché de borde ya tiene la página, el bucket
+ni se entera. Ahí está el ahorro de transferencia.

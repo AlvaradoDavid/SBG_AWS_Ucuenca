@@ -1,0 +1,259 @@
+---
+/**
+ * Campo de partículas a la deriva para usar como fondo de una sección.
+ *
+ * Port propio del efecto "particle drift": nodos ASCII que caen lentamente,
+ * líneas entre nodos cercanos, haces ascendentes y reacción al puntero.
+ *
+ * Diferencias deliberadas con el original de referencia (ver docs/decisiones.md):
+ *   · Sin React, sin iframe y sin CDNs externos.
+ *   · Adaptado a fondo claro y a la paleta del club, no al azul genérico.
+ *   · Se detiene fuera de pantalla y con la pestaña oculta, en vez de animar siempre.
+ *   · Con prefers-reduced-motion dibuja un solo fotograma y se queda quieto.
+ *
+ * La sección contenedora necesita `relative` y `overflow-hidden`.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+---
+
+<canvas
+  data-particulas
+  aria-hidden="true"
+  class={`pointer-events-none absolute inset-0 h-full w-full ${className}`}></canvas>
+
+<style>
+  /* Solo un desvanecido en los bordes superior e inferior, para fundir el campo
+     con las secciones vecinas.
+
+     Deliberadamente NO hay degradado horizontal: la primera versión atenuaba el
+     lado izquierdo para "apartar las partículas del texto", pero el collage de
+     fotos ocupa el 53 % derecho y es opaco, así que el efecto quedaba más fuerte
+     justo donde las fotos lo tapaban, y al 14 % de alfa donde sí se veía. */
+  canvas[data-particulas] {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  }
+</style>
+
+<script>
+  const GLIFOS = '01{}[]<>/\\|+=*#$%&·:;~^ABCDEF'.split('');
+
+  /** Densidad: un nodo por cada ~14.000 px². En móvil salen ~20, en escritorio ~55. */
+  const AREA_POR_NODO = 14000;
+  const NODOS_MIN = 14;
+  const NODOS_MAX = 70;
+  /** Radio de conexión entre nodos y con el puntero. */
+  const ENLACE = 110;
+  const ALCANCE_PUNTERO = 150;
+
+  /** Convierte "#ff9900" en "255, 153, 0" para poder variar el alfa. */
+  function aRgb(hex: string, respaldo: string): string {
+    const limpio = hex.trim().replace('#', '');
+    if (limpio.length !== 6) return respaldo;
+    const n = Number.parseInt(limpio, 16);
+    if (!Number.isFinite(n)) return respaldo;
+    return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+  }
+
+  function iniciar(lienzo: HTMLCanvasElement) {
+    const ctx = lienzo.getContext('2d');
+    if (!ctx) return;
+
+    // Los colores salen de los tokens de @theme, así que siguen a la marca.
+    const raiz = getComputedStyle(document.documentElement);
+    const ACENTO = aRgb(raiz.getPropertyValue('--color-marca-amber'), '255, 153, 0');
+    const NEUTRO = aRgb(raiz.getPropertyValue('--color-tinta-500'), '85, 96, 114');
+
+    const quietud = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const punteroFino = window.matchMedia('(pointer: fine)');
+
+    let ancho = 0;
+    let alto = 0;
+    let nodos: { x: number; y: number; vy: number; glifo: number }[] = [];
+    let haces: { x: number; y: number; largo: number; vel: number; alfa: number }[] = [];
+    const puntero = { x: -9999, y: -9999 };
+    let corriendo = false;
+    let enPantalla = false;
+
+    function medir() {
+      const caja = lienzo.getBoundingClientRect();
+      ancho = Math.max(1, Math.round(caja.width));
+      alto = Math.max(1, Math.round(caja.height));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      lienzo.width = Math.round(ancho * dpr);
+      lienzo.height = Math.round(alto * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function poblar() {
+      const cuantos = Math.round(
+        Math.min(NODOS_MAX, Math.max(NODOS_MIN, (ancho * alto) / AREA_POR_NODO))
+      );
+      nodos = Array.from({ length: cuantos }, () => ({
+        x: Math.random() * ancho,
+        y: Math.random() * alto,
+        vy: Math.random() * 0.28 + 0.06,
+        glifo: Math.floor(Math.random() * GLIFOS.length),
+      }));
+      haces = Array.from({ length: Math.max(3, Math.round(cuantos / 5)) }, () => ({
+        x: Math.random() * ancho,
+        y: Math.random() * alto,
+        largo: Math.random() * 90 + 40,
+        vel: Math.random() * 2.4 + 1.2,
+        alfa: Math.random() * 0.2 + 0.1,
+      }));
+    }
+
+    function dibujar(avanzar: boolean) {
+      ctx.clearRect(0, 0, ancho, alto);
+
+      // Haces ascendentes: sugieren tráfico subiendo a la nube.
+      for (const h of haces) {
+        if (avanzar) {
+          h.y -= h.vel;
+          if (h.y + h.largo < 0) {
+            h.y = alto + Math.random() * 80;
+            h.x = Math.random() * ancho;
+          }
+        }
+        const grad = ctx.createLinearGradient(h.x, h.y, h.x, h.y + h.largo);
+        grad.addColorStop(0, `rgba(${ACENTO}, ${h.alfa})`);
+        grad.addColorStop(1, `rgba(${ACENTO}, 0)`);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(h.x, h.y);
+        ctx.lineTo(h.x, h.y + h.largo);
+        ctx.stroke();
+      }
+
+      // Líneas entre nodos cercanos. Con ~55 nodos son ~1.500 comparaciones
+      // por fotograma, coste despreciable; por eso no hace falta indexar.
+      ctx.lineWidth = 0.6;
+      for (let i = 0; i < nodos.length; i++) {
+        for (let j = i + 1; j < nodos.length; j++) {
+          const dx = nodos[i].x - nodos[j].x;
+          const dy = nodos[i].y - nodos[j].y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 >= ENLACE * ENLACE) continue;
+          const cercania = 1 - Math.sqrt(d2) / ENLACE;
+          ctx.strokeStyle = `rgba(${NEUTRO}, ${(0.24 * cercania).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(nodos[i].x, nodos[i].y);
+          ctx.lineTo(nodos[j].x, nodos[j].y);
+          ctx.stroke();
+        }
+      }
+
+      // Nodos.
+      ctx.font = '11px ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      for (const n of nodos) {
+        if (avanzar) {
+          n.y += n.vy;
+          if (n.y > alto + 16) {
+            n.y = -16;
+            n.x = Math.random() * ancho;
+          }
+        }
+
+        const dx = puntero.x - n.x;
+        const dy = puntero.y - n.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const cerca = dist < ALCANCE_PUNTERO;
+
+        if (avanzar && (cerca ? Math.random() > 0.9 : Math.random() > 0.995)) {
+          n.glifo = Math.floor(Math.random() * GLIFOS.length);
+        }
+
+        if (cerca) {
+          const fuerza = 1 - dist / ALCANCE_PUNTERO;
+          ctx.strokeStyle = `rgba(${ACENTO}, ${(0.45 * fuerza).toFixed(3)})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(n.x, n.y);
+          ctx.lineTo(puntero.x, puntero.y);
+          ctx.stroke();
+          ctx.fillStyle = `rgba(${ACENTO}, ${(0.35 + 0.5 * fuerza).toFixed(3)})`;
+        } else {
+          // 0.44 de alfa: valor máximo medido con el que un titular en tinta-900
+          // encima de un glifo sigue por encima del 7:1 de AAA.
+          ctx.fillStyle = `rgba(${NEUTRO}, 0.44)`;
+        }
+        ctx.fillText(GLIFOS[n.glifo], n.x, n.y);
+      }
+    }
+
+    function bucle() {
+      if (!corriendo) return;
+      dibujar(true);
+      requestAnimationFrame(bucle);
+    }
+
+    function arrancar() {
+      if (corriendo || quietud.matches) return;
+      corriendo = true;
+      requestAnimationFrame(bucle);
+    }
+
+    function detener() {
+      corriendo = false;
+    }
+
+    function sincronizar() {
+      // Solo anima si está a la vista y la pestaña está al frente: un fondo
+      // decorativo no debería gastar batería mientras nadie lo mira.
+      if (enPantalla && document.visibilityState === 'visible') arrancar();
+      else detener();
+    }
+
+    medir();
+    poblar();
+    dibujar(false);
+
+    new IntersectionObserver((entradas) => {
+      enPantalla = entradas.some((e) => e.isIntersecting);
+      sincronizar();
+    }).observe(lienzo);
+
+    document.addEventListener('visibilitychange', sincronizar);
+
+    let temporizador: number | undefined;
+    new ResizeObserver(() => {
+      window.clearTimeout(temporizador);
+      temporizador = window.setTimeout(() => {
+        medir();
+        poblar();
+        dibujar(false);
+      }, 150);
+    }).observe(lienzo);
+
+    if (punteroFino.matches) {
+      window.addEventListener(
+        'pointermove',
+        (evento) => {
+          const caja = lienzo.getBoundingClientRect();
+          puntero.x = evento.clientX - caja.left;
+          puntero.y = evento.clientY - caja.top;
+        },
+        { passive: true }
+      );
+    }
+
+    // Si el usuario cambia la preferencia sobre la marcha, se respeta al vuelo.
+    quietud.addEventListener('change', () => {
+      if (quietud.matches) {
+        detener();
+        dibujar(false);
+      } else {
+        sincronizar();
+      }
+    });
+  }
+
+  document.querySelectorAll<HTMLCanvasElement>('canvas[data-particulas]').forEach(iniciar);
+</script>

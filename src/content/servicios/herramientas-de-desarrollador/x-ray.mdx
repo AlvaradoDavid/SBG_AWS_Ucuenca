@@ -1,0 +1,22 @@
+---
+nombre: 'AWS X-Ray'
+categoria: 'herramientas-de-desarrollador'
+nivel: 'intermedio'
+resumenCorto: 'Traza una petición a través de todos los servicios que atraviesa y muestra dónde se fue el tiempo.'
+cuandoAplicarlo: 'Cuando una petición es lenta o falla y la arquitectura tiene tantos saltos que los registros sueltos no bastan.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS X-Ray'
+    url: 'https://aws.amazon.com/xray/'
+  - titulo: 'Precios de AWS X-Ray'
+    url: 'https://aws.amazon.com/xray/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+X-Ray propaga un identificador de traza entre API Gateway, Lambda, ECS y las llamadas a bases de datos, y dibuja el mapa del recorrido con el tiempo consumido en cada tramo. Los errores quedan marcados sobre el mismo mapa.
+
+En arquitecturas serverless es casi imprescindible: sin traza distribuida, encontrar el cuello de botella es adivinar.

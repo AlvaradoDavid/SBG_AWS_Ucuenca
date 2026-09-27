@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Elastic Disaster Recovery (DRS)'
+categoria: 'almacenamiento'
+nivel: 'avanzado'
+resumenCorto: 'Replica servidores enteros hacia AWS de forma continua para poder levantarlos en minutos ante un desastre.'
+cuandoAplicarlo: 'Cuando el plan de continuidad exige recuperar servidores completos en poco tiempo sin mantener un centro de datos secundario encendido.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Elastic Disaster Recovery (DRS)'
+    url: 'https://aws.amazon.com/disaster-recovery/'
+  - titulo: 'Precios de AWS Elastic Disaster Recovery (DRS)'
+    url: 'https://aws.amazon.com/disaster-recovery/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Un agente instalado en cada servidor replica los bloques de disco hacia un área de preparación económica en AWS. Ante un incidente, el servicio convierte esa réplica en instancias EC2 en marcha, y permite ensayar la recuperación sin afectar la producción.
+
+El valor está en el costo: entre desastre y desastre solo se paga el almacenamiento de la réplica, no las máquinas de reemplazo.

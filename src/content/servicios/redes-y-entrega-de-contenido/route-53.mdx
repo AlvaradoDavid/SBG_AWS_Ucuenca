@@ -1,0 +1,111 @@
+---
+nombre: 'Amazon Route 53'
+categoria: 'redes-y-entrega-de-contenido'
+nivel: 'intermedio'
+resumenCorto: 'Servicio de DNS y registro de dominios, con enrutamiento inteligente y comprobaciones de estado.'
+analogia: 'Es la guía telefónica de internet, pero una que además sabe qué sucursal está abierta y cuál te queda más cerca antes de darte el número.'
+cuandoAplicarlo: 'Cuando un dominio propio debe apuntar a recursos de AWS, o cuando el tráfico debe repartirse entre regiones según latencia, ubicación o estado de salud.'
+casosDeUso:
+  - 'Apuntar el dominio del club a la distribución de CloudFront del sitio'
+  - 'Registrar y administrar dominios sin salir de AWS'
+  - 'Enviar a cada visitante a la región más cercana'
+  - 'Conmutar automáticamente a un sitio de respaldo si el principal deja de responder'
+
+conceptosClave:
+  - termino: 'Zona alojada'
+    definicion: 'El contenedor de todos los registros DNS de un dominio. Se cobra por zona y por consultas.'
+  - termino: 'Registro'
+    definicion: 'Cada entrada del DNS: A, AAAA, CNAME, MX, TXT. Es lo que traduce un nombre a una dirección.'
+  - termino: 'Registro de alias'
+    definicion: 'Un tipo propio de AWS que apunta directo a CloudFront, un balanceador o S3, sin costo por consulta.'
+  - termino: 'Política de enrutamiento'
+    definicion: 'La regla de reparto: simple, ponderada, por latencia, por geografía o con conmutación por error.'
+  - termino: 'Comprobación de estado'
+    definicion: 'Un sondeo periódico que retira del DNS los destinos que dejaron de responder.'
+
+modeloDePrecios: 'Una tarifa mensual baja por zona alojada, más el costo por millón de consultas. Los registros de alias hacia recursos de AWS no se cobran por consulta. El registro de dominios se paga aparte, según la extensión.'
+capaGratuita: 'No entra en la capa gratuita: cada zona alojada cobra desde el primer mes, aunque el importe sea pequeño.'
+trampasDeCosto:
+  - 'Zonas alojadas de dominios que ya no se usan: siguen facturando mes a mes.'
+  - 'Usar registros CNAME en vez de alias hacia recursos de AWS paga consultas que serían gratuitas.'
+  - 'Las comprobaciones de estado se cobran por cada una y por su frecuencia.'
+
+alternativas:
+  - servicio: 'El DNS del registrador del dominio'
+    porque: 'si el dominio solo necesita apuntar a un sitio y no hace falta enrutamiento inteligente ni integración con AWS.'
+  - servicio: 'AWS Global Accelerator'
+    slug: 'redes-y-entrega-de-contenido/global-accelerator'
+    porque: 'si la conmutación entre regiones debe ocurrir en segundos: el DNS depende de la caché de los clientes.'
+
+serviciosRelacionados:
+  - 'redes-y-entrega-de-contenido/cloudfront'
+  - 'almacenamiento/s3'
+  - 'redes-y-entrega-de-contenido/elb'
+  - 'seguridad-identidad/certificate-manager'
+
+certificaciones:
+  - 'AWS Certified Cloud Practitioner'
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Advanced Networking – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Route 53'
+    url: 'https://docs.aws.amazon.com/route53/'
+  - titulo: 'Precios de Amazon Route 53'
+    url: 'https://aws.amazon.com/route53/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+El DNS es la primera pieza de cualquier arquitectura visible desde internet: antes de que el
+navegador abra una conexión, tiene que averiguar a qué dirección conectarse. Route 53 es el servicio
+de DNS de AWS, y su nombre viene del puerto 53, el que usa ese protocolo.
+
+Lo que lo distingue de un DNS corriente son dos cosas. La primera son las **políticas de
+enrutamiento**: la misma consulta puede responder distinto según de dónde venga o cómo esté la salud
+de cada destino. La segunda es la integración con AWS mediante **registros de alias**, que apuntan a
+un recurso y no a una dirección, y no se cobran por consulta.
+
+## Cómo funciona
+
+1. Registras el dominio en Route 53, o traes uno existente delegando sus servidores de nombres.
+2. Se crea una **zona alojada** con los registros del dominio.
+3. Para apuntar a CloudFront, a un balanceador o a un bucket de S3, usas un **registro de alias**.
+4. Si hay varios destinos, eliges una **política de enrutamiento** que decida cómo se reparte el
+   tráfico entre ellos.
+5. Las **comprobaciones de estado** vigilan cada destino y lo sacan del reparto cuando falla.
+
+## Manos a la obra
+
+- Crea una zona alojada para un dominio de pruebas y observa los cuatro servidores de nombres que
+  asigna AWS.
+- Añade un registro de alias que apunte a una distribución de CloudFront o a un bucket de sitio web.
+- Crea un registro TXT y consúltalo con `dig` o `nslookup` desde tu máquina.
+- Configura una comprobación de estado hacia una URL y provoca un fallo para verla cambiar.
+- Recuerda que los cambios de DNS tardan en propagarse: el TTL manda sobre la impaciencia.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Del dominio al contenido"
+  descripcion="Un visitante escribe el dominio del club en el navegador, que consulta a Amazon Route 53. La zona alojada responde con un registro de alias que apunta a la distribución de Amazon CloudFront del sitio. CloudFront sirve el contenido desde su caché o lo pide al bucket de Amazon S3 que guarda los archivos del sitio estático. Route 53 solo participa al principio: una vez resuelto el nombre, el navegador habla directamente con CloudFront."
+  nodos={[
+    { id: 'visitante', etiqueta: 'Visitante', tipo: 'externo' },
+    { id: 'route53', etiqueta: 'Amazon Route 53', sub: 'resuelve el nombre', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 'cloudfront', etiqueta: 'Amazon CloudFront', sub: 'entrega', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'sitio estático', categoria: 'almacenamiento' },
+  ]}
+  flujos={[
+    { de: 'visitante', a: 'route53', etiqueta: 'dominio' },
+    { de: 'route53', a: 'cloudfront', etiqueta: 'alias' },
+    { de: 'cloudfront', a: 's3', etiqueta: 'origen' },
+  ]}
+/>
+
+Este es exactamente el camino que sigue este sitio: dominio en Route 53, entrega por CloudFront y
+archivos en S3.

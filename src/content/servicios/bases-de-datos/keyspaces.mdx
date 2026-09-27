@@ -1,0 +1,22 @@
+---
+nombre: 'Amazon Keyspaces (for Apache Cassandra)'
+categoria: 'bases-de-datos'
+nivel: 'avanzado'
+resumenCorto: 'Servicio compatible con Apache Cassandra, sin servidores que administrar y con escalado por demanda.'
+cuandoAplicarlo: 'Cuando tienes cargas de escritura masiva modeladas para Cassandra y no quieres operar un anillo de nodos.'
+
+enlaces:
+  - titulo: 'Página oficial de Amazon Keyspaces (for Apache Cassandra)'
+    url: 'https://aws.amazon.com/keyspaces/'
+  - titulo: 'Precios de Amazon Keyspaces (for Apache Cassandra)'
+    url: 'https://aws.amazon.com/keyspaces/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Keyspaces habla el mismo CQL y funciona con los controladores de Cassandra, pero elimina la parte dura: no hay nodos, ni compactaciones, ni reparaciones que programar. La capacidad se ajusta sola y se paga por lectura y escritura.
+
+Mantiene el modelo de datos de Cassandra, así que el diseño de la clave de partición sigue siendo la decisión que determina el rendimiento.

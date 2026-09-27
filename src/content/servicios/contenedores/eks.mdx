@@ -1,0 +1,113 @@
+---
+nombre: 'Amazon EKS'
+nombreCompleto: 'Elastic Kubernetes Service'
+categoria: 'contenedores'
+nivel: 'avanzado'
+resumenCorto: 'Kubernetes administrado: AWS opera el plano de control y tú despliegas con las herramientas estándar del ecosistema.'
+analogia: 'Es alquilar la torre de control de un aeropuerto ya montada y certificada: tú sigues decidiendo qué aviones vuelan, pero nadie tiene que construir ni mantener la torre.'
+cuandoAplicarlo: 'Cuando el equipo ya trabaja con Kubernetes, necesita su ecosistema de herramientas, o quiere que la misma configuración pueda ejecutarse fuera de AWS.'
+casosDeUso:
+  - 'Ejecutar en AWS una aplicación que ya tiene sus manifiestos de Kubernetes'
+  - 'Estandarizar el despliegue entre nube pública y centro de datos propio'
+  - 'Aprovechar herramientas del ecosistema como Helm, Argo CD o los operadores'
+  - 'Correr cargas de aprendizaje automático que ya usan Kubeflow u operadores de GPU'
+
+conceptosClave:
+  - termino: 'Plano de control'
+    definicion: 'El cerebro de Kubernetes — API, planificador, base de datos etcd — que en EKS opera y actualiza AWS.'
+  - termino: 'Nodo'
+    definicion: 'La máquina donde corren los contenedores. Puede ser una instancia EC2 tuya o una tarea de Fargate.'
+  - termino: 'Pod'
+    definicion: 'La unidad mínima de ejecución de Kubernetes: uno o varios contenedores que comparten red y almacenamiento.'
+  - termino: 'Grupo de nodos administrado'
+    definicion: 'Un conjunto de instancias que EKS aprovisiona, actualiza y reemplaza por ti.'
+  - termino: 'IRSA'
+    definicion: 'El mecanismo que asocia un rol de IAM a una cuenta de servicio de Kubernetes, para dar permisos sin claves.'
+
+modeloDePrecios: 'Una tarifa fija por hora y por clúster para el plano de control, más el costo de los nodos: instancias EC2 o tareas de Fargate.'
+capaGratuita: 'No hay capa gratuita para el plano de control: el clúster cobra por hora desde que se crea, aunque no tenga ningún pod corriendo.'
+trampasDeCosto:
+  - 'Dejar el clúster creado después de un taller: el plano de control cobra por hora aunque esté vacío.'
+  - 'Un grupo de nodos con escalado automático mal acotado puede crecer mucho más de lo previsto.'
+  - 'Cada balanceador que crea un recurso de tipo Service o Ingress se factura por separado.'
+
+alternativas:
+  - servicio: 'Amazon ECS'
+    slug: 'contenedores/ecs'
+    porque: 'si no necesitas Kubernetes, ECS resuelve lo mismo con mucha menos superficie que aprender y sin costo de plano de control.'
+  - servicio: 'AWS App Runner'
+    slug: 'computo/app-runner'
+    porque: 'si la aplicación es un servicio web sencillo, un clúster completo es desproporcionado.'
+  - servicio: 'AWS Lambda'
+    slug: 'computo/lambda'
+    porque: 'si la carga es por eventos y esporádica, no hace falta ningún clúster esperando.'
+
+serviciosRelacionados:
+  - 'contenedores/ecs'
+  - 'contenedores/fargate'
+  - 'contenedores/ecr'
+  - 'seguridad-identidad/iam'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified DevOps Engineer – Professional'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon EKS'
+    url: 'https://docs.aws.amazon.com/eks/'
+  - titulo: 'Precios de Amazon EKS'
+    url: 'https://aws.amazon.com/eks/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Kubernetes es el estándar de la industria para orquestar contenedores, y también es notoriamente
+laborioso de operar: el plano de control son varios componentes que hay que instalar, asegurar,
+respaldar y actualizar sin cortar el servicio. Amazon EKS se queda con esa parte.
+
+Lo que queda del lado del usuario es Kubernetes puro: los mismos manifiestos, el mismo `kubectl`,
+los mismos gráficos de Helm. Esa es su razón de ser frente a ECS — no es más fácil, es más portable
+y trae detrás un ecosistema enorme de herramientas que no dependen de AWS.
+
+## Cómo funciona
+
+1. Creas el clúster: AWS levanta el **plano de control** replicado en varias zonas de disponibilidad.
+2. Añades capacidad con un **grupo de nodos administrado** de instancias EC2, o con **Fargate** si
+   prefieres no ver máquinas.
+3. Te conectas con `kubectl` usando tus credenciales de AWS, que EKS traduce a permisos de Kubernetes.
+4. Aplicas tus manifiestos: despliegues, servicios, ingresos. Kubernetes coloca los pods en los nodos.
+5. Los complementos conectan el clúster con el resto de AWS: balanceadores, volúmenes EBS, roles de IAM.
+
+## Manos a la obra
+
+- Crea un clúster pequeño con `eksctl`, la herramienta que reduce el proceso a un solo comando.
+- Despliega una aplicación de ejemplo con un `Deployment` de dos réplicas y un `Service`.
+- Borra un pod a mano y observa cómo Kubernetes recrea otro en segundos.
+- Escala a cinco réplicas con `kubectl scale` y mira dónde las coloca el planificador.
+- **Borra el clúster completo al terminar.** El plano de control cobra por hora aunque esté ocioso.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Un clúster de EKS con nodos administrados"
+  descripcion="Una persona del equipo ejecuta kubectl contra el plano de control de Amazon EKS, que administra AWS. El plano de control programa los pods sobre dos nodos del grupo administrado, que son instancias de Amazon EC2 dentro de la VPC. Mientras tanto, el tráfico de los visitantes entra por un Application Load Balancer que reparte las peticiones entre los pods en ejecución. Quien opera el clúster nunca administra el plano de control: solo declara el estado deseado."
+  nodos={[
+    { id: 'dev', etiqueta: 'Equipo', sub: 'kubectl', tipo: 'externo' },
+    { id: 'plano', etiqueta: 'Amazon EKS', sub: 'plano de control', categoria: 'contenedores' },
+    { id: 'nodo1', etiqueta: 'Nodo EC2', sub: 'pods', categoria: 'computo', fila: 0 },
+    { id: 'nodo2', etiqueta: 'Nodo EC2', sub: 'pods', categoria: 'computo', fila: 1 },
+  ]}
+  flujos={[
+    { de: 'dev', a: 'plano', etiqueta: 'kubectl' },
+    { de: 'plano', a: 'nodo1', etiqueta: 'programa' },
+    { de: 'plano', a: 'nodo2' },
+  ]}
+/>
+
+Todo lo que aparece a la derecha del plano de control es infraestructura tuya, dentro de tu VPC y
+en tu factura. Lo que queda a la izquierda lo opera AWS.

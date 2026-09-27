@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Storage Gateway'
+categoria: 'almacenamiento'
+nivel: 'avanzado'
+resumenCorto: 'Puente híbrido que expone el almacenamiento de AWS como un disco, un recurso de red o una cinta virtual local.'
+cuandoAplicarlo: 'Cuando aplicaciones locales necesitan seguir hablando NFS, SMB o iSCSI, pero los datos deben terminar en S3.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Storage Gateway'
+    url: 'https://aws.amazon.com/storagegateway/'
+  - titulo: 'Precios de AWS Storage Gateway'
+    url: 'https://aws.amazon.com/storagegateway/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+El gateway se instala como máquina virtual en el centro de datos y guarda en caché los datos usados con más frecuencia mientras respalda todo contra S3, Glacier o EBS. Para las aplicaciones locales no cambia nada: siguen viendo un recurso compartido de red.
+
+El modo de cinta virtual es el más adoptado, porque permite jubilar bibliotecas de cintas físicas sin cambiar el software de respaldo.

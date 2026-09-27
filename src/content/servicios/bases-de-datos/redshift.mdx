@@ -1,0 +1,115 @@
+---
+nombre: 'Amazon Redshift'
+categoria: 'bases-de-datos'
+nivel: 'avanzado'
+resumenCorto: 'Almacén de datos para analizar miles de millones de filas con SQL, organizado por columnas en vez de por filas.'
+analogia: 'Una base transaccional es un archivador de fichas de clientes; Redshift es la hoja de cálculo gigante donde sumas una columna entera de un vistazo sin abrir ficha por ficha.'
+cuandoAplicarlo: 'Cuando las consultas dejan de ser "dame este registro" y pasan a ser "suma, promedia y agrupa millones de registros", y una base transaccional se ahoga.'
+casosDeUso:
+  - 'Informes y paneles sobre el histórico completo de una organización'
+  - 'Unir datos de varias fuentes para analizarlos con un mismo SQL'
+  - 'Consultar datos que viven en S3 sin cargarlos previamente'
+  - 'Alimentar QuickSight u otra herramienta de visualización con datos ya agregados'
+
+conceptosClave:
+  - termino: 'Almacenamiento por columnas'
+    definicion: 'Guarda cada columna junta en disco, así una consulta que usa tres columnas no lee las otras cincuenta.'
+  - termino: 'Nodo líder y nodos de cómputo'
+    definicion: 'El líder planifica la consulta y la reparte; los de cómputo procesan su porción en paralelo.'
+  - termino: 'Clave de distribución'
+    definicion: 'Decide cómo se reparten las filas entre nodos. Elegirla mal es la causa más común de consultas lentas.'
+  - termino: 'Redshift Spectrum'
+    definicion: 'Consulta datos que siguen en S3, sin cargarlos al clúster, usando el mismo SQL.'
+  - termino: 'Redshift Serverless'
+    definicion: 'Modalidad sin clúster que cobra por capacidad usada, pensada para cargas intermitentes.'
+
+modeloDePrecios: 'Por hora de nodo en la modalidad aprovisionada, o por unidad de capacidad consumida en la modalidad sin servidores. Spectrum cobra aparte por terabyte escaneado en S3.'
+capaGratuita: 'No forma parte de la capa gratuita general, aunque suele haber una prueba gratuita para cuentas nuevas. Conviene confirmar la oferta vigente antes de crear un clúster.'
+trampasDeCosto:
+  - 'Un clúster aprovisionado encendido todo el mes para consultas que se hacen dos veces por semana: la modalidad sin servidores encaja mucho mejor.'
+  - 'Consultas de Spectrum sin particionar los datos en S3: se escanean y cobran terabytes innecesarios.'
+  - 'Dimensionar el clúster por el pico y no por el uso habitual.'
+
+alternativas:
+  - servicio: 'Amazon Athena'
+    slug: 'analitica/athena'
+    porque: 'si los datos ya están en S3 y las consultas son ocasionales, Athena no exige mantener ningún clúster.'
+  - servicio: 'Amazon RDS'
+    slug: 'bases-de-datos/rds'
+    porque: 'si el volumen es moderado y las consultas son transaccionales, una base relacional normal basta y sobra.'
+  - servicio: 'Amazon EMR'
+    slug: 'analitica/emr'
+    porque: 'si el procesamiento necesita código distribuido en Spark y no encaja en SQL.'
+
+serviciosRelacionados:
+  - 'analitica/athena'
+  - 'analitica/glue'
+  - 'analitica/quicksight'
+  - 'almacenamiento/s3'
+
+certificaciones:
+  - 'AWS Certified Solutions Architect – Associate'
+  - 'AWS Certified Data Engineer – Associate'
+  - 'AWS Certified Data Analytics – Specialty'
+
+enlaces:
+  - titulo: 'Documentación oficial de Amazon Redshift'
+    url: 'https://docs.aws.amazon.com/redshift/'
+  - titulo: 'Precios de Amazon Redshift'
+    url: 'https://aws.amazon.com/redshift/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
+## Descripción
+
+Una base de datos transaccional está optimizada para leer y escribir filas completas: la ficha de un
+cliente, un pedido, una inscripción. Un almacén de datos como Redshift está optimizado para lo
+contrario: recorrer columnas enteras de millones de filas y resumirlas.
+
+La diferencia técnica está en cómo se guarda el dato en disco. Al almacenar por columnas, una
+consulta que solo mira tres campos no lee los cincuenta restantes, y como los valores de una misma
+columna se parecen entre sí, se comprimen mucho mejor. A eso se suma el procesamiento en paralelo
+entre nodos.
+
+## Cómo funciona
+
+1. Los datos llegan al clúster desde **S3**, desde bases operativas replicadas con **DMS** o
+   transformados con **Glue**.
+2. Al crear cada tabla se define su **clave de distribución** y su orden, que determinan cómo se
+   reparten y ordenan las filas entre nodos.
+3. Una consulta llega al **nodo líder**, que arma el plan y lo reparte entre los nodos de cómputo.
+4. Cada nodo procesa su porción en paralelo y devuelve resultados parciales que el líder combina.
+5. Con **Spectrum**, parte de los datos puede seguir en S3 y consultarse en la misma sentencia.
+
+## Manos a la obra
+
+- Crea un espacio de trabajo de **Redshift Serverless**, que evita dimensionar nodos para una práctica.
+- Carga un conjunto de datos público desde S3 con el comando `COPY`.
+- Ejecuta una agregación sobre varios millones de filas y observa el tiempo de respuesta.
+- Repite la consulta cambiando la clave de distribución de la tabla y compara los planes de ejecución.
+- **Elimina el espacio de trabajo al terminar** y revisa el gasto en Cost Explorer al día siguiente.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="De los datos crudos al panel de indicadores"
+  descripcion="Los datos crudos aterrizan en Amazon S3, donde AWS Glue los cataloga y los transforma a un formato analítico. Desde ahí se cargan en Amazon Redshift, que los almacena por columnas y responde consultas de agregación en paralelo entre sus nodos. Amazon QuickSight se conecta a Redshift para construir los paneles que consulta el resto de la organización. Cada pieza hace una cosa: S3 guarda, Glue prepara, Redshift analiza y QuickSight muestra."
+  nodos={[
+    { id: 's3', etiqueta: 'Amazon S3', sub: 'datos crudos', categoria: 'almacenamiento' },
+    { id: 'glue', etiqueta: 'AWS Glue', sub: 'transforma', categoria: 'analitica' },
+    { id: 'redshift', etiqueta: 'Amazon Redshift', sub: 'analiza', categoria: 'bases-de-datos' },
+    { id: 'quicksight', etiqueta: 'QuickSight', sub: 'paneles', categoria: 'analitica' },
+  ]}
+  flujos={[
+    { de: 's3', a: 'glue', etiqueta: 'cataloga' },
+    { de: 'glue', a: 'redshift', etiqueta: 'carga' },
+    { de: 'redshift', a: 'quicksight', etiqueta: 'consulta' },
+  ]}
+/>
+
+La pregunta previa a montar un almacén de datos siempre es la misma: ¿cuántas veces al día se va a
+consultar? Si la respuesta es «unas pocas», Athena sobre S3 resuelve lo mismo sin clúster.

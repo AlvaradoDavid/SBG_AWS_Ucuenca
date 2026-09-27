@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Firewall Manager'
+categoria: 'seguridad-identidad'
+nivel: 'avanzado'
+resumenCorto: 'Aplica y vigila reglas de WAF, Shield y firewall de red en todas las cuentas de la organización desde un punto central.'
+cuandoAplicarlo: 'Cuando hay muchas cuentas y hace falta garantizar que ninguna se despliegue sin las protecciones mínimas.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Firewall Manager'
+    url: 'https://aws.amazon.com/firewall-manager/'
+  - titulo: 'Precios de AWS Firewall Manager'
+    url: 'https://aws.amazon.com/firewall-manager/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Firewall Manager se apoya en AWS Organizations para imponer políticas de forma transversal: si alguien crea un balanceador nuevo sin WAF, el servicio lo detecta y aplica el conjunto de reglas obligatorio.
+
+Su valor no es técnico sino de gobernanza: convierte la política de seguridad en algo verificable en vez de un acuerdo entre equipos.

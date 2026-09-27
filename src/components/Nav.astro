@@ -1,0 +1,129 @@
+---
+import { club } from '../lib/categorias';
+
+const enlaces = [
+  { href: '/', texto: 'Inicio' },
+  { href: '/servicios', texto: 'Servicios AWS' },
+  { href: '/eventos', texto: 'Eventos' },
+  { href: '/#nosotros', texto: 'Quiénes somos' },
+];
+
+const ruta = Astro.url.pathname;
+/** Marca la sección actual: coincidencia exacta en la home, por prefijo en el resto. */
+const esActivo = (href: string) =>
+  href === '/' ? ruta === '/' : ruta.startsWith(href.split('#')[0]);
+---
+
+<header class="sticky top-0 z-50 border-b border-tinta-200 bg-white/90 backdrop-blur">
+  <nav
+    aria-label="Navegación principal"
+    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4"
+  >
+    <a href="/" class="flex items-center gap-3">
+      <img src="/marca/program-icon-amber.svg" alt="" width="32" height="32" class="h-8 w-8" />
+      <span class="flex flex-col leading-tight">
+        <span class="font-display text-sm font-bold tracking-tight text-tinta-900">{club.nombre}</span>
+        <span class="text-xs text-tinta-500">{club.universidad}</span>
+      </span>
+    </a>
+
+    <ul class="hidden items-center gap-8 text-sm font-medium text-tinta-600 md:flex">
+      {enlaces.map((enlace) => (
+        <li>
+          <a
+            href={enlace.href}
+            aria-current={esActivo(enlace.href) ? 'page' : undefined}
+            class:list={[
+              'transition hover:text-marca-grey',
+              esActivo(enlace.href) && 'font-bold text-tinta-900',
+            ]}
+          >
+            {enlace.texto}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <button
+      type="button"
+      id="boton-menu"
+      aria-expanded="false"
+      aria-controls="menu-movil"
+      aria-label="Abrir menú de navegación"
+      class="-mr-2 flex h-11 w-11 items-center justify-center rounded-lg text-tinta-700 transition hover:bg-tinta-100 md:hidden"
+    >
+      <svg
+        id="icono-abrir"
+        class="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+      <svg
+        id="icono-cerrar"
+        class="hidden h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </nav>
+
+  <div id="menu-movil" class="hidden border-t border-tinta-200 bg-white md:hidden">
+    <ul class="mx-auto max-w-6xl px-6 py-2 text-sm">
+      {enlaces.map((enlace) => (
+        <li>
+          <a
+            href={enlace.href}
+            aria-current={esActivo(enlace.href) ? 'page' : undefined}
+            class:list={[
+              'flex min-h-[44px] items-center border-b border-tinta-100 py-3 transition last:border-0',
+              esActivo(enlace.href) ? 'font-bold text-tinta-900' : 'text-tinta-600',
+            ]}
+          >
+            {enlace.texto}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</header>
+
+<script>
+  const boton = document.getElementById('boton-menu');
+  const menu = document.getElementById('menu-movil');
+  const iconoAbrir = document.getElementById('icono-abrir');
+  const iconoCerrar = document.getElementById('icono-cerrar');
+
+  function alternar(abierto: boolean) {
+    menu.classList.toggle('hidden', !abierto);
+    iconoAbrir.classList.toggle('hidden', abierto);
+    iconoCerrar.classList.toggle('hidden', !abierto);
+    boton.setAttribute('aria-expanded', String(abierto));
+    boton.setAttribute('aria-label', abierto ? 'Cerrar menú de navegación' : 'Abrir menú de navegación');
+  }
+
+  boton.addEventListener('click', () => {
+    alternar(menu.classList.contains('hidden'));
+  });
+
+  // Cierra al navegar a un ancla de la misma página, donde no hay recarga.
+  menu.addEventListener('click', (evento) => {
+    if ((evento.target as HTMLElement).closest('a')) alternar(false);
+  });
+
+  document.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape' && !menu.classList.contains('hidden')) {
+      alternar(false);
+      boton.focus();
+    }
+  });
+</script>

@@ -1,0 +1,22 @@
+---
+nombre: 'AWS Global Accelerator'
+categoria: 'redes-y-entrega-de-contenido'
+nivel: 'avanzado'
+resumenCorto: 'Dos direcciones IP fijas que enrutan a los usuarios por la red troncal de AWS hacia el punto de acceso más cercano y sano.'
+cuandoAplicarlo: 'Cuando la aplicación no es web cacheable — juegos, VoIP, IoT sobre TCP o UDP — y aun así necesita latencia baja en todo el mundo.'
+
+enlaces:
+  - titulo: 'Página oficial de AWS Global Accelerator'
+    url: 'https://aws.amazon.com/global-accelerator/'
+  - titulo: 'Precios de AWS Global Accelerator'
+    url: 'https://aws.amazon.com/global-accelerator/pricing/'
+
+actualizado: 2026-09-03
+autor: 'AWS SBG UCuenca'
+---
+
+## Descripción
+
+Global Accelerator se parece a CloudFront en que usa la red global de AWS, pero no almacena contenido en caché: acelera la conexión y conmuta el tráfico a otra región en segundos si un punto de acceso falla. Las IP fijas simplifican listas blancas de firewall y clientes que no resuelven DNS con frecuencia.
+
+Si lo que sirves es web o contenido estático, CloudFront es la opción correcta.

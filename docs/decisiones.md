@@ -262,6 +262,9 @@ expresión. Dentro del frontmatter, `//` y `/* */` funcionan con normalidad.
 
 ## D-15 · El bucket del sitio es privado; sirve CloudFront con OAC
 
+> **Sustituida por [D-23](#d-23).** El sitio se aloja en Amplify; esta decisión
+> se conserva como registro del plan anterior.
+
 **Decisión.** S3 mantiene el bloqueo de acceso público activado y **no** usa
 «Static website hosting». CloudFront accede al bucket mediante *Origin Access
 Control* (OAC), y es la única puerta de entrada al sitio.
@@ -279,6 +282,9 @@ común de este despliegue.
 ---
 
 ## D-16 · Las rutas limpias se resuelven con una CloudFront Function
+
+> **Sustituida por [D-23](#d-23).** El sitio se aloja en Amplify; esta decisión
+> se conserva como registro del plan anterior.
 
 **Decisión.** Una CloudFront Function asociada al evento *viewer request*
 reescribe la URI: `/servicios/` y `/servicios` pasan ambas a
@@ -314,6 +320,10 @@ primer mes. Es intencional: son las que hay que vigilar.
 
 ## D-18 · El despliegue no espera al dominio
 
+> **Vigente en su principio, no en sus detalles.** Con Amplify ([D-23](#d-23))
+> se publica primero contra `amplifyapp.com`; lo de ACM en `us-east-1` y la
+> distribución de CloudFront ya no aplica.
+
 **Decisión.** El sitio se publica primero contra el dominio que da CloudFront
 (`d1a2b3c4.cloudfront.net`). El dominio propio se añade después.
 
@@ -338,6 +348,9 @@ delegar el DNS.
 ---
 
 ## D-19 · Price Class «All» en CloudFront
+
+> **Sustituida por [D-23](#d-23).** El sitio se aloja en Amplify; esta decisión
+> se conserva como registro del plan anterior.
 
 **Decisión.** La distribución usa *Use all edge locations*, no las clases 100 ni
 200.
@@ -424,3 +437,47 @@ y AWS SimSpace Weaver— y ambas se corrigieron.
 
 **Consecuencia.** Al revisar el catálogo hay que volver a esa lista: AWS sigue
 apagando servicios, y una ficha que hoy está bien puede necesitar su nota mañana.
+
+---
+
+## D-23 · El sitio se aloja en Amplify Hosting, no en S3 + CloudFront
+
+**Decisión.** El sitio se publica con **AWS Amplify Hosting**, conectado a la
+rama `aws-sbg-ucuenca` del repositorio de GitHub. Sustituye al plan de S3 privado
++ CloudFront + OAC ([D-15](#d-15), [D-16](#d-16), [D-19](#d-19)).
+
+**Por qué.** Pagar un dominio propio no resultó viable, y los créditos no lo
+cubren ([D-18](#d-18)). Sin dominio, la URL
+pública es la que da el servicio, y ahí Amplify tiene una ventaja:
+
+| Plan | URL sin dominio propio |
+| --- | --- |
+| CloudFront | `d1a2b3c4.cloudfront.net` |
+| Amplify | `aws-sbg-ucuenca.d1a2b3c4.amplifyapp.com` |
+
+El primer tramo de la URL de Amplify es el nombre de la rama, así que el nombre
+del club aparece en el enlace. **Resuelve el problema del nombre solo en
+parte:** el ID de la app lo genera AWS y no se puede elegir.
+
+Además, Amplify trae incluido lo que el plan anterior había que montar a mano:
+build en cada push, invalidación de caché, certificado TLS y rutas limpias.
+
+**Lo que se pierde.** El plan anterior descartaba Amplify precisamente por eso:
+para un club de AWS, montar S3 + CloudFront a mano *era* parte del aprendizaje.
+Esa pérdida es real. Se compensa en parte ampliando la ficha de Amplify del
+catálogo con cómo lo usa el propio sitio.
+
+**Consecuencias.**
+
+- La rama `aws-sbg-ucuenca` **no se renombra**: su nombre forma la URL pública.
+- `site` en `astro.config.mjs` se calcula con `AWS_BRANCH` y `AWS_APP_ID`, que
+  Amplify inyecta en cada build, porque el ID de la app no existe hasta crearla.
+  `SITE_URL` en la consola tiene prioridad sobre ellas.
+- El build fija sus versiones: Node 24 en `amplify.yml` y pnpm 11.20.0 en el
+  `packageManager` de `package.json`. Con «latest», una versión mayor nueva podría
+  romper el build sin que nadie haya tocado el código.
+- La regla de la 404 vive en la consola, no en el repositorio.
+
+**Lo que queda abierto.** Un subdominio de la Universidad de Cuenca daría un
+nombre de verdad sin costo. Se pedirá más adelante, y conectarlo no rehace nada:
+se añade como dominio en Amplify y se define `SITE_URL`.

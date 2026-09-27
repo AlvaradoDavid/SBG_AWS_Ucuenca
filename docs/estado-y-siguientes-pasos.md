@@ -17,7 +17,7 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Contenido de eventos | ⚠️ **Los 5 son `[Placeholder]`** |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
 | Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 4 |
-| Infraestructura AWS | ⚠️ **Diseñada, no desplegada.** El sitio no está en línea |
+| Infraestructura AWS | ⚠️ **Preparada para Amplify, no conectada.** Repositorio en GitHub; el sitio no está en línea |
 
 ### Las dos profundidades de ficha
 
@@ -45,49 +45,52 @@ porque aparecen en material de estudio antiguo y en arquitecturas heredadas.
 
 ## Lo que queda pendiente
 
-### 1. Desplegar el sitio en AWS
+### 1. Conectar el repositorio a Amplify
 
-El sitio está terminado y **no está en línea**. La arquitectura ya está decidida
-y documentada en [arquitectura.md](arquitectura.md#despliegue); las decisiones y
-su porqué, en [D-15](decisiones.md#d-15) a [D-19](decisiones.md#d-19).
+El sitio se aloja en **AWS Amplify Hosting** ([D-23](decisiones.md#d-23)); el plan
+anterior con S3 + CloudFront quedó descartado. Lo que es del repositorio ya está
+hecho:
 
-El procedimiento completo de consola, paso a paso y con las rutas de clics,
-quedó en un runbook aparte:
-<https://claude.ai/code/artifact/28e62119-bc1f-4f6c-9cb3-03a6590ab896>
+- Repositorio en <https://github.com/AlvaradoDavid/SBG_AWS_Ucuenca>, rama
+  `aws-sbg-ucuenca`. **No renombrarla:** su nombre forma la URL pública.
+- `amplify.yml` con Node 24 y pnpm fijado en `package.json`.
+- `site` calculado a partir de las variables de Amplify.
+- `src/pages/404.astro`.
+- `og:image` en todas las páginas: cada evento comparte su primera foto y el
+  resto del sitio, la del stand de inicio de ciclo.
 
-**El orden importa.** Resumido:
+**Lo que falta, en este orden:**
 
-| Fase | Qué se hace | Por qué en ese orden |
+| Paso | Qué se hace | Por qué en ese orden |
 | --- | --- | --- |
-| 00 | Verificar permisos, créditos, MFA en root; `pnpm build` | Una cuenta de club puede tener SCPs que bloqueen servicios |
-| 01 | Budgets + Cost Anomaly Detection | **Antes** de crear nada: un presupuesto puesto después solo confirma el daño |
-| 02 | Bucket S3 privado, versionado, subir `dist/` | — |
-| 03 | Distribución CloudFront + OAC + política + función de rutas | Aquí el sitio se vuelve público |
-| 04 | Dominio y certificado ACM | Puede esperar: el dominio de CloudFront ya sirve |
-| 05 | Formulario de inscripción (opcional) | Añade el primer backend del sitio |
-| 06 | Archivo de originales en Glacier Instant Retrieval | — |
+| 1 | Budgets + Cost Anomaly Detection, con los créditos **excluidos** ([D-17](decisiones.md#d-17)) | **Antes** de crear nada: un presupuesto puesto después solo confirma el daño |
+| 2 | Amplify → *Create new app* → GitHub → repositorio → rama `aws-sbg-ucuenca` | Amplify detecta `amplify.yml` solo; no hay que tocar la configuración de build |
+| 3 | *Hosting → Rewrites and redirects*: sustituir la regla por defecto por `/<*>` → `/404.html`, tipo *404* | Sin ella, una URL equivocada no muestra la página del sitio |
+| 4 | Verificar en la URL pública | Ver la lista de abajo |
 
-**Antes de la fase 02 hay que tocar el código.** Estas tareas son del
-repositorio, no de la consola, y el despliegue las destapa:
+**Qué verificar tras el primer despliegue:**
 
-- **`site` en `astro.config.mjs`.** Hoy no está definido. Sin él Astro no genera
-  URLs absolutas ni un sitemap correcto. Debe apuntar al dominio final, o al de
-  CloudFront mientras tanto.
-- **Página 404.** No existe `src/pages/404.astro`, así que una URL equivocada
-  mostrará el XML de error de S3 en vez del diseño del sitio.
-- **`og:image` en `Layout.astro`.** El layout define `og:title`, `og:description`
-  y `twitter:card`, pero no la imagen. Compartido por WhatsApp o LinkedIn el
-  enlace sale sin previsualización — justo donde se difunden los eventos.
+- Que el log del build muestre Node 24 y pnpm 11.20.0.
+- Que `/servicios/almacenamiento/s3/` cargue, y que `/servicios/almacenamiento/s3`
+  (sin barra) redirija a la versión con barra.
+- Que una URL inventada muestre la 404 del sitio.
+- Que el `og:image` de la portada apunte a `https://aws-sbg-ucuenca.<id>.amplifyapp.com/_astro/…`.
+  Si apunta a `localhost`, Amplify no inyectó las variables y hay que definir
+  `SITE_URL` en la consola.
+- Que un enlace compartido por WhatsApp muestre la foto.
 
-**Después del primer despliegue manual:**
+**Después:**
 
-- **Iniciar git.** El proyecto todavía no es un repositorio.
-- **Automatizar con GitHub Actions y un rol IAM con OIDC**, sin claves de acceso
-  guardadas. Cada push construye, sincroniza a S3 e invalida CloudFront. Es
-  además el patrón que ya dibuja el diagrama de la ficha de IAM.
-- **Cerrar el círculo en el catálogo.** Las fichas de S3, CloudFront, IAM,
-  Lambda y DynamoDB ya existen; añadirles un bloque «así lo usamos nosotros»
-  convierte el propio despliegue en el ejemplo real de cada una.
+- **Cerrar el círculo en el catálogo.** La ficha de Amplify
+  (`src/content/servicios/front-end-web-y-movil/amplify.mdx`) todavía es breve.
+  Ampliarla con un bloque «así lo usamos nosotros» convierte el propio despliegue
+  en su ejemplo real y recupera parte del valor didáctico que se perdió al dejar
+  CloudFront.
+- **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como dominio
+  en Amplify y se define `SITE_URL`.
+- **Cabeceras HTTP** (opcional). Un `customHttp.yml` en la raíz con caché larga
+  para `/_astro/*` (sus nombres llevan hash) y cabeceras de seguridad. AWS pide
+  ponerlas ahí y no en `amplify.yml`.
 
 ### 2. Contenido de los eventos (prioridad alta)
 

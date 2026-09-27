@@ -114,60 +114,74 @@ evento del 16 aparecería como 15. Por eso el formateo es explícitamente UTC.
 
 ## Despliegue
 
-> **Estado: diseñado, todavía no desplegado.** Nada de lo que sigue existe aún
-> en la consola de AWS. El procedimiento paso a paso está en
-> [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-desplegar-el-sitio-en-aws).
+> **Estado: preparado, todavía no conectado.** El repositorio está en GitHub y el
+> código listo para Amplify; falta crear la app en la consola. Los pasos están en
+> [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-conectar-el-repositorio-a-amplify).
 
-Build estático a `dist/` (14 páginas, 387 fotos WebP, índice de Pagefind: ~31 MB
-en 441 archivos). No hay servidor ni funciones de renderizado: todo el HTML se
-genera en `pnpm build`.
+El sitio se aloja en **AWS Amplify Hosting**, conectado a la rama
+`aws-sbg-ucuenca` de <https://github.com/AlvaradoDavid/SBG_AWS_Ucuenca>. Cada push
+a esa rama dispara un build en Amplify y publica `dist/`. El porqué de Amplify
+frente al plan original con S3 + CloudFront está en [D-23](decisiones.md#d-23).
 
-### Los cinco servicios del núcleo
-
-| Servicio | Rol |
-| --- | --- |
-| **S3** | Bucket **privado** con el contenido de `dist/`. Sin hosting estático, sin acceso público |
-| **CloudFront** | CDN y única puerta de entrada. Lee de S3 vía OAC. HTTPS forzado |
-| **ACM** | Certificado TLS gratuito. **Obligatoriamente en `us-east-1`** |
-| **Route 53** | Zona alojada y registros alias hacia CloudFront |
-| **IAM** | Rol de despliegue con permisos mínimos, sin claves de larga vida |
+Build estático a `dist/` (260 páginas, 387 fotos WebP, índice de Pagefind). No
+hay servidor ni funciones de renderizado: todo el HTML se genera en `pnpm build`.
 
 ```
-Visitante → CloudFront ──(OAC, petición firmada)──→ S3 (bucket privado)
-                │
-                └── CloudFront Function (viewer request): reescribe la URI
+push a aws-sbg-ucuenca → Amplify: pnpm install + pnpm build → CDN de Amplify → visitante
 ```
 
-Todo en **us-east-1**. No es preferencia: ACM solo emite certificados válidos
-para CloudFront en esa región, y repartir los recursos entre regiones multiplica
-la confusión al depurar. La latencia no entra en la ecuación porque CloudFront
-sirve desde ubicaciones de borde.
+### La URL pública
 
-### Las tres piezas que fallan en silencio
+```
+https://aws-sbg-ucuenca.<id-de-la-app>.amplifyapp.com
+```
 
-1. **La política del bucket.** Tras crear el OAC hay que pegarla en S3 o todo
-   devuelve `AccessDenied` — ver [D-15](decisiones.md#d-15).
-2. **Las rutas limpias.** Sin la CloudFront Function que reescribe la URI, solo
-   carga la portada — ver [D-16](decisiones.md#d-16).
-3. **La región del certificado.** Emitido fuera de `us-east-1`, CloudFront ni
-   siquiera lo lista — ver [D-18](decisiones.md#d-18).
+El primer tramo es el **nombre de la rama**, y por eso la rama se llama como el
+club: renombrarla cambia la URL pública. El segundo tramo lo genera AWS al crear
+la app y no se puede elegir.
 
-### Invalidación
+`astro.config.mjs` arma esa URL sola a partir de `AWS_BRANCH` y `AWS_APP_ID`, dos
+variables que Amplify inyecta en cada build. Si se define `SITE_URL` en la
+consola, gana ella: es el mecanismo para cuando llegue un dominio propio. En
+local, sin ninguna de las tres, queda `http://localhost:4321`.
 
-Cada despliegue necesita invalidar `/*` en CloudFront, o los visitantes siguen
-viendo la versión anterior. AWS regala 1.000 rutas al mes y `/*` cuenta como
-una, así que se puede desplegar a diario sin coste.
+### Qué vive en el repositorio y qué en la consola
+
+| Pieza | Dónde | Para qué |
+| --- | --- | --- |
+| `amplify.yml` | Repositorio | Receta del build: Node 24, pnpm del `packageManager`, caché del store |
+| `packageManager` en `package.json` | Repositorio | Fija pnpm 11.20.0; el build nunca usa «latest» |
+| `src/pages/404.astro` | Repositorio | Genera `dist/404.html` |
+| Regla `/<*>` → `/404.html` (404) | **Consola** | Sin ella Amplify no sirve la 404 propia. No se puede declarar en el repo |
+| `SITE_URL` | **Consola** | Solo si hay dominio propio |
+
+### Las dos piezas que fallan en silencio
+
+1. **La regla de la 404.** Al crear la app, Amplify pone su propia regla por
+   defecto. Hay que sustituirla por `/<*>` → `/404.html` con tipo *404*, o las URLs
+   equivocadas no mostrarán la página del sitio.
+2. **Renombrar la rama.** Cambia la URL pública y rompe cualquier enlace ya
+   compartido. La rama `aws-sbg-ucuenca` no se renombra.
+
+### Rutas limpias
+
+Amplify resuelve solo `/eventos/flisol-2026/` → `/eventos/flisol-2026/index.html`,
+así que no hace falta nada equivalente a la CloudFront Function del plan
+anterior. A una ruta sin barra final (`/eventos/flisol-2026`), Amplify la
+redirige a la versión con barra.
 
 ### Servicios complementarios
 
 | Servicio | Para qué | Estado |
 | --- | --- | --- |
-| **Budgets** + **Cost Anomaly Detection** | Alarma de gasto. Con los créditos **excluidos** del cálculo — ver [D-17](decisiones.md#d-17) | Pendiente |
+| **Budgets** + **Cost Anomaly Detection** | Alarma de gasto. Con los créditos **excluidos** del cálculo — ver [D-17](decisiones.md#d-17) | Pendiente, **antes** de crear la app |
 | **S3 Glacier Instant Retrieval** | Archivar los originales de `Eventos/`, hoy en un solo disco duro | Pendiente |
 | **API Gateway + Lambda + DynamoDB + SES** | Formulario de inscripción a eventos. Añadiría el primer backend del sitio | Pendiente, opcional |
 
 ### Costo
 
-Con capa gratuita y tráfico de club, la infraestructura sale **≈ $0.50/mes** (la
-zona de Route 53) y queda cubierta por los créditos. La excepción es el dominio:
-**los créditos no pagan el registro** — ver [D-18](decisiones.md#d-18).
+Amplify cobra por minutos de build, almacenamiento y transferencia. Con el
+tráfico de un club, todo queda cubierto por los créditos. Lo único que crece con
+el uso son los **minutos de build**: cada push dispara un build completo, así
+que conviene no hacer push de cambios a medias. El presupuesto de [D-17](decisiones.md#d-17)
+avisa si algo se dispara.

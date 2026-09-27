@@ -31,3 +31,10 @@ export function fotosDeEvento(carpeta: string): FotoEvento[] {
 export function portadaDeEvento(carpeta: string): ImageMetadata | undefined {
   return fotosDeEvento(carpeta)[0]?.miniatura;
 }
+
+/**
+ * Imagen por defecto al compartir un enlace del sitio: el stand de inicio de
+ * ciclo, con gente real y el banner del club. Ya es apaisada, así que las redes
+ * apenas la recortan.
+ */
+export const fotoParaCompartir = fotosDeEvento('2026-03-23-stand-de-inicio-de-ciclo')[0]?.completa;

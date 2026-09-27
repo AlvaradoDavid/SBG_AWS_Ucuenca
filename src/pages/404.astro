@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<!--
+  Amplify la sirve para cualquier ruta inexistente gracias a la regla
+  /<*> → /404.html (404) de la consola. Sin data-pagefind-body: no se indexa.
+-->
+<Layout
+  title="Página no encontrada"
+  description="La dirección que buscas no existe en el sitio del AWS Student Builder Group de la Universidad de Cuenca."
+>
+  <section class="mx-auto max-w-6xl px-6 py-24">
+    <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Error 404</p>
+    <h1 class="mt-3 font-display text-4xl font-bold tracking-tight text-tinta-900">
+      Esta página no existe
+    </h1>
+    <p class="mt-4 max-w-2xl leading-relaxed text-tinta-600">
+      Puede que el enlace esté mal escrito o que la página se haya movido. Desde aquí puedes volver
+      a la portada o ir directo a lo que más se consulta.
+    </p>
+
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a
+        href="/"
+        class="rounded-lg bg-marca-grey px-6 py-3 text-sm font-bold text-white transition hover:bg-tinta-700"
+      >
+        Volver a la portada
+      </a>
+      <a
+        href="/servicios"
+        class="rounded-lg border border-tinta-300 bg-white/60 px-6 py-3 text-sm font-bold text-tinta-700 transition hover:border-tinta-500"
+      >
+        Catálogo de servicios
+      </a>
+      <a
+        href="/eventos"
+        class="rounded-lg border border-tinta-300 bg-white/60 px-6 py-3 text-sm font-bold text-tinta-700 transition hover:border-tinta-500"
+      >
+        Eventos
+      </a>
+    </div>
+  </section>
+</Layout>

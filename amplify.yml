@@ -3,9 +3,16 @@ frontend:
   phases:
     preBuild:
       commands:
+        # Node fijado a la misma versión mayor que en desarrollo (engines pide >=22.12).
+        # La versión por defecto de la imagen de Amplify puede cambiar sin aviso.
+        - nvm install 24
+        - nvm use 24
+        # pnpm sale del campo packageManager de package.json, nunca de "latest":
+        # una versión mayor nueva podría romper el build sin tocar el código.
         - corepack enable
-        - corepack prepare pnpm@latest --activate
-        - pnpm install --frozen-lockfile
+        - corepack install
+        # El store va dentro del proyecto para que la caché de Amplify lo conserve.
+        - pnpm install --frozen-lockfile --store-dir .pnpm-store
     build:
       commands:
         - pnpm run build
@@ -15,5 +22,4 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - node_modules/**/*
       - .pnpm-store/**/*

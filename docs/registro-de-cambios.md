@@ -2,6 +2,45 @@
 
 ---
 
+## Repositorio en GitHub y preparación para Amplify
+
+El despliegue cambió de plan: **Amplify Hosting en lugar de S3 + CloudFront**.
+Pagar un dominio propio no resultó viable, y Amplify permite que el nombre del
+club aparezca en la URL pública a través del nombre de la rama. El porqué
+completo, y lo que se pierde, está en [D-23](decisiones.md#d-23).
+
+### Repositorio
+
+El proyecto pasó a ser un repositorio git, publicado en
+<https://github.com/AlvaradoDavid/SBG_AWS_Ucuenca> con una sola rama,
+`aws-sbg-ucuenca`.
+
+**Un hallazgo antes del primer commit.** La regla `Eventos/` de `.gitignore`, pensada
+para excluir los originales (2.3 GB), no estaba anclada a la raíz. Como Windows
+no distingue mayúsculas de minúsculas, también excluía `src/assets/eventos/` (las 255 fotos),
+`src/content/eventos/` y `src/pages/eventos/`. El repositorio habría salido sin
+eventos y el build en Amplify habría fallado. Se ancló como `/Eventos/` (y
+`/Branding/*.pptx`), y se comprobó construyendo desde un clon limpio: salió
+idéntico al build local.
+
+### Preparación para Amplify
+
+| Cambio | Archivo |
+| --- | --- |
+| Receta de build con Node 24, pnpm del `packageManager` y caché del store | `amplify.yml` |
+| pnpm fijado en 11.20.0 | `package.json` |
+| `site` calculado a partir de `AWS_BRANCH` y `AWS_APP_ID`, con `SITE_URL` como prioridad | `astro.config.mjs` |
+| Página 404 propia, fuera del índice de búsqueda | `src/pages/404.astro` |
+| `og:image` en todas las páginas; cada evento usa su primera foto | `Layout.astro`, `fotos.ts`, `eventos/[...slug].astro` |
+
+Las imágenes para compartir **no se recortan** a 1200×630: dos de las fotos de
+portada de los eventos son carteles y el recorte les cortaría el título. Se
+redimensionan a 1200 px de ancho, manteniendo la proporción.
+
+El presupuesto de JavaScript no cambió: 4.6 KB en la portada.
+
+---
+
 ## Catálogo completo de servicios de AWS
 
 El catálogo pasó de 6 fichas a **251: todos los servicios que AWS lista hoy en su
@@ -259,13 +298,16 @@ Un runbook de consola con las rutas de clics exactas, los avisos de cada fallo
 silencioso y la tabla de costos:
 <https://claude.ai/code/artifact/28e62119-bc1f-4f6c-9cb3-03a6590ab896>
 
+> Obsoleto desde el paso a Amplify ([D-23](decisiones.md#d-23)); se conserva como
+> referencia del plan con CloudFront.
+
 ---
 
 ## Pendiente
 
-- **Desplegar el sitio.** La infraestructura está diseñada y documentada, pero
-  no ejecutada: el sitio no está en línea. Es hoy la prioridad más alta —
-  ver [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-desplegar-el-sitio-en-aws).
+- **Desplegar el sitio.** Preparado para Amplify, falta conectar la app en la
+  consola: el sitio no está en línea. Es hoy la prioridad más alta —
+  ver [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-conectar-el-repositorio-a-amplify).
 - **Contenido de los eventos.** Los cinco `.mdx` de `src/content/eventos/` tienen
   `[Placeholder]` como cuerpo. El diseño ya está listo para recibir el texto.
 - **Catálogo de servicios.** Cobertura completa con 251 fichas; lo que falta es

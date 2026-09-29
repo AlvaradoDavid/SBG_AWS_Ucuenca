@@ -115,7 +115,7 @@ evento del 16 aparecería como 15. Por eso el formateo es explícitamente UTC.
 ## Despliegue
 
 > **Estado: en línea desde el 2026-09-29** en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>.
-> Lo que queda por cerrar del despliegue está en
+> Del despliegue solo queda pendiente el subdominio de la Universidad: ver
 > [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
 
 El sitio se aloja en **AWS Amplify Hosting**, conectado a la rama
@@ -150,6 +150,7 @@ local, sin ninguna de las tres, queda `http://localhost:4321`.
 | Pieza | Dónde | Para qué |
 | --- | --- | --- |
 | `amplify.yml` | Repositorio | Receta del build: Node 24, pnpm del `packageManager`, caché del store |
+| `customHttp.yml` | Repositorio | Cabeceras: caché de un año para `/_astro/*` y seguridad ([D-25](decisiones.md#d-25)). Gana sobre la consola |
 | `packageManager` en `package.json` | Repositorio | Fija pnpm 11.20.0; el build nunca usa «latest» |
 | `src/pages/404.astro` | Repositorio | Genera `dist/404.html` |
 | Regla `/<*>` → `/404.html`, estado **`404-200`** | **Consola** | Sirve la 404 propia sin cambiar la URL y con código 404. No se puede declarar en el repo |
@@ -177,7 +178,7 @@ redirige a la versión con barra.
 
 | Servicio | Para qué | Estado |
 | --- | --- | --- |
-| **Budgets** + **Cost Anomaly Detection** | Alarma de gasto. Con los créditos **excluidos** del cálculo — ver [D-17](decisiones.md#d-17) | Pendiente, **antes** de crear la app |
+| **Budgets** + **Cost Anomaly Detection** | Alarma de gasto. Con los créditos **excluidos** del cálculo — ver [D-17](decisiones.md#d-17) | Activos desde el 2026-09-29 |
 | **S3 Glacier Instant Retrieval** | Archivar los originales de `Eventos/`, hoy en un solo disco duro | Pendiente |
 | **API Gateway + Lambda + DynamoDB + SES** | Formulario de inscripción a eventos. Añadiría el primer backend del sitio | Pendiente, opcional |
 

@@ -31,10 +31,14 @@ alternativas:
   - servicio: 'S3 con website hosting directo'
     slug: 'almacenamiento/s3'
     porque: 'si es una prueba interna sin dominio propio y no te importa que no tenga HTTPS ni caché global.'
+  - servicio: 'AWS Amplify Hosting'
+    slug: 'front-end-web-y-movil/amplify'
+    porque: 'si solo quieres publicar un front-end desde Git: Amplify monta y administra la distribución por ti. Es lo que usa este sitio.'
 
 serviciosRelacionados:
   - 'almacenamiento/s3'
   - 'seguridad-identidad/iam'
+  - 'front-end-web-y-movil/amplify'
 
 certificaciones:
   - 'AWS Certified Cloud Practitioner'
@@ -46,7 +50,7 @@ enlaces:
   - titulo: 'Precios de Amazon CloudFront'
     url: 'https://aws.amazon.com/cloudfront/pricing/'
 
-actualizado: 2026-08-06
+actualizado: 2026-09-29
 autor: 'AWS SBG UCuenca'
 ---
 
@@ -64,7 +68,7 @@ tiene permiso para leerlo.
 
 ## Cómo funciona
 
-1. Creas una **distribución** y le indicas un **origen** — en nuestro caso, el bucket S3 del sitio.
+1. Creas una **distribución** y le indicas un **origen** — por ejemplo, el bucket S3 de un sitio estático.
 2. Configuras **Origin Access Control** para que el bucket solo acepte peticiones de esa distribución.
 3. Asocias un certificado de **ACM** y, si lo hay, el dominio propio vía Route 53.
 4. En cada despliegue, se **invalida** la caché para que los visitantes reciban la versión nueva.
@@ -80,7 +84,7 @@ tiene permiso para leerlo.
 ## Ejemplo visual
 
 <DiagramaAWS
-  titulo="La capa de entrega de este sitio"
+  titulo="Un sitio estático servido con CloudFront"
   descripcion="El navegador resuelve primero el dominio consultando a Route 53. Con esa dirección pide la página a CloudFront por HTTPS. CloudFront responde desde su caché de borde y, solo si no la tiene, la busca en el bucket S3 privado mediante Origin Access Control. Nótese que Route 53 no está en el camino de los datos: solo traduce el nombre del dominio."
   nodos={[
     { id: 'navegador', etiqueta: 'Navegador', tipo: 'externo' },
@@ -97,3 +101,6 @@ tiene permiso para leerlo.
 
 La flecha hacia S3 es la que menos se recorre: si la caché de borde ya tiene la página, el bucket
 ni se entera. Ahí está el ahorro de transferencia.
+
+Este sitio empezó planeado así, y al final se publicó con [AWS Amplify](/servicios/front-end-web-y-movil/amplify/), que monta
+por debajo una distribución de CloudFront y la administra por su cuenta.

@@ -3,20 +3,154 @@ nombre: 'AWS Amplify'
 categoria: 'front-end-web-y-movil'
 nivel: 'intermedio'
 resumenCorto: 'Plataforma para construir y alojar aplicaciones web y móviles con su backend, desde el repositorio hasta el dominio.'
+analogia: 'Es un equipo de montaje que vigila tu repositorio: cada vez que cambias el código, compila el sitio, lo publica y lo reparte por el mundo sin que toques un servidor.'
 cuandoAplicarlo: 'Cuando quieres publicar un front-end moderno con autenticación y API sin montar la infraestructura pieza por pieza.'
+casosDeUso:
+  - 'Publicar un sitio estático (Astro, Hugo, Vite) desde GitHub en cada push, como este mismo sitio'
+  - 'Alojar una aplicación de React o Vue con HTTPS y dominio propio'
+  - 'Desplegar una app de Next.js con renderizado en servidor sin administrar Lambda ni CloudFront'
+  - 'Previsualizar cada pull request en su propia URL antes de fusionarlo'
+  - 'Crear el backend de una app —login, API y archivos— desde TypeScript con Amplify Gen 2'
+
+conceptosClave:
+  - termino: 'Rama conectada'
+    definicion: 'Cada rama de Git que se conecta a la app se publica en su propia URL, con el nombre de la rama delante.'
+  - termino: 'Especificación de build (amplify.yml)'
+    definicion: 'El archivo del repositorio que dice qué comandos corren en cada build y qué carpeta se publica.'
+  - termino: 'Reglas de reescritura y redirección'
+    definicion: 'Qué hacer con cada URL: redirigir (301, 302), reescribir sin cambiar la dirección (200) o servir una página de error (404-200).'
+  - termino: 'Cabeceras personalizadas (customHttp.yml)'
+    definicion: 'Las cabeceras HTTP que Amplify añade a las respuestas: caché, HTTPS obligatorio, política de seguridad.'
+  - termino: 'Amplify Gen 2'
+    definicion: 'La parte de backend: se describe en TypeScript y Amplify crea por debajo Cognito, AppSync, DynamoDB o S3.'
+
+modeloDePrecios: 'El hosting cobra por minuto de build (0,01 USD en la instancia estándar), por GB almacenado (0,023 USD al mes) y por GB servido (0,15 USD). El backend se paga aparte, según los servicios que cree.'
+capaGratuita: 'La página de precios lista 1.000 minutos de build, 5 GB almacenados y 15 GB servidos al mes sin costo. Las cuentas creadas desde el 15 de julio de 2025 reciben la capa gratuita como créditos, de hasta 200 USD.'
+trampasDeCosto:
+  - 'Hacer push de cada cambio a medias: cada push es un build completo y los minutos se suman.'
+  - 'Servir videos pesados desde el sitio: a 0,15 USD por GB, un video de 350 MB visto cien veces son unos 35 GB de transferencia.'
+  - 'Activar el firewall para un sitio estático: son 15 USD al mes por app, más el uso de AWS WAF, para casi nada que proteger.'
+  - 'Elegir una instancia de build mayor «por si acaso»: el minuto de la Large cuesta 2,5 veces el de la estándar, y el de la XLarge, 10 veces.'
+  - 'Dejar conectadas ramas de prueba: cada una se reconstruye en cada push que reciba.'
+
+alternativas:
+  - servicio: 'S3 + CloudFront, montados a mano'
+    slug: 'redes-y-entrega-de-contenido/cloudfront'
+    porque: 'si quieres controlar cada pieza —acceso al bucket, funciones de borde, políticas de caché— o aprender cómo se arma una CDN por dentro. Era el plan original de este sitio.'
+  - servicio: 'Amazon Lightsail'
+    slug: 'computo/lightsail'
+    porque: 'si lo que necesitas es un servidor tradicional con precio fijo, por ejemplo para un WordPress.'
+  - servicio: 'AWS App Runner'
+    slug: 'computo/app-runner'
+    porque: 'si tu aplicación es un contenedor con su propio servidor web y no un front-end.'
+
+serviciosRelacionados:
+  - 'redes-y-entrega-de-contenido/cloudfront'
+  - 'almacenamiento/s3'
+  - 'seguridad-identidad/cognito'
+  - 'front-end-web-y-movil/appsync'
+  - 'redes-y-entrega-de-contenido/route-53'
+  - 'seguridad-identidad/certificate-manager'
+
+certificaciones:
+  - 'AWS Certified Developer – Associate'
+  - 'AWS Certified Cloud Practitioner'
 
 enlaces:
   - titulo: 'Página oficial de AWS Amplify'
     url: 'https://aws.amazon.com/amplify/'
+  - titulo: 'Guía de usuario de Amplify Hosting'
+    url: 'https://docs.aws.amazon.com/amplify/latest/userguide/welcome.html'
   - titulo: 'Precios de AWS Amplify'
     url: 'https://aws.amazon.com/amplify/pricing/'
 
-actualizado: 2026-09-03
+actualizado: 2026-09-29
 autor: 'AWS SBG UCuenca'
 ---
 
+import DiagramaAWS from '../../../components/DiagramaAWS.astro';
+
 ## Descripción
 
-Amplify conecta con el repositorio, compila en cada push y publica el sitio en una CDN con HTTPS y dominio propio. Sus bibliotecas añaden autenticación con Cognito, API con AppSync y almacenamiento en S3 desde el código del cliente.
+Amplify tiene dos mitades que conviene no confundir. **Amplify Hosting** conecta con el
+repositorio, compila en cada push y publica el resultado en una CDN con HTTPS y dominio propio.
+**Amplify Gen 2** es la parte de backend: se describe en TypeScript y Amplify crea por debajo la
+autenticación con Cognito, la API con AppSync y el almacenamiento en S3.
 
-Es el camino más corto entre un proyecto de React o Astro y un sitio en producción sobre AWS.
+Se pueden usar por separado. Un sitio estático solo necesita el hosting, y es el camino más corto
+entre un proyecto de Astro o React y un sitio en producción sobre AWS.
+
+Lo que Amplify ahorra es justo lo que hay que armar a mano con S3 y CloudFront: el build en cada
+cambio, la invalidación de la caché, el certificado TLS y las rutas limpias. El precio de esa
+comodidad es el control: la distribución de CloudFront existe, pero la administra Amplify y no
+aparece en tu cuenta.
+
+## Cómo funciona
+
+1. Conectas un **repositorio** de GitHub, GitLab o Bitbucket y eliges una **rama**.
+2. En cada push, Amplify levanta un contenedor de build y corre lo que diga **`amplify.yml`**:
+   instalar dependencias, compilar y señalar la carpeta que se publica.
+3. El resultado se sube a la CDN y **la caché se vacía sola**: nadie tiene que invalidar nada.
+4. El sitio queda en `https://<rama>.<id-de-la-app>.amplifyapp.com`, o en tu dominio si lo añades.
+5. Las **reglas de reescritura** y las **cabeceras** deciden qué responde cada URL y con qué
+   instrucciones de caché y seguridad.
+
+## Así lo usa este sitio
+
+Este sitio está en Amplify Hosting. No era el plan original —se iba a montar S3 y CloudFront a
+mano—, pero sin dominio propio la URL de Amplify lleva el nombre del club delante:
+`aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com`. El primer tramo es el nombre de la rama de Git,
+así que esa rama no se renombra nunca.
+
+Cuatro piezas hacen el trabajo, y tres viven en el repositorio:
+
+- **`amplify.yml`** fija las versiones de Node y pnpm, en vez de usar las que traiga la imagen de
+  build ese día, y guarda las dependencias descargadas en la caché de Amplify para que el siguiente
+  build no las baje de nuevo.
+- **`astro.config.mjs`** arma la URL pública con `AWS_BRANCH` y `AWS_APP_ID`, dos variables que
+  Amplify inyecta en cada build. Así las vistas previas de los enlaces apuntan a la dirección
+  correcta sin escribirla a mano.
+- **`customHttp.yml`** le dice al navegador que guarde un año lo que está en `/_astro/`, cuyos
+  nombres cambian con cada versión, y añade las cabeceras de seguridad.
+- **La regla de la 404** es la única que vive en la consola: `/<*>` → `/404.html` con estado
+  `404-200`.
+
+Esa última costó un tropiezo. Con el estado `404` a secas, Amplify **redirige**: una URL
+inexistente respondía 302, cambiaba la dirección del navegador y terminaba en un 200. Se veía
+bien, pero para un buscador la página existía. Con `404-200` Amplify **reescribe**: sirve la misma
+página de error, deja la URL como estaba y responde 404.
+
+## Manos a la obra
+
+- Conecta un repositorio con un solo `index.html` y haz push. En un par de minutos tienes una URL
+  con HTTPS.
+- Crea una rama `prueba`, conéctala también y fíjate en su URL: es la misma de antes con otro
+  nombre delante.
+- Pide una página que no existe con `curl -I`. Compara la respuesta con la regla en `404` y en
+  `404-200`: la primera trae una cabecera `Location`; la segunda, no.
+- Añade un `customHttp.yml` con un `Cache-Control` propio, haz push y vuelve a mirar las cabeceras
+  con `curl -I`.
+- Al terminar, desconecta la rama de prueba: cada rama conectada vuelve a construirse con cada
+  push que reciba.
+
+## Ejemplo visual
+
+<DiagramaAWS
+  titulo="Del push al visitante en este sitio"
+  descripcion="Un push a la rama aws-sbg-ucuenca en GitHub avisa a AWS Amplify, que instala las dependencias, corre pnpm build y publica la carpeta dist en la CDN de Amazon CloudFront que administra por su cuenta. Desde ahí se sirve el sitio al navegador del visitante por HTTPS. Cada publicación vacía la caché de la CDN, así que nadie tiene que invalidarla."
+  nodos={[
+    { id: 'github', etiqueta: 'GitHub', sub: 'rama aws-sbg-ucuenca', tipo: 'externo' },
+    { id: 'amplify', etiqueta: 'AWS Amplify', sub: 'pnpm build', categoria: 'front-end-web-y-movil' },
+    { id: 'cdn', etiqueta: 'CloudFront', sub: 'administrado', categoria: 'redes-y-entrega-de-contenido' },
+    { id: 'navegador', etiqueta: 'Navegador', tipo: 'externo' },
+  ]}
+  flujos={[
+    { de: 'github', a: 'amplify', etiqueta: 'push' },
+    { de: 'amplify', a: 'cdn', etiqueta: 'publica' },
+    { de: 'cdn', a: 'navegador', etiqueta: 'HTTPS' },
+  ]}
+/>
+
+La flecha de la izquierda solo se recorre cuando alguien hace push; la de la derecha, en cada
+visita. Por eso los minutos de build dependen de cuánto se trabaja en el sitio, y la transferencia,
+de cuánta gente lo visita.

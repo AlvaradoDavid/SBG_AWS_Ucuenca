@@ -52,7 +52,7 @@ enlaces:
   - titulo: 'Precios de Amazon S3'
     url: 'https://aws.amazon.com/s3/pricing/'
 
-actualizado: 2026-08-06
+actualizado: 2026-09-29
 autor: 'AWS SBG UCuenca'
 destacado: true
 ---
@@ -65,15 +65,16 @@ Amazon S3 guarda *objetos* — en la práctica, archivos — organizados en **bu
 duro tradicional ni una base de datos: es almacenamiento diseñado para ser prácticamente
 indestructible (AWS anuncia once nueves de durabilidad) y escalar sin límite práctico de tamaño total.
 
-Es, además, el servicio detrás de la infraestructura de este mismo sitio: los archivos que genera
-Astro al compilar el proyecto se suben a un bucket S3, y desde ahí los sirve CloudFront.
+Está, además, detrás de este mismo sitio, aunque no se vea: Amplify guarda en S3 los archivos que
+genera Astro al compilar y los sirve con CloudFront. Cualquier página del sitio responde con la
+cabecera `Server: AmazonS3`; se puede comprobar con `curl -I`.
 
 ## Cómo funciona
 
 1. Creas un **bucket** con un nombre único a nivel mundial, en una región concreta.
 2. Subes **objetos**, cada uno con una clave (su "ruta") y metadatos.
-3. Defines quién puede leerlos: por política del bucket, por IAM, o — en el caso de este sitio —
-   solo desde CloudFront mediante *Origin Access Control*.
+3. Defines quién puede leerlos: por política del bucket, por IAM, o —en un sitio estático bien
+   montado— solo desde CloudFront mediante *Origin Access Control*.
 4. Opcionalmente configuras **reglas de ciclo de vida** para mover objetos viejos a clases más baratas.
 
 ## Manos a la obra
@@ -87,7 +88,7 @@ Astro al compilar el proyecto se suben a un bucket S3, y desde ahí los sirve Cl
 ## Ejemplo visual
 
 <DiagramaAWS
-  titulo="Cómo se publica este sitio"
+  titulo="Un sitio estático en S3 detrás de CloudFront"
   descripcion="El comando astro build genera la carpeta dist/ con el sitio compilado. Un paso de despliegue sincroniza esa carpeta con un bucket de Amazon S3 privado. CloudFront lee de ese bucket mediante Origin Access Control y sirve el sitio al visitante con HTTPS y caché en el borde, sin que el bucket quede nunca expuesto a internet."
   nodos={[
     { id: 'build', etiqueta: 'dist/', sub: 'astro build', tipo: 'externo' },
@@ -104,3 +105,7 @@ Astro al compilar el proyecto se suben a un bucket S3, y desde ahí los sirve Cl
 
 Fíjate en que el bucket nunca habla directamente con el visitante. Esa es la diferencia entre
 *guardar* archivos y *servirlos*, y también la razón de que salga más barato.
+
+Ese era el plan original de este sitio. Al final se publicó con
+[AWS Amplify](/servicios/front-end-web-y-movil/amplify/), que hace esos mismos pasos por su cuenta en
+cada push, con un almacenamiento y una distribución que administra él.

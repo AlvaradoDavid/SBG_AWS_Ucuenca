@@ -126,8 +126,9 @@ Dos mecanismos distintos:
 - **Catálogo de servicios:** índice JSON incrustado, filtra en memoria sin red.
   Es rapidísimo y no hace ni una petición, pero se paga entero en la carga
   inicial: ver el presupuesto de arriba
-- **Sitio completo:** Pagefind genera un índice fragmentado en el build, que se
-  descarga por partes solo cuando alguien busca
+- **Sitio completo:** Pagefind genera un índice fragmentado en el build, pensado
+  para descargarse por partes solo cuando alguien busca. **Todavía ninguna página
+  lo carga:** el índice existe, pero falta el buscador que lo use
 
 ### Cómo medir
 

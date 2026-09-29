@@ -54,7 +54,7 @@ enlaces:
   - titulo: 'Precios de Amazon Route 53'
     url: 'https://aws.amazon.com/route53/pricing/'
 
-actualizado: 2026-09-03
+actualizado: 2026-09-29
 autor: 'AWS SBG UCuenca'
 ---
 
@@ -93,7 +93,7 @@ un recurso y no a una dirección, y no se cobran por consulta.
 
 <DiagramaAWS
   titulo="Del dominio al contenido"
-  descripcion="Un visitante escribe el dominio del club en el navegador, que consulta a Amazon Route 53. La zona alojada responde con un registro de alias que apunta a la distribución de Amazon CloudFront del sitio. CloudFront sirve el contenido desde su caché o lo pide al bucket de Amazon S3 que guarda los archivos del sitio estático. Route 53 solo participa al principio: una vez resuelto el nombre, el navegador habla directamente con CloudFront."
+  descripcion="Un visitante escribe el dominio en el navegador, que consulta a Amazon Route 53. La zona alojada responde con un registro de alias que apunta a la distribución de Amazon CloudFront del sitio. CloudFront sirve el contenido desde su caché o lo pide al bucket de Amazon S3 que guarda los archivos del sitio estático. Route 53 solo participa al principio: una vez resuelto el nombre, el navegador habla directamente con CloudFront."
   nodos={[
     { id: 'visitante', etiqueta: 'Visitante', tipo: 'externo' },
     { id: 'route53', etiqueta: 'Amazon Route 53', sub: 'resuelve el nombre', categoria: 'redes-y-entrega-de-contenido' },
@@ -107,5 +107,6 @@ un recurso y no a una dirección, y no se cobran por consulta.
   ]}
 />
 
-Este es exactamente el camino que sigue este sitio: dominio en Route 53, entrega por CloudFront y
-archivos en S3.
+Es el camino clásico de un sitio estático con dominio propio. Este sitio todavía no lo tiene: vive
+en la URL que le da [AWS Amplify](/servicios/front-end-web-y-movil/amplify/), y el día que llegue un
+dominio, lo que se añade es justo ese primer paso: resolver el nombre.

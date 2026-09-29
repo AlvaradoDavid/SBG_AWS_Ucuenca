@@ -13,11 +13,11 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Navegación (escritorio y móvil) | Completa |
 | Portada | Completa: hero con collage, cifras, partículas, trayectoria, galería |
 | Galería de eventos | Completa, con visor accesible |
-| Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 40 completas con diagrama, 211 breves |
+| Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
 | Contenido de eventos | ⚠️ **Los 5 son `[Placeholder]`** |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
 | Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 4 |
-| Infraestructura AWS | ✅ **En línea en Amplify:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>. Quedan dos ajustes de consola: ver el punto 1 |
+| Infraestructura AWS | ✅ **En línea en Amplify:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, con 404 real, cabeceras de seguridad y alarmas de costo. Solo queda el subdominio: ver el punto 1 |
 
 ### Las dos profundidades de ficha
 
@@ -26,11 +26,12 @@ productos, repartidos en 19 categorías y en dos niveles de detalle:
 
 | Tipo | Cuántas | Qué lleva |
 | --- | --- | --- |
-| **Completa** | 40 | Frontmatter entero —analogía, vocabulario, costos, alternativas, servicios relacionados, certificaciones— y cuerpo con `## Descripción`, `## Cómo funciona`, `## Manos a la obra` y `## Ejemplo visual` con su diagrama |
-| **Breve** | 211 | Campos obligatorios, `cuandoAplicarlo`, enlaces oficiales y un `## Descripción` de dos o tres párrafos. Sin diagrama |
+| **Completa** | 41 | Frontmatter entero —analogía, vocabulario, costos, alternativas, servicios relacionados, certificaciones— y cuerpo con `## Descripción`, `## Cómo funciona`, `## Manos a la obra` y `## Ejemplo visual` con su diagrama |
+| **Breve** | 210 | Campos obligatorios, `cuandoAplicarlo`, enlaces oficiales y un `## Descripción` de dos o tres párrafos. Sin diagrama |
 
-Las 40 completas son las que aparecen en Cloud Practitioner, Solutions Architect
-Associate y Developer Associate, más las que el club usa de verdad. Las seis
+Las completas son las que aparecen en Cloud Practitioner, Solutions Architect
+Associate y Developer Associate, más las que el club usa de verdad: las 40 del
+primer lote, más Amplify, que se amplió al publicar el sitio con él. Las seis
 primeras (EC2, Lambda, S3, DynamoDB, CloudFront e IAM) siguen siendo las de
 referencia para el estilo.
 
@@ -63,28 +64,24 @@ Amplify Hosting ([D-23](decisiones.md#d-23)) y conectado a la rama
   nada, así que **no hace falta definir `SITE_URL`**.
 - La vista previa de los enlaces en WhatsApp muestra la foto.
 
-**Pendiente, en este orden:**
+**Hecho después de publicar** (2026-09-29):
 
-1. **Cambiar el estado de la regla de la 404 a `404-200`** (consola → *Hosting →
-   Rewrites and redirects → Manage redirects*). Hoy está en `404`, que es una
-   redirección: una URL inexistente responde 302 → `/404.html` → 200. Se ve bien,
-   pero la URL cambia y un buscador ve la página como existente. Después de
-   cambiarla, `curl -I https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/no-existe/` debe responder **404** sin `Location`.
-2. **Confirmar que Budgets y Cost Anomaly Detection están creados**, con los
-   créditos excluidos por el filtro *Charge type* ([D-17](decisiones.md#d-17)).
-   No se confirmó en la sesión del despliegue.
-3. **Cerrar el círculo en el catálogo.** La ficha de Amplify
-   (`src/content/servicios/front-end-web-y-movil/amplify.mdx`) todavía es breve.
-   Ampliarla con un bloque «así lo usamos nosotros» convierte el propio despliegue
-   en su ejemplo real y recupera parte del valor didáctico que se perdió al dejar
-   CloudFront.
-4. **`README.md` de la raíz.** Sigue siendo la plantilla «Astro Starter Kit» y es
-   lo primero que se ve en GitHub. Debería presentar el sitio y enlazar a `docs/`.
-5. **Cabeceras HTTP** (opcional). Un `customHttp.yml` en la raíz con caché larga
-   para `/_astro/*` (sus nombres llevan hash) y cabeceras de seguridad. AWS pide
-   ponerlas ahí y no en `amplify.yml`.
-6. **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como
-   dominio en Amplify y se define `SITE_URL`.
+- ✅ **Regla de la 404 en `404-200`.** `curl -I` a una URL inexistente responde
+  404 sin `Location`, con la página de error propia.
+- ✅ **Budgets y Cost Anomaly Detection** creados, con los créditos excluidos por
+  el filtro *Charge type* ([D-17](decisiones.md#d-17)).
+- ✅ **Ficha de Amplify completa**, con una sección «Así lo usa este sitio» y su
+  diagrama. De paso, las fichas de S3, CloudFront y Route 53 dejaron de decir que
+  este sitio se sirve con S3 + CloudFront.
+- ✅ **`README.md` de la raíz** reescrito: presenta el sitio y enlaza a `docs/`.
+- ✅ **Cabeceras HTTP** en `customHttp.yml`: caché de un año para `/_astro/*` y
+  cabeceras de seguridad, con una CSP que no admite orígenes externos
+  ([D-25](decisiones.md#d-25)).
+
+**Pendiente:**
+
+- **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como
+  dominio en Amplify y se define `SITE_URL`.
 
 **Lo que no se hace:** activar el firewall (WAF) que ofrece Amplify — ver
 [D-24](decisiones.md#d-24).
@@ -107,7 +104,7 @@ campo ya está soportado y se muestra como una etiqueta en la página del evento
 
 ### 3. Profundizar fichas breves (prioridad media)
 
-El catálogo ya está completo en cobertura; lo que queda es profundidad. Hay 211
+El catálogo ya está completo en cobertura; lo que queda es profundidad. Hay 210
 fichas breves esperando su frontmatter completo y su diagrama. El orden sensato
 es por uso real: primero lo que el club enseña en talleres, después lo que entra
 en certificación, y el resto según haga falta.
@@ -131,6 +128,11 @@ magnitud.
 
 ### 5. Ideas que quedaron sobre la mesa
 
+- **Buscador de todo el sitio.** `pnpm build` genera el índice de Pagefind en
+  `dist/pagefind/`, pero **ninguna página lo carga**: la única búsqueda que existe
+  hoy es el filtro del catálogo. Falta decidir dónde va el buscador y medir su
+  peso contra el presupuesto de JS. Si se añade, la CSP necesita
+  `'wasm-unsafe-eval'` ([D-25](decisiones.md#d-25)).
 - **Iconos oficiales de AWS.** AWS publica un set de *AWS Architecture Icons*
   (~750 SVG) que no está en `Branding/`. Si se descarga, los nodos de los
   diagramas podrían llevar el icono real de cada servicio en vez de solo texto.
@@ -162,7 +164,7 @@ La ruta tiene tres niveles porque las fichas viven en
 ### La forma de una ficha breve
 
 Es el mínimo que exige el esquema, más enlaces oficiales y una descripción corta.
-Sirve de plantilla para las 211 que están así:
+Sirve de plantilla para las 210 que están así:
 
 ```mdx
 ---

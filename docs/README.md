@@ -4,9 +4,8 @@ Sitio del **AWS Student Builder Group – Universidad de Cuenca**. Construido co
 Astro como sitio estático.
 
 > **En línea en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>**, alojado en AWS Amplify Hosting.
-> **Cada push a la rama `aws-sbg-ucuenca` se publica en producción.** Lo que queda
-> por cerrar del despliegue está en
-> [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
+> **Cada push a la rama `aws-sbg-ucuenca` se publica en producción.** Cómo lo usa
+> el propio sitio está contado en la ficha de Amplify del catálogo.
 
 ## Índice
 

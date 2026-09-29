@@ -2,6 +2,30 @@
 
 ---
 
+## Cierre del despliegue: cabeceras, README y ficha de Amplify
+
+El 2026-09-29, el mismo día de la publicación, se cerró todo lo que quedaba del
+despliegue salvo el subdominio de la Universidad.
+
+- **404 real.** La regla pasó a `404-200` en la consola. Una URL inexistente
+  responde ahora 404, sin redirección y con la página de error propia.
+- **Budgets y Cost Anomaly Detection** confirmados en la consola.
+- **`customHttp.yml`.** Caché de un año para `/_astro/*` —antes todo se servía
+  con `max-age=0`— y cabeceras de seguridad: HSTS, una CSP sin orígenes externos,
+  `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy`. Ver
+  [D-25](decisiones.md#d-25).
+- **Ficha de Amplify completa**, con la sección «Así lo usa este sitio» y el
+  diagrama del push al visitante. Las fichas de S3, CloudFront y Route 53 decían
+  que este sitio se sirve con S3 + CloudFront; ahora cuentan ese montaje como
+  ejemplo y enlazan a la de Amplify.
+- **`README.md` de la raíz**, que seguía siendo la plantilla de Astro.
+
+Al auditar lo que carga el sitio para escribir la CSP apareció algo que la
+documentación daba por hecho: **Pagefind genera su índice, pero ninguna página lo
+carga.** No hay buscador de todo el sitio. Quedó anotado en los siguientes pasos.
+
+---
+
 ## Sitio en línea en Amplify
 
 El 2026-09-29 el sitio quedó publicado en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>. La app de Amplify se creó en

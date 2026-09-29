@@ -512,3 +512,62 @@ pero avisan a tiempo.
 primer backend del sitio. Aun así, la protección iría en la API de ese
 formulario (API Gateway), no en Amplify. El plan con CloudFront ya había
 descartado WAF por su costo base; con Amplify ese costo es cuatro veces mayor.
+
+---
+
+## D-25 · Cabeceras HTTP en `customHttp.yml`, con una CSP sin orígenes externos
+
+**Decisión.** Las cabeceras de respuesta se declaran en `customHttp.yml`, en la
+raíz del repositorio, y la sección *Custom headers* de la consola se deja vacía.
+Son dos grupos:
+
+| Patrón | Cabecera | Para qué |
+| --- | --- | --- |
+| `/_astro/*` | `Cache-Control: public, max-age=31536000, immutable` | El navegador guarda un año los archivos con hash en el nombre |
+| `**` | `Strict-Transport-Security` | Solo HTTPS durante un año |
+| `**` | `Content-Security-Policy` | Solo se carga lo que sale del propio dominio |
+| `**` | `X-Frame-Options: DENY` | Nadie puede incrustar el sitio en un iframe |
+| `**` | `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` | Endurecimiento básico sin efectos visibles |
+
+**Por qué en el archivo y no en la consola.** AWS da las dos opciones y dice que
+el archivo gana si existen las dos. En el repositorio las cabeceras quedan
+versionadas y revisables, igual que `amplify.yml`. AWS pide explícitamente **no**
+ponerlas en `amplify.yml`, que era la forma antigua.
+
+**Por qué solo `/_astro/*` lleva caché larga.** Amplify sirve todo con
+`max-age=0`: el navegador revalida cada archivo en cada visita, aunque la CDN sí
+lo tenga en caché. Para el HTML es lo correcto, porque cambia con cada push. Los
+archivos de `/_astro/` llevan un hash en el nombre: una versión nueva tiene otra
+URL, así que guardarlos un año no puede servir nada viejo. Las fuentes de
+`public/fonts/` y los archivos de Pagefind no llevan hash y se quedan como están.
+Amplify solo aplica un `Cache-Control` propio a las respuestas 200, así que un
+error nunca queda guardado.
+
+**La CSP usa `'unsafe-inline'`.** Astro incrusta sus scripts —y los de
+`define:vars` cambian de página en página— y hay atributos `style` en el HTML.
+Sin `'unsafe-inline'` el sitio se rompe. Con él, la política no frena un script
+inyectado en la página, pero sí impide cargar nada de otro origen, incrustar el
+sitio, cambiar la base de las URLs o enviar formularios fuera. Para un sitio
+estático sin formularios ni contenido de usuarios es el punto razonable.
+
+Si se quiere endurecer más adelante, Astro puede calcular un hash por cada script
+y estilo del HTML y emitir la política él mismo (opción `security.csp`). Cambia el
+build de todas las páginas, así que no se hizo junto con lo demás.
+
+**Lo que se descartó.**
+
+- `X-XSS-Protection`: aparece en el ejemplo de AWS, pero los navegadores actuales
+  la ignoran o la retiraron.
+- `includeSubDomains` y `preload` en HSTS: el dominio de Amplify no tiene
+  subdominios propios del club, y `preload` es difícil de deshacer.
+
+**Consecuencias.**
+
+- Cualquier recurso de otro origen —un video embebido, analítica, un formulario
+  hacia una API— **se bloqueará en silencio** hasta declararlo en la CSP. El
+  síntoma es un error en la consola del navegador, no en el build.
+- Si se añade el buscador de Pagefind (hoy el índice se genera pero ninguna
+  página lo carga), su motor es WebAssembly y necesita `'wasm-unsafe-eval'` en
+  `script-src`.
+- Un cambio en `customHttp.yml` se aplica en el siguiente build: basta con hacer
+  push.

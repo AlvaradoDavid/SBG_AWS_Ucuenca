@@ -8,11 +8,14 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
-Dos cosas que cuestan tiempo si no se saben:
+Tres cosas que cuestan tiempo si no se saben:
 
 - **Solo cabe un servidor de desarrollo por proyecto.** El PID y el puerto quedan
   en `.astro/dev.json`; un segundo `astro dev` no arranca aunque se le pase otro
   puerto. Si el 4321 está ocupado por otra sesión, hay que parar esa.
+- **Cada push a `aws-sbg-ucuenca` publica en producción.** El sitio vive en
+  Amplify (https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/) y esa rama es la única. Verifica con
+  `pnpm build` antes de hacer push; no la renombres, porque su nombre forma la URL.
 - **Tras añadir muchos archivos de contenido de golpe, reinicia el servidor.** Su
   caché de colecciones se queda a medias y sigue sirviendo un número de fichas
   viejo. `pnpm build` es la fuente de verdad; el servidor de desarrollo, no.

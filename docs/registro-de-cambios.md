@@ -2,6 +2,45 @@
 
 ---
 
+## Sitio en línea en Amplify
+
+El 2026-09-29 el sitio quedó publicado en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>. La app de Amplify se creó en
+`us-east-1`, conectada a la rama `aws-sbg-ucuenca`. El primer build funcionó con
+el `amplify.yml` del repositorio, sin tocar nada en la consola.
+
+### Verificado contra el sitio publicado
+
+| Comprobación | Resultado |
+| --- | --- |
+| Portada, catálogo, eventos, búsqueda | 200 |
+| `/servicios/almacenamiento/s3` sin barra | 301 hacia la versión con barra |
+| `og:image` | Apunta al dominio de Amplify: las variables `AWS_APP_ID` y `AWS_BRANCH` llegaron al build, así que no hizo falta `SITE_URL` |
+| Vista previa en WhatsApp | Muestra la foto |
+| URL inexistente | ⚠️ 302 → `/404.html` → 200. Ver abajo |
+
+### Un error en las instrucciones de la 404
+
+Las instrucciones del despliegue decían que el estado de la regla fuese `404` y
+que se evitara `404-200`. Era al revés. Según la referencia de AWS, **`404` es una
+redirección y `404-200` una reescritura**. Con `404`, Amplify responde 302 hacia
+`/404.html`, la URL cambia y la respuesta final es un 200. A la vista funciona,
+así que no se nota, pero un buscador trata la página como existente. Hay que
+cambiar el estado a `404-200` en la consola; la documentación ya está corregida.
+
+De paso, la nota interna de `src/pages/404.astro` pasó de un comentario `<!-- -->`
+al frontmatter: Astro publica los comentarios HTML, así que la nota se estaba
+sirviendo en el HTML público.
+
+### Dos decisiones más
+
+- **Sin firewall (WAF).** Amplify lo ofrece al crear la app por 15 USD al mes por
+  app, más el uso de WAF, y para un sitio estático no protege casi nada — ver
+  [D-24](decisiones.md#d-24).
+- **[D-17](decisiones.md#d-17) actualizada.** La casilla `Credits` de Budgets ya no
+  existe; los créditos se excluyen con el filtro *Charge type*.
+
+---
+
 ## Repositorio en GitHub y preparación para Amplify
 
 El despliegue cambió de plan: **Amplify Hosting en lugar de S3 + CloudFront**.
@@ -305,9 +344,8 @@ silencioso y la tabla de costos:
 
 ## Pendiente
 
-- **Desplegar el sitio.** Preparado para Amplify, falta conectar la app en la
-  consola: el sitio no está en línea. Es hoy la prioridad más alta —
-  ver [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-conectar-el-repositorio-a-amplify).
+- **Desplegar el sitio.** Hecho: ver la entrada «Sitio en línea en Amplify» —
+  ver [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
 - **Contenido de los eventos.** Los cinco `.mdx` de `src/content/eventos/` tienen
   `[Placeholder]` como cuerpo. El diseño ya está listo para recibir el texto.
 - **Catálogo de servicios.** Cobertura completa con 251 fichas; lo que falta es

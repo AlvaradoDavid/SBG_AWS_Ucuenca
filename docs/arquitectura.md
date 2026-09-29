@@ -114,9 +114,9 @@ evento del 16 aparecería como 15. Por eso el formateo es explícitamente UTC.
 
 ## Despliegue
 
-> **Estado: preparado, todavía no conectado.** El repositorio está en GitHub y el
-> código listo para Amplify; falta crear la app en la consola. Los pasos están en
-> [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-conectar-el-repositorio-a-amplify).
+> **Estado: en línea desde el 2026-09-29** en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>.
+> Lo que queda por cerrar del despliegue está en
+> [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
 
 El sitio se aloja en **AWS Amplify Hosting**, conectado a la rama
 `aws-sbg-ucuenca` de <https://github.com/AlvaradoDavid/SBG_AWS_Ucuenca>. Cada push
@@ -133,12 +133,12 @@ push a aws-sbg-ucuenca → Amplify: pnpm install + pnpm build → CDN de Amplify
 ### La URL pública
 
 ```
-https://aws-sbg-ucuenca.<id-de-la-app>.amplifyapp.com
+https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/
 ```
 
 El primer tramo es el **nombre de la rama**, y por eso la rama se llama como el
-club: renombrarla cambia la URL pública. El segundo tramo lo genera AWS al crear
-la app y no se puede elegir.
+club: renombrarla cambia la URL pública. El segundo tramo (`d2jrpw2uglkitl`) lo
+generó AWS al crear la app y no se puede elegir.
 
 `astro.config.mjs` arma esa URL sola a partir de `AWS_BRANCH` y `AWS_APP_ID`, dos
 variables que Amplify inyecta en cada build. Si se define `SITE_URL` en la
@@ -152,14 +152,17 @@ local, sin ninguna de las tres, queda `http://localhost:4321`.
 | `amplify.yml` | Repositorio | Receta del build: Node 24, pnpm del `packageManager`, caché del store |
 | `packageManager` en `package.json` | Repositorio | Fija pnpm 11.20.0; el build nunca usa «latest» |
 | `src/pages/404.astro` | Repositorio | Genera `dist/404.html` |
-| Regla `/<*>` → `/404.html` (404) | **Consola** | Sin ella Amplify no sirve la 404 propia. No se puede declarar en el repo |
+| Regla `/<*>` → `/404.html`, estado **`404-200`** | **Consola** | Sirve la 404 propia sin cambiar la URL y con código 404. No se puede declarar en el repo |
 | `SITE_URL` | **Consola** | Solo si hay dominio propio |
 
 ### Las dos piezas que fallan en silencio
 
 1. **La regla de la 404.** Al crear la app, Amplify pone su propia regla por
-   defecto. Hay que sustituirla por `/<*>` → `/404.html` con tipo *404*, o las URLs
-   equivocadas no mostrarán la página del sitio.
+   defecto. Hay que sustituirla por `/<*>` → `/404.html` con estado **`404-200`**
+   (reescritura). **No `404` a secas:** ese es una *redirección*. Amplify responde
+   302 hacia `/404.html`, la barra de direcciones cambia y la respuesta final es
+   un 200, así que para un buscador la página «existe». Visualmente parece que
+   funciona, y por eso pasa desapercibido.
 2. **Renombrar la rama.** Cambia la URL pública y rompe cualquier enlace ya
    compartido. La rama `aws-sbg-ucuenca` no se renombra.
 

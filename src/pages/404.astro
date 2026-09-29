@@ -1,11 +1,11 @@
 ---
+// Amplify la sirve para cualquier ruta inexistente gracias a la regla
+// /<*> → /404.html de la consola, con estado 404-200 (reescritura). Con 404 a
+// secas Amplify redirige con un 302. Sin data-pagefind-body: no se indexa.
+// El comentario va aquí y no como <!-- --> porque Astro publicaría este último.
 import Layout from '../layouts/Layout.astro';
 ---
 
-<!--
-  Amplify la sirve para cualquier ruta inexistente gracias a la regla
-  /<*> → /404.html (404) de la consola. Sin data-pagefind-body: no se indexa.
--->
 <Layout
   title="Página no encontrada"
   description="La dirección que buscas no existe en el sitio del AWS Student Builder Group de la Universidad de Cuenca."

@@ -17,7 +17,7 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Contenido de eventos | ⚠️ **Los 5 son `[Placeholder]`** |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
 | Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 4 |
-| Infraestructura AWS | ⚠️ **Preparada para Amplify, no conectada.** Repositorio en GitHub; el sitio no está en línea |
+| Infraestructura AWS | ✅ **En línea en Amplify:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>. Quedan dos ajustes de consola: ver el punto 1 |
 
 ### Las dos profundidades de ficha
 
@@ -45,52 +45,49 @@ porque aparecen en material de estudio antiguo y en arquitecturas heredadas.
 
 ## Lo que queda pendiente
 
-### 1. Conectar el repositorio a Amplify
+### 1. Cerrar el despliegue
 
-El sitio se aloja en **AWS Amplify Hosting** ([D-23](decisiones.md#d-23)); el plan
-anterior con S3 + CloudFront quedó descartado. Lo que es del repositorio ya está
-hecho:
+El sitio está **en línea desde el 2026-09-29** en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, alojado en AWS
+Amplify Hosting ([D-23](decisiones.md#d-23)) y conectado a la rama
+`aws-sbg-ucuenca` de <https://github.com/AlvaradoDavid/SBG_AWS_Ucuenca>.
 
-- Repositorio en <https://github.com/AlvaradoDavid/SBG_AWS_Ucuenca>, rama
-  `aws-sbg-ucuenca`. **No renombrarla:** su nombre forma la URL pública.
-- `amplify.yml` con Node 24 y pnpm fijado en `package.json`.
-- `site` calculado a partir de las variables de Amplify.
-- `src/pages/404.astro`.
-- `og:image` en todas las páginas: cada evento comparte su primera foto y el
-  resto del sitio, la del stand de inicio de ciclo.
+> **Cada push a `aws-sbg-ucuenca` se publica en producción.** No hay rama de
+> pruebas: se verifica con `pnpm build` antes de hacer push.
 
-**Lo que falta, en este orden:**
+**Verificado contra el sitio publicado** (con `curl` y a mano en el navegador):
 
-| Paso | Qué se hace | Por qué en ese orden |
-| --- | --- | --- |
-| 1 | Budgets + Cost Anomaly Detection, con los créditos **excluidos** ([D-17](decisiones.md#d-17)) | **Antes** de crear nada: un presupuesto puesto después solo confirma el daño |
-| 2 | Amplify → *Create new app* → GitHub → repositorio → rama `aws-sbg-ucuenca` | Amplify detecta `amplify.yml` solo; no hay que tocar la configuración de build |
-| 3 | *Hosting → Rewrites and redirects*: sustituir la regla por defecto por `/<*>` → `/404.html`, tipo *404* | Sin ella, una URL equivocada no muestra la página del sitio |
-| 4 | Verificar en la URL pública | Ver la lista de abajo |
+- La portada, el catálogo, los eventos y la búsqueda cargan.
+- `/servicios/almacenamiento/s3` (sin barra) responde 301 hacia la versión con barra.
+- El `og:image` apunta a `https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/_astro/…`, la imagen responde 200 y cada evento
+  comparte su propia foto: Amplify inyectó `AWS_APP_ID` y `AWS_BRANCH` sin tocar
+  nada, así que **no hace falta definir `SITE_URL`**.
+- La vista previa de los enlaces en WhatsApp muestra la foto.
 
-**Qué verificar tras el primer despliegue:**
+**Pendiente, en este orden:**
 
-- Que el log del build muestre Node 24 y pnpm 11.20.0.
-- Que `/servicios/almacenamiento/s3/` cargue, y que `/servicios/almacenamiento/s3`
-  (sin barra) redirija a la versión con barra.
-- Que una URL inventada muestre la 404 del sitio.
-- Que el `og:image` de la portada apunte a `https://aws-sbg-ucuenca.<id>.amplifyapp.com/_astro/…`.
-  Si apunta a `localhost`, Amplify no inyectó las variables y hay que definir
-  `SITE_URL` en la consola.
-- Que un enlace compartido por WhatsApp muestre la foto.
+1. **Cambiar el estado de la regla de la 404 a `404-200`** (consola → *Hosting →
+   Rewrites and redirects → Manage redirects*). Hoy está en `404`, que es una
+   redirección: una URL inexistente responde 302 → `/404.html` → 200. Se ve bien,
+   pero la URL cambia y un buscador ve la página como existente. Después de
+   cambiarla, `curl -I https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/no-existe/` debe responder **404** sin `Location`.
+2. **Confirmar que Budgets y Cost Anomaly Detection están creados**, con los
+   créditos excluidos por el filtro *Charge type* ([D-17](decisiones.md#d-17)).
+   No se confirmó en la sesión del despliegue.
+3. **Cerrar el círculo en el catálogo.** La ficha de Amplify
+   (`src/content/servicios/front-end-web-y-movil/amplify.mdx`) todavía es breve.
+   Ampliarla con un bloque «así lo usamos nosotros» convierte el propio despliegue
+   en su ejemplo real y recupera parte del valor didáctico que se perdió al dejar
+   CloudFront.
+4. **`README.md` de la raíz.** Sigue siendo la plantilla «Astro Starter Kit» y es
+   lo primero que se ve en GitHub. Debería presentar el sitio y enlazar a `docs/`.
+5. **Cabeceras HTTP** (opcional). Un `customHttp.yml` en la raíz con caché larga
+   para `/_astro/*` (sus nombres llevan hash) y cabeceras de seguridad. AWS pide
+   ponerlas ahí y no en `amplify.yml`.
+6. **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como
+   dominio en Amplify y se define `SITE_URL`.
 
-**Después:**
-
-- **Cerrar el círculo en el catálogo.** La ficha de Amplify
-  (`src/content/servicios/front-end-web-y-movil/amplify.mdx`) todavía es breve.
-  Ampliarla con un bloque «así lo usamos nosotros» convierte el propio despliegue
-  en su ejemplo real y recupera parte del valor didáctico que se perdió al dejar
-  CloudFront.
-- **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como dominio
-  en Amplify y se define `SITE_URL`.
-- **Cabeceras HTTP** (opcional). Un `customHttp.yml` en la raíz con caché larga
-  para `/_astro/*` (sus nombres llevan hash) y cabeceras de seguridad. AWS pide
-  ponerlas ahí y no en `amplify.yml`.
+**Lo que no se hace:** activar el firewall (WAF) que ofrece Amplify — ver
+[D-24](decisiones.md#d-24).
 
 ### 2. Contenido de los eventos (prioridad alta)
 

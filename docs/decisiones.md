@@ -304,8 +304,13 @@ Lambda@Edge estaría sobredimensionado.
 
 ## D-17 · El presupuesto de costos excluye los créditos
 
-**Decisión.** El presupuesto de AWS Budgets se configura con la casilla
-`Credits` **desmarcada** en «Include the following costs».
+**Decisión.** El presupuesto de AWS Budgets excluye los créditos con el filtro
+**Charge type** de *Budget scope*: se excluyen `Credit` y `Refund` o, si la consola
+solo deja incluir, se incluye solo `Usage` (y `Tax`). Se mantiene *Use unblended
+costs*; las opciones *net* restan los créditos.
+
+> Hasta 2026 esto se hacía desmarcando la casilla `Credits` en «Include the
+> following costs». Esa casilla ya no aparece en la documentación de AWS.
 
 **Por qué.** Con los créditos incluidos, AWS los descuenta del total y el
 presupuesto marca **$0.00 todos los meses** aunque haya consumo real. La alarma
@@ -476,8 +481,34 @@ catálogo con cómo lo usa el propio sitio.
 - El build fija sus versiones: Node 24 en `amplify.yml` y pnpm 11.20.0 en el
   `packageManager` de `package.json`. Con «latest», una versión mayor nueva podría
   romper el build sin que nadie haya tocado el código.
-- La regla de la 404 vive en la consola, no en el repositorio.
+- La regla de la 404 vive en la consola, no en el repositorio, y su estado es
+  `404-200`: con `404` Amplify redirige en vez de reescribir.
 
 **Lo que queda abierto.** Un subdominio de la Universidad de Cuenca daría un
 nombre de verdad sin costo. Se pedirá más adelante, y conectarlo no rehace nada:
 se añade como dominio en Amplify y se define `SITE_URL`.
+
+---
+
+## D-24 · Sin firewall (WAF) en Amplify
+
+**Decisión.** La opción *Enable firewall protections* de Amplify queda
+**desactivada**.
+
+**Por qué.** Cuesta mucho más que el sitio: Amplify cobra **15 USD al mes por
+app** solo por conectar el firewall, y a eso se suma el uso de AWS WAF (cuota por
+lista de reglas, por regla y por millón de peticiones). Son unos 20 USD al mes
+como mínimo, para un sitio que cuesta centavos. Y no protege casi nada: las
+reglas típicas bloquean inyección SQL, XSS y ataques a formularios o APIs, y el
+sitio es HTML estático, sin base de datos, formularios ni servidor. La protección
+básica contra denegación de servicio ya viene incluida, porque Amplify sirve a
+través de CloudFront, con AWS Shield Standard.
+
+El único riesgo real —tráfico masivo para inflar la factura de transferencia— lo
+vigilan el presupuesto ([D-17](#d-17)) y Cost Anomaly Detection. No lo bloquean,
+pero avisan a tiempo.
+
+**Cuándo reconsiderarlo.** Si se añade el formulario de inscripción a eventos, el
+primer backend del sitio. Aun así, la protección iría en la API de ese
+formulario (API Gateway), no en Amplify. El plan con CloudFront ya había
+descartado WAF por su costo base; con Amplify ese costo es cuatro veces mayor.

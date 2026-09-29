@@ -24,6 +24,44 @@ Al auditar lo que carga el sitio para escribir la CSP apareció algo que la
 documentación daba por hecho: **Pagefind genera su índice, pero ninguna página lo
 carga.** No hay buscador de todo el sitio. Quedó anotado en los siguientes pasos.
 
+### Comprobado antes del push
+
+- Build desde cero, borrando `dist/` y la caché de Astro: 260 páginas, 256
+  indexadas, sin avisos. La portada sigue en 4.6 KB de JavaScript.
+- Las 6.312 referencias internas del HTML generado —páginas, imágenes, fuentes y
+  anclas— apuntan a archivos que existen.
+- Las 251 fichas: sin slugs rotos, cada una en la carpeta de su categoría,
+  ningún `resumenCorto` de más de 160 caracteres.
+- `dist/` servido en local con las cabeceras de `customHttp.yml`: la CSP no
+  bloqueó nada en la portada, el catálogo, las fichas editadas y los cinco
+  eventos. Funcionan el visor de fotos, el filtro del catálogo y el menú móvil.
+
+### En producción
+
+Publicado a los ~2 minutos del push (commit `2bc2154`). Comprobado con `curl`:
+
+| Comprobación | Resultado |
+| --- | --- |
+| Las seis cabeceras de seguridad | En todas las respuestas, también en la 404 |
+| Archivos de `/_astro/` | `max-age=31536000, immutable` |
+| Un archivo de `/_astro/` que no existe | 404, sin la caché larga |
+| HTML y fuentes | `max-age=0`, como antes |
+| URL inexistente | 404 sin `Location` |
+| Ruta sin barra final | 301 hacia la versión con barra |
+| `og:image` de un evento | 200 |
+
+### Anclas de las decisiones
+
+Los enlaces del tipo `decisiones.md#d-17` no funcionaban en GitHub, que genera el
+ancla a partir del título completo. Cada decisión lleva ahora un `<a id="d-NN">`
+explícito, y los 68 enlaces relativos de la documentación resuelven.
+
+### Encontrado de paso
+
+Unos 258 destinos se enlazan sin barra final (`/servicios` en vez de
+`/servicios/`), así que Amplify responde a cada clic interno con un 301 antes de
+servir la página. Ya pasaba antes; se corrige en una tarea aparte.
+
 ---
 
 ## Sitio en línea en Amplify

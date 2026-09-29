@@ -8,7 +8,7 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
-Tres cosas que cuestan tiempo si no se saben:
+Cuatro cosas que cuestan tiempo si no se saben:
 
 - **Solo cabe un servidor de desarrollo por proyecto.** El PID y el puerto quedan
   en `.astro/dev.json`; un segundo `astro dev` no arranca aunque se le pase otro
@@ -19,13 +19,15 @@ Tres cosas que cuestan tiempo si no se saben:
 - **Tras añadir muchos archivos de contenido de golpe, reinicia el servidor.** Su
   caché de colecciones se queda a medias y sigue sirviendo un número de fichas
   viejo. `pnpm build` es la fuente de verdad; el servidor de desarrollo, no.
+- **La CSP de `customHttp.yml` bloquea todo lo que venga de otro origen.** Un
+  video embebido, analítica o una API nueva pasan el build y fallan en
+  producción, en silencio. Hay que declararlos en la CSP antes del push (D-25).
 
 ## Documentación del proyecto
 
 La documentación propia vive en [`docs/`](docs/README.md). Consúltala antes de
 tocar diseño o componentes:
 
-- [`docs/estado-y-siguientes-pasos.md`](docs/estado-y-siguientes-pasos.md) — **empieza por aquí:** qué falta y cómo hacerlo
 - [`docs/arquitectura.md`](docs/arquitectura.md) — stack, colecciones, pipeline de fotos, despliegue
 - [`docs/sistema-de-diseno.md`](docs/sistema-de-diseno.md) — paleta, tipografía, tokens
 - [`docs/componentes.md`](docs/componentes.md) — qué hace cada componente

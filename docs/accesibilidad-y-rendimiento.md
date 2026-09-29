@@ -119,6 +119,18 @@ Amazon Ember se sirve desde el propio dominio con `font-display: swap`. No hay
 peticiones a CDN externos, lo que evita una conexión extra y el riesgo de que un
 tercero registre a los visitantes.
 
+### Caché
+
+Las cabeceras viven en `customHttp.yml` ([D-25](decisiones.md#d-25)):
+
+| Qué | `Cache-Control` | Por qué |
+| --- | --- | --- |
+| `/_astro/*` (CSS, imágenes) | `public, max-age=31536000, immutable` | El nombre lleva un hash: una versión nueva tiene otra URL |
+| HTML, fuentes, Pagefind | `max-age=0` (lo que pone Amplify) | No llevan hash; el navegador revalida y cada push se ve al momento |
+
+Cada publicación de Amplify vacía la caché de su CDN, así que no hay que
+invalidar nada a mano.
+
 ### Búsqueda
 
 Dos mecanismos distintos:

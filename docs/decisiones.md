@@ -5,6 +5,8 @@ dentro de seis meses nadie deshaga algo sin saber qué problema resolvía.
 
 ---
 
+<a id="d-01"></a>
+
 ## D-01 · El color de marca no se usa para texto
 
 **Decisión.** Los cinco colores vibrantes del kit (amber, blue, mint, purple,
@@ -20,6 +22,8 @@ halos, degradados, bordes y barras — no subiendo la saturación del texto.
 
 ---
 
+<a id="d-02"></a>
+
 ## D-02 · Fuentes servidas localmente
 
 **Decisión.** Amazon Ember se sirve desde `public/fonts/`, no desde un CDN.
@@ -28,6 +32,8 @@ halos, degradados, bordes y barras — no subiendo la saturación del texto.
 una conexión a un tercero y que ese tercero registre a los visitantes.
 
 ---
+
+<a id="d-03"></a>
 
 ## D-03 · Las fechas se formatean en UTC
 
@@ -40,6 +46,8 @@ equivocadas.
 
 ---
 
+<a id="d-04"></a>
+
 ## D-04 · Los reveals se activan desde JavaScript
 
 **Decisión.** La regla `opacity: 0` está bajo `.reveal-activo`, y esa clase la
@@ -51,6 +59,8 @@ que el contenido aparezca sin animación.
 
 ---
 
+<a id="d-05"></a>
+
 ## D-05 · Menú móvil propio
 
 **Decisión.** Menú hamburguesa escrito a mano en `Nav.astro`.
@@ -60,6 +70,8 @@ que el contenido aparezca sin animación.
 teléfono. No era una decisión de diseño, era un defecto.
 
 ---
+
+<a id="d-06"></a>
 
 ## D-06 · El contador tiene una red de seguridad
 
@@ -76,6 +88,8 @@ oculto, la prueba se colgó. El cuelgue era el síntoma del bug.
 
 ---
 
+<a id="d-07"></a>
+
 ## D-07 · Las flechas del visor flotan sobre la foto
 
 **Decisión.** En móvil, el `figure` usa `px-3`; las flechas se superponen a la
@@ -85,6 +99,8 @@ imagen con fondo translúcido propio.
 247 px. Flotando las flechas se recuperan 351 px útiles, un 42 % más.
 
 ---
+
+<a id="d-08"></a>
 
 ## D-08 · MCP de 21st.dev: revisión de seguridad
 
@@ -113,6 +129,8 @@ al contexto del agente. Clasificado como OWASP LLM01.
 - `.mcp.json` está en `.gitignore` porque contiene la API key en texto plano
 
 ---
+
+<a id="d-09"></a>
 
 ## D-09 · Componentes React de terceros: qué hay que medir antes
 
@@ -152,6 +170,8 @@ problema; el envoltorio sí.
 
 ---
 
+<a id="d-10"></a>
+
 ## D-10 · El efecto de partículas se portó, no se instaló
 
 **Decisión.** El fondo de partículas se reescribió como
@@ -184,6 +204,8 @@ del contenido. Esa parte estaba bien resuelta.
 
 ---
 
+<a id="d-11"></a>
+
 ## D-11 · La máscara del fondo de partículas no lleva degradado horizontal
 
 **Decisión.** `FondoParticulas.astro` solo se desvanece arriba y abajo. No hay
@@ -207,6 +229,8 @@ mandando el efecto exactamente donde no se ve.
 
 ---
 
+<a id="d-12"></a>
+
 ## D-12 · Pagefind no indexa el texto de un SVG
 
 **Hallazgo.** Al construir `DiagramaAWS.astro` se asumió que, por ser texto
@@ -225,6 +249,8 @@ aparecen en el diagrama. Ya era obligatoria por accesibilidad; ahora también lo
 es para que el diagrama sea encontrable.
 
 ---
+
+<a id="d-13"></a>
 
 ## D-13 · El límite de las etiquetas se avisa en el build, no se documenta y ya
 
@@ -248,6 +274,8 @@ cada lado. Cabía, pero se veía apretado.
 
 ---
 
+<a id="d-14"></a>
+
 ## D-14 · Los comentarios JSX no existen dentro de una expresión de Astro
 
 **Hallazgo.** Escribir `{/* comentario */}` justo después de abrir una expresión
@@ -259,6 +287,8 @@ como un objeto literal, no como un comentario.
 expresión. Dentro del frontmatter, `//` y `/* */` funcionan con normalidad.
 
 ---
+
+<a id="d-15"></a>
 
 ## D-15 · El bucket del sitio es privado; sirve CloudFront con OAC
 
@@ -281,6 +311,8 @@ común de este despliegue.
 
 ---
 
+<a id="d-16"></a>
+
 ## D-16 · Las rutas limpias se resuelven con una CloudFront Function
 
 > **Sustituida por [D-23](#d-23).** El sitio se aloja en Amplify; esta decisión
@@ -302,6 +334,8 @@ Lambda@Edge estaría sobredimensionado.
 
 ---
 
+<a id="d-17"></a>
+
 ## D-17 · El presupuesto de costos excluye los créditos
 
 **Decisión.** El presupuesto de AWS Budgets excluye los créditos con el filtro
@@ -322,6 +356,8 @@ créditos, que es la cifra que avisa a tiempo.
 primer mes. Es intencional: son las que hay que vigilar.
 
 ---
+
+<a id="d-18"></a>
 
 ## D-18 · El despliegue no espera al dominio
 
@@ -352,6 +388,8 @@ delegar el DNS.
 
 ---
 
+<a id="d-19"></a>
+
 ## D-19 · Price Class «All» en CloudFront
 
 > **Sustituida por [D-23](#d-23).** El sitio se aloja en Amplify; esta decisión
@@ -367,6 +405,8 @@ la capa gratuita permanente de 1 TB al mes— así que la clase restringida solo
 empeora el servicio sin bajar la factura.
 
 ---
+
+<a id="d-20"></a>
 
 ## D-20 · El catálogo cubre los 251 servicios, en dos profundidades
 
@@ -393,6 +433,8 @@ hay cambio de esquema, y el catálogo no se rompe mientras tanto. El esquema de
 `content.config.ts` ya lo permitía: solo seis campos son obligatorios.
 
 ---
+
+<a id="d-21"></a>
 
 ## D-21 · Ocho categorías nuevas, sin ampliar la paleta
 
@@ -423,6 +465,8 @@ líneas. Es el precio de la cobertura completa.
 
 ---
 
+<a id="d-22"></a>
+
 ## D-22 · Los servicios retirados se documentan, no se omiten
 
 **Decisión.** Los servicios que AWS ya apagó tienen ficha, con una línea
@@ -444,6 +488,8 @@ y AWS SimSpace Weaver— y ambas se corrigieron.
 apagando servicios, y una ficha que hoy está bien puede necesitar su nota mañana.
 
 ---
+
+<a id="d-23"></a>
 
 ## D-23 · El sitio se aloja en Amplify Hosting, no en S3 + CloudFront
 
@@ -490,6 +536,8 @@ se añade como dominio en Amplify y se define `SITE_URL`.
 
 ---
 
+<a id="d-24"></a>
+
 ## D-24 · Sin firewall (WAF) en Amplify
 
 **Decisión.** La opción *Enable firewall protections* de Amplify queda
@@ -514,6 +562,8 @@ formulario (API Gateway), no en Amplify. El plan con CloudFront ya había
 descartado WAF por su costo base; con Amplify ese costo es cuatro veces mayor.
 
 ---
+
+<a id="d-25"></a>
 
 ## D-25 · Cabeceras HTTP en `customHttp.yml`, con una CSP sin orígenes externos
 

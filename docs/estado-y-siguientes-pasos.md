@@ -78,6 +78,9 @@ Amplify Hosting ([D-23](decisiones.md#d-23)) y conectado a la rama
   cabeceras de seguridad, con una CSP que no admite orígenes externos
   ([D-25](decisiones.md#d-25)).
 
+Todo lo anterior está publicado y comprobado con `curl` contra el sitio real. El
+detalle está en el [registro de cambios](registro-de-cambios.md).
+
 **Hecho en local, a la espera del push** (2026-09-30):
 
 - ✅ **Enlaces internos con barra final** ([D-26](decisiones.md#d-26)), con
@@ -150,6 +153,18 @@ magnitud.
 - **Modo oscuro.** El kit de marca ya trae `brandmark-white.svg`, así que la
   parte de identidad estaría resuelta. Habría que definir la escala `tinta`
   invertida y revisar los contrastes del canvas de partículas.
+
+### 6. Enlaces internos sin barra final (resuelto, a la espera del push)
+
+Casi todos los enlaces internos apuntan a rutas sin barra final (`/servicios`,
+`/eventos/flisol-2026`, `/servicios/computo/ec2`). Astro genera
+`servicios/index.html`, así que Amplify responde a cada una con un 301 hacia la
+versión con barra: cada clic interno cuesta un viaje de ida y vuelta de más. En el
+build del 2026-09-29 eran 258 destinos distintos.
+
+Resuelto el 2026-09-30: todos los enlaces internos a página llevan la barra
+final y `pnpm enlaces` lo comprueba en `dist/`. Ver [D-26](decisiones.md#d-26)
+y el [registro de cambios](registro-de-cambios.md).
 
 ---
 
@@ -295,3 +310,28 @@ Para medir el JavaScript de una página:
 ```bash
 python -c "import re; h=open('dist/index.html',encoding='utf-8').read(); print(sum(len(m) for m in re.findall(r'<script type=\"module\">(.*?)</script>',h,re.S))/1024, 'KB')"
 ```
+
+### Lo que el build no comprueba: la CSP
+
+`pnpm build` no sabe nada de `customHttp.yml`. Si un cambio añade un recurso de
+otro origen —un video embebido, analítica, una fuente de un CDN, una API—, el
+build pasa y el navegador lo **bloquea en producción**, con un error en la consola
+y nada más. Antes de hacer push de algo así, hay que declararlo en la CSP
+([D-25](decisiones.md#d-25)).
+
+Para probarlo sin publicar: servir `dist/` con un servidor estático propio que
+añada las cabeceras de `customHttp.yml`, recorrer las páginas afectadas y buscar
+errores `Refused to…` en la consola del navegador.
+
+### Después de cada push
+
+Amplify tarda unos 2 minutos en publicar. Para confirmar que el sitio responde
+como debe:
+
+```bash
+curl -sI https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/ | grep -iE "^HTTP|content-security|strict-transport|cache-control"
+```
+
+Debe dar 200 con la CSP y HSTS. Una URL inexistente
+(`…/no-existe/`) debe dar **404 sin `Location`**, y un archivo de `/_astro/`,
+`Cache-Control: public, max-age=31536000, immutable`.

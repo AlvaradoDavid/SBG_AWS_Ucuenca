@@ -14,7 +14,7 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Portada | Completa: hero con collage, cifras, partículas, trayectoria, galería |
 | Galería de eventos | Completa, con visor accesible |
 | Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
-| Contenido de eventos | ⚠️ **Los 5 son `[Placeholder]`** |
+| Contenido de eventos | Completo: los 5 con texto; 3 con cifra de asistentes |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
 | Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 4 |
 | Infraestructura AWS | ✅ **En línea en Amplify:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, con 404 real, cabeceras de seguridad y alarmas de costo. Solo queda el subdominio: ver el punto 1 |
@@ -97,21 +97,25 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
 **Lo que no se hace:** activar el firewall (WAF) que ofrece Amplify — ver
 [D-24](decisiones.md#d-24).
 
-### 2. Contenido de los eventos (prioridad alta)
+### 2. Contenido de los eventos
 
-Los cinco `.mdx` de `src/content/eventos/` tienen `[Placeholder]` como cuerpo:
+✅ **Hecho el 2026-09-30.** Los cinco eventos tienen su texto, escrito con lo
+que contó el club y lo que se ve en las fotos. De paso se corrigieron tres datos
+que las fotos contradecían: el taller de infraestructura fue un webinar en
+línea, «Los 4 Fantásticos» fue un stand con trivia y no una charla, y los lugares
+de cuatro eventos ganaron precisión. El detalle está en el
+[registro de cambios](registro-de-cambios.md).
 
-- `yachana-day-2026.mdx`
-- `cuatro-fantasticos-aws.mdx`
-- `infraestructura-cloud.mdx`
-- `stand-inicio-de-ciclo.mdx`
-- `flisol-2026.mdx`
+Tres llevan `asistentes`: 200 en «Los 4 Fantásticos» y en el stand de inicio de
+ciclo, y 25 en el webinar. Las dos primeras cifras son aproximadas y la etiqueta
+no lo indica. Yachana Day y FLISol no tienen cifra: si aparece, basta con añadir
+el campo.
 
-El diseño ya está listo para recibir el texto; solo falta escribirlo. Las fotos
-de cada evento pueden servir de guion para recordar qué pasó.
-
-Ninguno tiene `asistentes` en el frontmatter. Si alguien llevó el registro, ese
-campo ya está soportado y se muestra como una etiqueta en la página del evento.
+**Para un evento nuevo:** poner las fotos en `Eventos/<fecha> <nombre>/`, correr
+`pnpm fotos` y crear el `.mdx` con los campos de `src/content.config.ts`;
+`carpetaFotos` es el nombre de carpeta que el script crea en `src/assets/eventos/`. El texto
+va en primera persona del plural y no repite el `resumen`, que ya aparece justo
+encima. Con `hito: true` sale también en la trayectoria de la portada.
 
 ### 3. Profundizar fichas breves (prioridad media)
 

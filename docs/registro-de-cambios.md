@@ -2,6 +2,41 @@
 
 ---
 
+## Contenido de los cinco eventos
+
+El 2026-09-30. Los cinco `.mdx` de `src/content/eventos/` tenían `[Placeholder]`
+como cuerpo. Ahora cada uno tiene dos o tres párrafos, escritos con lo que contó
+el club y con lo que se ve en las fotos: afiches, diapositivas y el propio stand.
+
+Las fotos contradecían parte de lo ya publicado, así que se corrigió también el
+frontmatter:
+
+| Evento | Antes | Ahora |
+| --- | --- | --- |
+| Yachana Day | Resumen: «una introducción a la computación en la nube» | Un stand en la jornada de proyectos y emprendimientos; no hubo charla |
+| Los 4 Fantásticos | Resumen: «una sesión… con ejemplos prácticos». Lugar: Universidad de Cuenca | Un stand con trivia y premios, sin charla. Lugar: Campus Balzay (sale en el afiche) |
+| Infraestructura Cloud | Resumen: «taller» sobre regiones y zonas de disponibilidad. Lugar: Universidad de Cuenca | Webinar sobre data centers con Miguel González, de AWS Alemania. Lugar: En línea |
+| Stand de inicio de ciclo | Lugar: Campus de la Universidad de Cuenca | Bloque A, Campus Balzay |
+| FLISol | Lugar: FLISol Cuenca | Universidad Politécnica Salesiana, Cuenca |
+
+- **`asistentes`** en tres eventos: 200 en «Los 4 Fantásticos» y en el stand, 25
+  en el webinar. Las dos primeras cifras son aproximadas.
+- **Enlaces a fichas:** «Los 4 Fantásticos» enlaza a EC2, S3, Lambda y RDS, y el
+  webinar a Local Zones.
+- **La portada de `/eventos/`** decía «Talleres, stands y participaciones»,
+  pero ninguno de los cinco fue un taller. Ahora dice «Stands, charlas y
+  webinars», también en la meta descripción.
+- Los nombres de los miembros del club no aparecen; solo se nombra al ponente
+  invitado, que figura en el afiche público del webinar.
+
+Verificado: `pnpm build` sin avisos, con 260 páginas y 256 indexadas. `pnpm
+enlaces` da ✓ con 5 enlaces internos más, y el HTML de `dist/` ya no contiene
+`[Placeholder]`. El JavaScript de la portada sigue en 4.6 KB. Revisado en el
+servidor de desarrollo: las cinco páginas, la lista de eventos y la trayectoria
+de la portada.
+
+---
+
 ## Pie: enlaces sin texto en amber y despliegue con Amplify
 
 El 2026-09-30.
@@ -492,8 +527,8 @@ silencioso y la tabla de costos:
 
 - **Desplegar el sitio.** Hecho: ver la entrada «Sitio en línea en Amplify» —
   ver [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
-- **Contenido de los eventos.** Los cinco `.mdx` de `src/content/eventos/` tienen
-  `[Placeholder]` como cuerpo. El diseño ya está listo para recibir el texto.
+- **Contenido de los eventos.** Hecho: ver la entrada «Contenido de los cinco
+  eventos».
 - **Catálogo de servicios.** Cobertura completa con 251 fichas; lo que falta es
   profundidad: 211 son breves y esperan su frontmatter completo y su diagrama.
 - **Iniciar git.** El proyecto todavía no es un repositorio, así que no hay

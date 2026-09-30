@@ -34,6 +34,7 @@ El sitio queda en `http://localhost:4321`.
 | `pnpm build` | Compila a `dist/` y genera el índice de búsqueda con Pagefind |
 | `pnpm preview` | Sirve el build de producción |
 | `pnpm fotos` | Convierte las fotos de `Eventos/` a WebP en `src/assets/eventos/` |
+| `pnpm enlaces` | Revisa los enlaces internos de `dist/`: barra final, destino existente y anclas |
 
 ## Las tres reglas que no se rompen
 

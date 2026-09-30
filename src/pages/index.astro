@@ -98,7 +98,7 @@ const pilares = [
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a
-            href="/servicios"
+            href="/servicios/"
             class="rounded-lg bg-marca-grey px-6 py-3 text-sm font-bold text-white transition hover:bg-tinta-700"
           >
             Explorar el catálogo
@@ -136,7 +136,7 @@ const pilares = [
       {fotosHero.length === 3 && (
         <div class="grid grid-cols-2 gap-3 sm:gap-4">
           <a
-            href={`/eventos/${fotosHero[0].evento.id}`}
+            href={`/eventos/${fotosHero[0].evento.id}/`}
             class="group relative row-span-2 block overflow-hidden rounded-2xl bg-tinta-200 shadow-sm ring-1 ring-tinta-900/5"
           >
             <Image
@@ -153,7 +153,7 @@ const pilares = [
           </a>
           {fotosHero.slice(1).map(({ foto, evento }) => (
             <a
-              href={`/eventos/${evento.id}`}
+              href={`/eventos/${evento.id}/`}
               class="group block overflow-hidden rounded-2xl bg-tinta-200 shadow-sm ring-1 ring-tinta-900/5"
               title={evento.data.titulo}
             >
@@ -196,7 +196,7 @@ const pilares = [
               Empieza por los fundamentales
             </h2>
           </div>
-          <a href="/servicios" class="text-sm font-bold text-tinta-900 underline">
+          <a href="/servicios/" class="text-sm font-bold text-tinta-900 underline">
             Ver los {servicios.length} servicios →
           </a>
         </div>
@@ -238,7 +238,7 @@ const pilares = [
       <div class="grid grid-cols-2 gap-3">
         {fotosNosotros.map(({ foto, evento }) => (
           <a
-            href={`/eventos/${evento.id}`}
+            href={`/eventos/${evento.id}/`}
             data-reveal
             class="group block overflow-hidden rounded-xl bg-tinta-100"
             title={evento.data.titulo}
@@ -284,14 +284,14 @@ const pilares = [
             <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">
               {fechaLarga(hito.data.fecha)}
             </p>
-            <a href={`/eventos/${hito.id}`} class="mt-1 block font-display text-lg font-bold text-tinta-900 hover:underline">
+            <a href={`/eventos/${hito.id}/`} class="mt-1 block font-display text-lg font-bold text-tinta-900 hover:underline">
               {hito.data.titulo}
             </a>
             <p class="mt-1 leading-relaxed text-tinta-600">{hito.data.resumen}</p>
           </li>
         ))}
       </ol>
-      <a href="/eventos" class="mt-8 inline-block text-sm font-bold text-tinta-900 underline">
+      <a href="/eventos/" class="mt-8 inline-block text-sm font-bold text-tinta-900 underline">
         Ver los {eventos.length} eventos →
       </a>
     </div>
@@ -304,14 +304,14 @@ const pilares = [
         <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Galería</p>
         <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">Momentos del grupo</h2>
       </div>
-      <a href="/eventos" class="text-sm font-bold text-tinta-900 underline">
+      <a href="/eventos/" class="text-sm font-bold text-tinta-900 underline">
         Ver las {totalFotos} fotos →
       </a>
     </div>
     <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
       {galeria.map(({ foto, evento }) => (
         <a
-          href={`/eventos/${evento.id}`}
+          href={`/eventos/${evento.id}/`}
           data-reveal
           class="group block overflow-hidden rounded-xl bg-tinta-100"
           title={evento.data.titulo}

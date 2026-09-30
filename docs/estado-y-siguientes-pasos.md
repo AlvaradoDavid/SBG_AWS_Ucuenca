@@ -80,6 +80,10 @@ Amplify Hosting ([D-23](decisiones.md#d-23)) y conectado a la rama
 
 **Pendiente:**
 
+- **Comprobar los enlaces con barra final en producción.** Tras el primer push
+  con [D-26](decisiones.md#d-26), `curl -sI` a `/servicios/` debe responder 200
+  sin `Location`, y en la pestaña Red del navegador un clic a una ficha no debe
+  pasar por un 301.
 - **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como
   dominio en Amplify y se define `SITE_URL`.
 
@@ -263,17 +267,21 @@ la plantilla van como `<!-- -->` fuera de la expresión.
 pnpm dev      # servidor de desarrollo en localhost:4321
 pnpm build    # compila a dist/ y genera el índice de Pagefind
 pnpm fotos    # convierte Eventos/ a WebP en src/assets/eventos/
+pnpm enlaces  # revisa los enlaces internos de dist/ (después de pnpm build)
 ```
 
 ### Cómo comprobar que no se rompió nada
 
 ```bash
 pnpm build
+pnpm enlaces
 ```
 
-Vigila dos cosas en la salida: que no aparezca ningún aviso `[DiagramaAWS]`, y
+Vigila tres cosas en la salida: que no aparezca ningún aviso `[DiagramaAWS]`,
 que el número de páginas siga cuadrando (hoy: 256 indexadas por Pagefind, de las
-cuales 251 son fichas de servicio).
+cuales 251 son fichas de servicio) y que `pnpm enlaces` termine con ✓. Este
+último detecta enlaces internos sin barra final, destinos que no existen —por
+ejemplo un `slug` mal escrito en `alternativas`— y anclas rotas.
 
 Para medir el JavaScript de una página:
 

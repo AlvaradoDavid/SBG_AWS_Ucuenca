@@ -621,3 +621,51 @@ build de todas las páginas, así que no se hizo junto con lo demás.
   `script-src`.
 - Un cambio en `customHttp.yml` se aplica en el siguiente build: basta con hacer
   push.
+
+---
+
+<a id="d-26"></a>
+
+## D-26 · Enlaces internos con barra final y `trailingSlash: 'always'`
+
+**Decisión.** Todo enlace interno a una página termina en `/` (`/servicios/`,
+`/eventos/flisol-2026/`), y `astro.config.mjs` fija `trailingSlash: 'always'`.
+Los enlaces a archivos (`/_astro/*.webp`, `/marca/*.svg`, `/fonts/*`) van sin
+barra.
+
+**Por qué.** Astro genera cada página como una carpeta con su `index.html`
+(`dist/servicios/index.html`). Amplify responde a `/servicios` con un 301 hacia
+`/servicios/`, así que cada clic interno sin barra le costaba al visitante un
+viaje de ida y vuelta extra. Antes del cambio había 258 destinos distintos
+enlazados así, repartidos por las 260 páginas.
+
+**Qué hace `trailingSlash: 'always'`.** En el build estático no cambia ningún
+archivo: el sitio sigue saliendo en carpetas. Lo que cambia es el servidor de
+desarrollo:
+
+- Una URL sin barra muestra una página de aviso de Astro en lugar de la página.
+  Un enlace que olvide la barra se nota al primer clic.
+- `Astro.url.pathname` lleva siempre la barra final, igual que en el build. Con
+  el valor por defecto (`'ignore'`) dependía de cómo se hubiera escrito la URL,
+  y la navegación podía marcar la sección activa distinto en desarrollo y en
+  producción.
+
+Amplify sigue redirigiendo las URLs sin barra que lleguen de fuera, como un
+enlace escrito a mano o uno antiguo en un buscador: nadie cae en un 404.
+
+**Lo que se descartó.**
+
+- `build.format: 'file'` con `trailingSlash: 'never'` (`/servicios` servido desde
+  `servicios.html`): quitaría la barra de todas las URLs y rompería las que ya
+  están publicadas y compartidas.
+- Una función que arme las URLs (`urlDeServicio(id)`): son pocas plantillas, y
+  entre el aviso de desarrollo y `pnpm enlaces` el error ya no pasa desapercibido.
+
+**Consecuencias.**
+
+- Un enlace nuevo sin barra no rompe el build. Se detecta en desarrollo, por el
+  aviso, o con `pnpm enlaces` sobre `dist/`.
+- El buscador del catálogo cruza cada tarjeta con el índice por `data-id`, no
+  por el `href`.
+- La navegación compara con prefijos que terminan en `/`, así que `/servicios/`
+  no puede marcar una futura `/servicios-x/`.

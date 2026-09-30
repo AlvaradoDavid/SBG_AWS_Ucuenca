@@ -10,6 +10,7 @@
     "dev": "astro dev",
     "build": "astro build && pagefind --site dist",
     "fotos": "node scripts/procesar-fotos.mjs",
+    "enlaces": "node scripts/comprobar-enlaces.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

@@ -137,8 +137,7 @@ const indice = servicios.map((s) => ({
   function aplicar() {
     let visibles = 0;
     tarjetas.forEach((tarjeta) => {
-      const id = tarjeta.getAttribute('href').replace('/servicios/', '');
-      const texto = mapaTexto.get(id) ?? '';
+      const texto = mapaTexto.get(tarjeta.dataset.id) ?? '';
       const coincide =
         (filtroCat === 'todas' || tarjeta.dataset.categoria === filtroCat) &&
         (filtroNivel === 'todos' || tarjeta.dataset.nivel === filtroNivel) &&

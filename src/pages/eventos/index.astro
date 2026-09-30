@@ -34,7 +34,7 @@ const totalFotos = conFotos.reduce((suma, e) => suma + e.fotos.length, 0);
     <div class="mt-12 space-y-6">
       {conFotos.map(({ evento, fotos }) => (
         <a
-          href={`/eventos/${evento.id}`}
+          href={`/eventos/${evento.id}/`}
           data-reveal
           class="group grid gap-6 overflow-hidden rounded-xl border border-tinta-200 transition hover:border-tinta-400 hover:shadow-md sm:grid-cols-[320px_1fr]"
         >

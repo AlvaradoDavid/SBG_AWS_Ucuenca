@@ -10,7 +10,8 @@ const color = colorDeCategoria(servicio.data.categoria);
 ---
 
 <a
-  href={`/servicios/${servicio.id}`}
+  href={`/servicios/${servicio.id}/`}
+  data-id={servicio.id}
   data-categoria={servicio.data.categoria}
   data-nivel={servicio.data.nivel}
   style={`--color-cat: ${color}`}

@@ -39,13 +39,15 @@ El sitio queda en `http://localhost:4321`.
 | `pnpm build` | Compila a `dist/` y genera el índice de Pagefind |
 | `pnpm preview` | Sirve el build de producción en local |
 | `pnpm fotos` | Convierte las fotos originales de `Eventos/` a WebP en `src/assets/eventos/` |
+| `pnpm enlaces` | Revisa los enlaces internos de `dist/`: barra final, destino existente y anclas |
 
 ## Antes de hacer push
 
 > **Cada push a la rama `aws-sbg-ucuenca` se publica en producción.** No hay rama de pruebas.
 
 1. Corre `pnpm build` y revisa que termine sin errores ni avisos `[DiagramaAWS]`.
-2. No renombres la rama: su nombre forma la URL pública.
+2. Corre `pnpm enlaces` y revisa que termine con ✓.
+3. No renombres la rama: su nombre forma la URL pública.
 
 ## Estructura
 

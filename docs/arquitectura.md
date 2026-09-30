@@ -34,6 +34,7 @@ public/
 Eventos/                    Material original pesado. NO entra al repo.
 Branding/                   Kit de marca oficial de AWS.
 scripts/procesar-fotos.mjs  Convierte Eventos/ → src/assets/eventos/
+scripts/comprobar-enlaces.mjs  Revisa los enlaces internos de dist/ (pnpm enlaces)
 ```
 
 ## Colecciones de contenido
@@ -172,7 +173,13 @@ local, sin ninguna de las tres, queda `http://localhost:4321`.
 Amplify resuelve solo `/eventos/flisol-2026/` → `/eventos/flisol-2026/index.html`,
 así que no hace falta nada equivalente a la CloudFront Function del plan
 anterior. A una ruta sin barra final (`/eventos/flisol-2026`), Amplify la
-redirige a la versión con barra.
+redirige con un 301 a la versión con barra.
+
+Por eso **todo enlace interno a una página termina en `/`**: sin la barra, cada
+clic costaría un viaje de ida y vuelta extra. `trailingSlash: 'always'` en
+`astro.config.mjs` hace que el servidor de desarrollo muestre un aviso si se
+olvida, y `pnpm enlaces` lo comprueba en `dist/`. Los archivos (`/_astro/*.webp`,
+`/marca/*.svg`) van sin barra. Ver [D-26](decisiones.md#d-26).
 
 ### Servicios complementarios
 

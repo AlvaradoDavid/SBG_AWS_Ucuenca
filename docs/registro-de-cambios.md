@@ -2,6 +2,54 @@
 
 ---
 
+## Enlaces internos con barra final
+
+El 2026-09-29. Los enlaces internos apuntaban a rutas sin barra final
+(`/servicios`, `/eventos/flisol-2026`, `/servicios/computo/ec2`). Astro genera
+`dist/servicios/index.html` y Amplify responde a la URL sin barra con un 301
+hacia la versión con barra, así que cada clic interno costaba un viaje de ida y
+vuelta extra. En el build había **258 destinos distintos** enlazados así,
+repartidos por las 260 páginas. Ver [D-26](decisiones.md#d-26).
+
+| Cambio | Archivo |
+| --- | --- |
+| Barra final en todas las plantillas de enlaces internos a página | `Nav.astro`, `Footer.astro`, `TarjetaServicio.astro`, `404.astro`, `index.astro`, `eventos/`, `servicios/[...slug].astro` |
+| `trailingSlash: 'always'`: el servidor de desarrollo avisa si un enlace olvida la barra | `astro.config.mjs` |
+| El buscador del catálogo lee el id de la tarjeta de `data-id`, no del `href` | `TarjetaServicio.astro`, `servicios/index.astro` |
+| `pnpm enlaces`: revisa en `dist/` la barra final, que el destino exista y las anclas | `scripts/comprobar-enlaces.mjs` |
+
+### Dos fallos que aparecieron por el camino
+
+- **El buscador del catálogo se habría roto en silencio.** Sacaba el id de cada
+  tarjeta quitándole `/servicios/` al `href`. Con la barra final, el id pasaba a
+  ser `computo/ec2/`, no coincidía con el índice y ninguna búsqueda encontraba
+  nada. Ahora usa `data-id`.
+- **«Quiénes somos» salía marcado como página actual en todo el sitio.** La
+  navegación comparaba por prefijo la parte del enlace anterior a `#`; para
+  `/#nosotros` eso es `/`, y toda ruta empieza por `/`. En cada página había dos
+  enlaces con `aria-current="page"` y en negrita. Ahora las anclas no se marcan
+  nunca.
+
+### Verificado
+
+- `pnpm build` sin avisos: 260 páginas y 256 indexadas por Pagefind, como antes.
+- `pnpm enlaces`: 5346 enlaces internos hacia 389 destinos distintos, todos con
+  barra y todos existentes. Antes del cambio, el mismo script contaba los 258
+  destinos sin barra.
+- Navegación: cada página marca una sola sección (la de la portada, «Inicio»), y
+  la 404 ninguna.
+- En el servidor de desarrollo, `/servicios` muestra el aviso de Astro, y los
+  clics a una ficha y a un evento cargan directo con 200.
+- Buscador: «lambda» encuentra 5 fichas, el filtro Cómputo deja 17 y con la
+  búsqueda vacía vuelven las 251.
+- JavaScript sin cambios: 4.6 KB en la portada, 52.4 KB en el catálogo y 1.0 KB
+  en fichas y eventos.
+
+Queda comprobar en el sitio publicado, tras el push, que los clics internos ya
+no pasan por el 301.
+
+---
+
 ## Cierre del despliegue: cabeceras, README y ficha de Amplify
 
 El 2026-09-29, el mismo día de la publicación, se cerró todo lo que quedaba del

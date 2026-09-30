@@ -20,6 +20,11 @@ const site =
 export default defineConfig({
   site,
 
+  // Cada página se genera como carpeta/index.html y Amplify redirige con un 301
+  // cualquier URL sin barra final. Con 'always', el servidor de desarrollo muestra
+  // un aviso en vez de la página si un enlace olvida la barra. Ver D-26.
+  trailingSlash: 'always',
+
   vite: {
     plugins: [tailwindcss()]
   },

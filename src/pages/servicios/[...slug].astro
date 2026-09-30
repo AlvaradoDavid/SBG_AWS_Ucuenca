@@ -26,7 +26,7 @@ const fechaLegible = mesYAnio(d.actualizado);
 
 <Layout title={d.nombre} description={d.resumenCorto}>
   <article class="mx-auto max-w-3xl px-6 py-12" data-pagefind-body>
-    <a href="/servicios" class="font-mono text-xs uppercase tracking-widest text-tinta-500 transition hover:text-tinta-900">
+    <a href="/servicios/" class="font-mono text-xs uppercase tracking-widest text-tinta-500 transition hover:text-tinta-900">
       ← Catálogo
     </a>
 
@@ -142,7 +142,7 @@ const fechaLegible = mesYAnio(d.actualizado);
           {d.alternativas.map((alt) => (
             <li class="text-sm leading-relaxed text-tinta-700">
               {alt.slug ? (
-                <a href={`/servicios/${alt.slug}`} class="font-bold text-tinta-900 underline">
+                <a href={`/servicios/${alt.slug}/`} class="font-bold text-tinta-900 underline">
                   {alt.servicio}
                 </a>
               ) : (
@@ -164,7 +164,7 @@ const fechaLegible = mesYAnio(d.actualizado);
         <div class="mt-3 flex flex-wrap gap-2">
           {relacionados.map((rel) => (
             <a
-              href={`/servicios/${rel.id}`}
+              href={`/servicios/${rel.id}/`}
               class="inline-flex items-center gap-2 rounded-full border border-tinta-200 px-3 py-1.5 text-sm text-tinta-700 transition hover:border-tinta-400 hover:text-tinta-900"
             >
               <span class="punto-categoria" style={`background-color: ${colorDeCategoria(rel.data.categoria)}`}></span>

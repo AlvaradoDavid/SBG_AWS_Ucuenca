@@ -48,7 +48,9 @@ Barra fija superior.
 - `aria-expanded` se mantiene sincronizado con el estado real
 
 La detección de página activa es exacta en `/` y por prefijo en el resto, para
-que `/eventos/flisol-2026` también marque «Eventos».
+que `/eventos/flisol-2026/` también marque «Eventos». El prefijo lleva la barra
+final (`/eventos/`), como todos los enlaces internos. «Quiénes somos»
+(`/#nosotros`) es una sección de la portada y no se marca nunca.
 
 ---
 
@@ -120,8 +122,9 @@ un halo difuminado, sin generar una clase por categoría. Al hacer hover la
 tarjeta se eleva 3 px y proyecta una sombra teñida con `color-mix()`. El
 `transform` se anula bajo `prefers-reduced-motion`.
 
-Los atributos `data-categoria` y `data-nivel` son los que lee el filtro del
-catálogo.
+Los atributos `data-id`, `data-categoria` y `data-nivel` son los que lee el
+filtro del catálogo. El buscador usa `data-id` para cruzar cada tarjeta con el
+índice; antes lo sacaba del `href`, y eso lo ataba al formato de la URL.
 
 ---
 

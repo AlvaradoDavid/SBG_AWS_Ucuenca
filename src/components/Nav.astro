@@ -3,15 +3,19 @@ import { club } from '../lib/categorias';
 
 const enlaces = [
   { href: '/', texto: 'Inicio' },
-  { href: '/servicios', texto: 'Servicios AWS' },
-  { href: '/eventos', texto: 'Eventos' },
+  { href: '/servicios/', texto: 'Servicios AWS' },
+  { href: '/eventos/', texto: 'Eventos' },
   { href: '/#nosotros', texto: 'Quiénes somos' },
 ];
 
 const ruta = Astro.url.pathname;
-/** Marca la sección actual: coincidencia exacta en la home, por prefijo en el resto. */
+/**
+ * Marca la sección actual: coincidencia exacta en la home, por prefijo en el resto.
+ * La barra final del prefijo evita que /servicios/ marque una futura /servicios-x/.
+ * Un ancla es una sección de la portada, no una página: nunca se marca.
+ */
 const esActivo = (href: string) =>
-  href === '/' ? ruta === '/' : ruta.startsWith(href.split('#')[0]);
+  !href.includes('#') && (href === '/' ? ruta === '/' : ruta.startsWith(href));
 ---
 
 <header class="sticky top-0 z-50 border-b border-tinta-200 bg-white/90 backdrop-blur">

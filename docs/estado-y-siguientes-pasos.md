@@ -78,12 +78,19 @@ Amplify Hosting ([D-23](decisiones.md#d-23)) y conectado a la rama
   cabeceras de seguridad, con una CSP que no admite orígenes externos
   ([D-25](decisiones.md#d-25)).
 
+**Hecho en local, a la espera del push** (2026-09-30):
+
+- ✅ **Enlaces internos con barra final** ([D-26](decisiones.md#d-26)), con
+  `pnpm enlaces` para comprobarlos en `dist/`.
+- ✅ **Pie:** los enlaces ya no ponen el texto en amber, y la última línea dice
+  «desplegado en AWS Amplify».
+
 **Pendiente:**
 
-- **Comprobar los enlaces con barra final en producción.** Tras el primer push
-  con [D-26](decisiones.md#d-26), `curl -sI` a `/servicios/` debe responder 200
-  sin `Location`, y en la pestaña Red del navegador un clic a una ficha no debe
-  pasar por un 301.
+- **Publicar y comprobar lo anterior en producción.** Tras el push, `curl -sI` a
+  `/servicios/` debe responder 200 sin `Location`, y en la pestaña Red del
+  navegador un clic a una ficha no debe pasar por un 301. El pie debe decir
+  «desplegado en AWS Amplify».
 - **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como
   dominio en Amplify y se define `SITE_URL`.
 

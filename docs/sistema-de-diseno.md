@@ -18,7 +18,7 @@ El texto siempre sale de la escala `tinta`, derivada del Grey 850 de la marca.
 
 | Token | Hex | Dónde se usa |
 | --- | --- | --- |
-| `marca-amber` | `#ff9900` | Color principal. Foco, hito de fundación, halo del hero |
+| `marca-amber` | `#ff9900` | Color principal. Foco, hito de fundación, halo del hero, subrayado de los enlaces del pie |
 | `marca-blue` | `#42b4ff` | Categorías, fin del degradado de trayectoria |
 | `marca-mint` | `#00e582` | Categorías |
 | `marca-purple` | `#ad5cff` | Categorías, halo del hero, medio del degradado |
@@ -104,6 +104,20 @@ viene del dato, no de una clase.
 ```
 
 Global y en amber, para que sea consistente y visible en fondos claros y oscuros.
+
+### Enlaces sobre fondo oscuro
+
+En el pie, sobre `marca-grey`, el enlace en reposo va en `tinta-300`. Al pasar el
+cursor, el texto sube a `tinta-50` y el amber aparece como subrayado:
+
+```html
+<a class="transition underline decoration-transparent decoration-2 underline-offset-4
+          hover:text-tinta-50 hover:decoration-marca-amber">Eventos</a>
+```
+
+El subrayado existe siempre, pero transparente, para que `transition` funda su
+color en lugar de hacerlo aparecer de golpe. El contraste sube de 8.9:1 en reposo
+a 15.8:1 en hover. Con el texto en amber, como estaba antes, *bajaba* a 7.9:1.
 
 ### Reveals al hacer scroll
 

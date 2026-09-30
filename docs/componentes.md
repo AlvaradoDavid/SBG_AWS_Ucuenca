@@ -57,7 +57,12 @@ final (`/eventos/`), como todos los enlaces internos. «Quiénes somos»
 ## `Footer.astro`
 
 Pie sobre `marca-grey`. Tres columnas: descripción del club, mapa del sitio y
-redes (LinkedIn e Instagram, con SVG en línea, sin librería de iconos).
+redes (LinkedIn e Instagram, con SVG en línea, sin librería de iconos). Debajo,
+el año, el nombre del club y «Construido con Astro y desplegado en AWS Amplify».
+
+Al pasar el cursor, el texto de los enlaces se aclara y el amber aparece como
+subrayado, nunca como color del texto. En los enlaces con icono, el subrayado va
+solo bajo el texto. Ver [Enlaces sobre fondo oscuro](sistema-de-diseno.md#enlaces-sobre-fondo-oscuro).
 
 ---
 

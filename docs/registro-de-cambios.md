@@ -2,6 +2,26 @@
 
 ---
 
+## Pie: enlaces sin texto en amber y despliegue con Amplify
+
+El 2026-09-30.
+
+- **Los enlaces del pie ya no usan el amber como color de texto.** Al pasar el
+  cursor el texto se volvía `marca-amber`, contra la regla de [D-01](decisiones.md#d-01).
+  Además el contraste bajaba, de 8.9:1 en reposo a 7.9:1. Ahora el texto sube a
+  `tinta-50` (15.8:1) y el amber aparece como subrayado de 2 px. Aplica a los
+  cinco enlaces del mapa del sitio y a LinkedIn e Instagram. El patrón quedó en
+  [sistema-de-diseno.md](sistema-de-diseno.md#enlaces-sobre-fondo-oscuro).
+- **El pie decía «desplegado en AWS (S3 + CloudFront)».** Ahora dice «desplegado
+  en AWS Amplify», que es donde se aloja el sitio desde el 2026-09-29
+  ([D-23](decisiones.md#d-23)).
+
+Verificado en el servidor de desarrollo, con el cursor sobre un enlace de texto y
+sobre uno con icono. `pnpm build` sin avisos y `pnpm enlaces` en ✓. El HTML ya no
+contiene ninguna clase `text-marca-amber`. En reposo el pie no cambia.
+
+---
+
 ## Enlaces internos con barra final
 
 El 2026-09-29. Los enlaces internos apuntaban a rutas sin barra final

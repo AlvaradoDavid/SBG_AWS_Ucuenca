@@ -81,19 +81,16 @@ Amplify Hosting ([D-23](decisiones.md#d-23)) y conectado a la rama
 Todo lo anterior está publicado y comprobado con `curl` contra el sitio real. El
 detalle está en el [registro de cambios](registro-de-cambios.md).
 
-**Hecho en local, a la espera del push** (2026-09-30):
+**Publicado el 2026-09-30** y comprobado en producción:
 
-- ✅ **Enlaces internos con barra final** ([D-26](decisiones.md#d-26)), con
-  `pnpm enlaces` para comprobarlos en `dist/`.
+- ✅ **Enlaces internos con barra final** ([D-26](decisiones.md#d-26)). Los 389
+  destinos internos responden 200 sin pasar por un 301. `pnpm enlaces` lo
+  comprueba en `dist/` antes de cada push.
 - ✅ **Pie:** los enlaces ya no ponen el texto en amber, y la última línea dice
   «desplegado en AWS Amplify».
 
 **Pendiente:**
 
-- **Publicar y comprobar lo anterior en producción.** Tras el push, `curl -sI` a
-  `/servicios/` debe responder 200 sin `Location`, y en la pestaña Red del
-  navegador un clic a una ficha no debe pasar por un 301. El pie debe decir
-  «desplegado en AWS Amplify».
 - **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como
   dominio en Amplify y se define `SITE_URL`.
 
@@ -153,18 +150,6 @@ magnitud.
 - **Modo oscuro.** El kit de marca ya trae `brandmark-white.svg`, así que la
   parte de identidad estaría resuelta. Habría que definir la escala `tinta`
   invertida y revisar los contrastes del canvas de partículas.
-
-### 6. Enlaces internos sin barra final (resuelto, a la espera del push)
-
-Casi todos los enlaces internos apuntan a rutas sin barra final (`/servicios`,
-`/eventos/flisol-2026`, `/servicios/computo/ec2`). Astro genera
-`servicios/index.html`, así que Amplify responde a cada una con un 301 hacia la
-versión con barra: cada clic interno cuesta un viaje de ida y vuelta de más. En el
-build del 2026-09-29 eran 258 destinos distintos.
-
-Resuelto el 2026-09-30: todos los enlaces internos a página llevan la barra
-final y `pnpm enlaces` lo comprueba en `dist/`. Ver [D-26](decisiones.md#d-26)
-y el [registro de cambios](registro-de-cambios.md).
 
 ---
 

@@ -18,7 +18,9 @@ El 2026-09-30.
 
 Verificado en el servidor de desarrollo, con el cursor sobre un enlace de texto y
 sobre uno con icono. `pnpm build` sin avisos y `pnpm enlaces` en ✓. El HTML ya no
-contiene ninguna clase `text-marca-amber`. En reposo el pie no cambia.
+contiene ninguna clase `text-marca-amber`. En reposo el pie no cambia. Se
+publicó en el mismo push que los enlaces con barra final; la comprobación en
+producción está en la entrada siguiente.
 
 ---
 
@@ -65,8 +67,22 @@ repartidos por las 260 páginas. Ver [D-26](decisiones.md#d-26).
 - JavaScript sin cambios: 4.6 KB en la portada, 52.4 KB en el catálogo y 1.0 KB
   en fichas y eventos.
 
-Queda comprobar en el sitio publicado, tras el push, que los clics internos ya
-no pasan por el 301.
+### En producción
+
+Publicado el 2026-09-30, junto con el cambio del pie, en el commit `d276b68`.
+Antes del push hubo que fusionar `5e561a4`, un commit de otra sesión que solo
+tocaba documentación. El build se repitió desde cero, sin `dist/` ni caché de
+Astro, y ninguna página carga recursos de otro origen.
+
+| Comprobación | Resultado |
+| --- | --- |
+| Los 389 destinos internos de `dist/`, pedidos sin seguir redirecciones | Todos 200: 259 páginas y 130 archivos. Ningún 301 |
+| Clic del catálogo a la ficha de EC2, en el navegador | Una sola petición, 200, `redirectCount` 0 |
+| Ruta sin barra que llegue de fuera (`/servicios`) | Sigue en 301 hacia `/servicios/`, como debe |
+| Pie | «desplegado en AWS Amplify»; ninguna clase `text-marca-amber` |
+| CSP | La consola no registra ningún bloqueo en la portada, el catálogo (con el buscador), una ficha y un evento (con el visor) |
+| Navegación | Una sola sección marcada en cada página |
+| Cabeceras, 404 y caché de `/_astro/` | Sin cambios |
 
 ---
 

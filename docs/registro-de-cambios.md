@@ -2,6 +2,36 @@
 
 ---
 
+## Portada elegible para cada evento
+
+El 2026-09-30. La foto que representa a cada evento era siempre la primera de su
+carpeta. Ahora el campo opcional `portada` del frontmatter la elige por su
+número, el mismo que muestra el contador del visor (`7 / 28`) y que lleva el
+archivo (`foto-07.webp`).
+
+| Dónde se ve la portada | Archivo |
+| --- | --- |
+| Tarjeta del evento en `/eventos/` | `eventos/index.astro` |
+| `og:image` al compartir la página del evento | `eventos/[...slug].astro` |
+| Collage del hero, «Quiénes somos» y galería de la portada del sitio | `index.astro` |
+
+- `portadaDeEvento(carpeta, portada)` en `src/lib/fotos.ts` reemplaza a la versión
+  anterior, que nadie usaba y solo devolvía la primera miniatura.
+- La galería de la página de cada evento no se reordena: si lo hiciera, los
+  números del visor cambiarían y dejarían de servir para elegir.
+- La galería de la portada del sitio muestra dos fotos por evento. Ahora empieza
+  por la portada y sigue con la primera foto que no lo sea.
+- Un número fuera de rango rompe el build:
+  `[portada] … tiene 42 fotos; no existe la foto 99.`
+
+Verificado: sin ningún `portada`, el HTML de `dist/` es idéntico al del build
+anterior (lo único que cambia es el lugar de Yachana Day, corregido a Campus
+Balzay en el mismo cambio). Con `portada: 5` en FLISol, la tarjeta, el `og:image`,
+«Quiénes somos» y la galería de la portada toman la foto 5, y la galería no la
+repite. Con `portada: 99` el build falla con el mensaje de arriba.
+
+---
+
 ## Contenido de los cinco eventos
 
 El 2026-09-30. Los cinco `.mdx` de `src/content/eventos/` tenían `[Placeholder]`
@@ -13,7 +43,7 @@ frontmatter:
 
 | Evento | Antes | Ahora |
 | --- | --- | --- |
-| Yachana Day | Resumen: «una introducción a la computación en la nube» | Un stand en la jornada de proyectos y emprendimientos; no hubo charla |
+| Yachana Day | Resumen: «una introducción a la computación en la nube». Lugar: Universidad de Cuenca | Un stand en la jornada de proyectos y emprendimientos; no hubo charla. Lugar: Campus Balzay |
 | Los 4 Fantásticos | Resumen: «una sesión… con ejemplos prácticos». Lugar: Universidad de Cuenca | Un stand con trivia y premios, sin charla. Lugar: Campus Balzay (sale en el afiche) |
 | Infraestructura Cloud | Resumen: «taller» sobre regiones y zonas de disponibilidad. Lugar: Universidad de Cuenca | Webinar sobre data centers con Miguel González, de AWS Alemania. Lugar: En línea |
 | Stand de inicio de ciclo | Lugar: Campus de la Universidad de Cuenca | Bloque A, Campus Balzay |

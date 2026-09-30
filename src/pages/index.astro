@@ -5,7 +5,7 @@ import FondoParticulas from '../components/FondoParticulas.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { club } from '../lib/categorias';
-import { fotosDeEvento } from '../lib/fotos';
+import { fotosDeEvento, portadaDeEvento } from '../lib/fotos';
 import { fechaLarga } from '../lib/fechas';
 
 const servicios = await getCollection('servicios');
@@ -23,20 +23,24 @@ const trayectoria = eventos
 /** Una foto de cada uno de los cuatro eventos más recientes, para "Quiénes somos". */
 const fotosNosotros = eventos
   .slice(0, 4)
-  .map((evento) => ({ foto: fotosDeEvento(evento.data.carpetaFotos)[0], evento }))
+  .map((evento) => ({ foto: portadaDeEvento(evento.data.carpetaFotos, evento.data.portada), evento }))
   .filter((f) => f.foto);
 
 /** Collage del hero: tres eventos distintos, para mostrar actividad real de entrada. */
 const fotosHero = eventos
-  .map((evento) => ({ foto: fotosDeEvento(evento.data.carpetaFotos)[0], evento }))
+  .map((evento) => ({ foto: portadaDeEvento(evento.data.carpetaFotos, evento.data.portada), evento }))
   .filter((f) => f.foto)
   .slice(0, 3);
 
-/** Galería de portada: una foto representativa de cada evento. */
+/** Galería de portada: dos fotos de cada evento, empezando por su portada. */
 const galeria = eventos
   .flatMap((evento) => {
-    const fotos = fotosDeEvento(evento.data.carpetaFotos);
-    return fotos.slice(0, 2).map((foto) => ({ foto, evento }));
+    const portada = portadaDeEvento(evento.data.carpetaFotos, evento.data.portada);
+    if (!portada) return [];
+    const resto = fotosDeEvento(evento.data.carpetaFotos).filter(
+      (f) => f.completa !== portada.completa
+    );
+    return [portada, ...resto].slice(0, 2).map((foto) => ({ foto, evento }));
   })
   .slice(0, 8);
 

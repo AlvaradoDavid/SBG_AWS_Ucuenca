@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import GaleriaEvento from '../../components/GaleriaEvento.astro';
 import { getCollection, render } from 'astro:content';
-import { fotosDeEvento } from '../../lib/fotos';
+import { fotosDeEvento, portadaDeEvento } from '../../lib/fotos';
 import { fechaLarga } from '../../lib/fechas';
 
 export async function getStaticPaths() {
@@ -16,6 +16,7 @@ export async function getStaticPaths() {
 const { evento } = Astro.props;
 const { Content } = await render(evento);
 const fotos = fotosDeEvento(evento.data.carpetaFotos);
+const portada = portadaDeEvento(evento.data.carpetaFotos, evento.data.portada);
 
 const fecha = fechaLarga(evento.data.fecha);
 ---
@@ -23,7 +24,7 @@ const fecha = fechaLarga(evento.data.fecha);
 <Layout
   title={evento.data.titulo}
   description={evento.data.resumen}
-  imagen={fotos[0]?.completa}
+  imagen={portada?.completa}
   imagenAlt={evento.data.titulo}
 >
   <article class="mx-auto max-w-6xl px-6 py-12" data-pagefind-body>

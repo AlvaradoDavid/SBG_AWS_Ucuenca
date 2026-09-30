@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import { fotosDeEvento } from '../../lib/fotos';
+import { fotosDeEvento, portadaDeEvento } from '../../lib/fotos';
 import { fechaLarga } from '../../lib/fechas';
 
 const eventos = (await getCollection('eventos')).sort(
@@ -12,6 +12,7 @@ const eventos = (await getCollection('eventos')).sort(
 const conFotos = eventos.map((evento) => ({
   evento,
   fotos: fotosDeEvento(evento.data.carpetaFotos),
+  portada: portadaDeEvento(evento.data.carpetaFotos, evento.data.portada),
 }));
 
 const totalFotos = conFotos.reduce((suma, e) => suma + e.fotos.length, 0);
@@ -32,15 +33,15 @@ const totalFotos = conFotos.reduce((suma, e) => suma + e.fotos.length, 0);
     </p>
 
     <div class="mt-12 space-y-6">
-      {conFotos.map(({ evento, fotos }) => (
+      {conFotos.map(({ evento, fotos, portada }) => (
         <a
           href={`/eventos/${evento.id}/`}
           data-reveal
           class="group grid gap-6 overflow-hidden rounded-xl border border-tinta-200 transition hover:border-tinta-400 hover:shadow-md sm:grid-cols-[320px_1fr]"
         >
-          {fotos[0] ? (
+          {portada ? (
             <Image
-              src={fotos[0].miniatura}
+              src={portada.miniatura}
               alt={evento.data.titulo}
               widths={[320, 640]}
               sizes="(max-width: 640px) 100vw, 320px"

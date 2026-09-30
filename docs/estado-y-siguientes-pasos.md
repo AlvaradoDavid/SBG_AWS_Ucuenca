@@ -103,7 +103,7 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
 que contó el club y lo que se ve en las fotos. De paso se corrigieron tres datos
 que las fotos contradecían: el taller de infraestructura fue un webinar en
 línea, «Los 4 Fantásticos» fue un stand con trivia y no una charla, y los lugares
-de cuatro eventos ganaron precisión. El detalle está en el
+de los cinco ganaron precisión. El detalle está en el
 [registro de cambios](registro-de-cambios.md).
 
 Tres llevan `asistentes`: 200 en «Los 4 Fantásticos» y en el stand de inicio de
@@ -116,6 +116,10 @@ el campo.
 `carpetaFotos` es el nombre de carpeta que el script crea en `src/assets/eventos/`. El texto
 va en primera persona del plural y no repite el `resumen`, que ya aparece justo
 encima. Con `hito: true` sale también en la trayectoria de la portada.
+
+**Para cambiar la foto de portada de un evento:** abrir la galería del evento,
+hacer clic en la foto y leer el contador del visor (`7 / 28`). Ese número va en
+`portada: 7`. Es el mismo que el del archivo, `foto-07.webp`.
 
 ### 3. Profundizar fichas breves (prioridad media)
 

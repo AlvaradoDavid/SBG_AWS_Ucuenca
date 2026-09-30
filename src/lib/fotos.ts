@@ -27,9 +27,22 @@ export function fotosDeEvento(carpeta: string): FotoEvento[] {
     }));
 }
 
-/** Solo la primera foto, para usarla como portada del evento. */
-export function portadaDeEvento(carpeta: string): ImageMetadata | undefined {
-  return fotosDeEvento(carpeta)[0]?.miniatura;
+/**
+ * La foto que representa al evento: la que indica `portada` (su número en la
+ * galería, empezando en 1) o, si no hay, la primera. Un número que no existe
+ * rompe el build en vez de dejar al evento sin portada.
+ */
+export function portadaDeEvento(carpeta: string, portada?: number): FotoEvento | undefined {
+  const fotos = fotosDeEvento(carpeta);
+  if (portada === undefined) return fotos[0];
+
+  const foto = fotos[portada - 1];
+  if (!foto) {
+    throw new Error(
+      `[portada] ${carpeta} tiene ${fotos.length} fotos; no existe la foto ${portada}.`
+    );
+  }
+  return foto;
 }
 
 /**

@@ -53,6 +53,7 @@ el esquema, **el build falla** — es intencional: evita publicar fichas a media
 | `lugar` | string? | |
 | `hito` | boolean | Si es `true`, aparece en la trayectoria de la portada |
 | `asistentes` | number? | |
+| `portada` | number? | Número de la foto que representa al evento, el que muestra el visor (`7 / 28` → `7`). Sin él, la primera |
 
 ### `servicios`
 
@@ -104,6 +105,12 @@ Los videos se ignoran. Se generan dos tamaños:
 `src/lib/fotos.ts` las carga con `import.meta.glob` en tiempo de build, así que
 Astro las optimiza y genera los `srcset` automáticamente. `fotosDeEvento(carpeta)`
 empareja cada foto con su miniatura.
+
+`portadaDeEvento(carpeta, portada)` devuelve la foto que representa al evento. La
+usan la tarjeta de `/eventos/`, el `og:image` de la página del evento y las fotos
+de eventos de la portada del sitio: el collage, «Quiénes somos» y la galería. La
+galería de cada evento no se reordena, así que el número de cada foto no cambia.
+Un número que no existe rompe el build con un error `[portada]`.
 
 ## Fechas: siempre en UTC
 

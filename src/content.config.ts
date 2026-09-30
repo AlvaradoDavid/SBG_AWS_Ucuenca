@@ -81,6 +81,11 @@ const eventos = defineCollection({
     hito: z.boolean().optional().default(false),
     /** Cuántas personas asistieron, si se llevó registro. */
     asistentes: z.number().optional(),
+    /**
+     * Número de la foto que representa al evento, el mismo que muestra el visor
+     * («7 / 28» → 7). Sin él, la portada es la primera foto.
+     */
+    portada: z.number().int().positive().optional(),
   }),
 });
 

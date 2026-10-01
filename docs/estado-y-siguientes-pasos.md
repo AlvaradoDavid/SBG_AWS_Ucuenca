@@ -93,6 +93,10 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
 - ✅ **Números de foto fijos en `pnpm fotos`** (`f9c4f33`): agregar fotos a un
   evento ya no cambia el número de las demás ni su `portada`. Ver el punto 2 y
   [arquitectura.md](arquitectura.md#números-que-no-cambian).
+- ✅ **El morado de marca es el color principal** (`daf4623`): foco, hero,
+  trayectoria, pie e íconos. El amber sigue como advertencia en el recuadro de
+  costo de las fichas y entre los acentos de las categorías del catálogo. Ver
+  [D-27](decisiones.md#d-27).
 
 **Pendiente:**
 

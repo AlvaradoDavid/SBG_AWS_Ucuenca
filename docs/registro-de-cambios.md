@@ -14,6 +14,32 @@ El porqué y el detalle están en [D-27](decisiones.md#d-27).
 - El recuadro de costo de las fichas sigue en amber: ahí es una advertencia.
 - El anillo de foco sube de 2.14:1 a 3.65:1 sobre blanco.
 
+Verificado antes del push sobre el build de `daf4623`, el mismo que se publicó.
+`pnpm build` termina sin avisos y `pnpm enlaces` da ✓. `dist/` se sirvió con las
+cabeceras de `customHttp.yml` y se recorrió en el navegador:
+
+- **La CSP no bloquea nada.** No hay ningún `Refused` en la consola. Se probaron
+  la portada, el visor de la galería de FLISol (abrir y pasar de foto), el
+  buscador del catálogo, la ficha de EC2 con su diagrama y la 404.
+- **En morado:** el ícono de la barra, el halo superior del hero, el hito de
+  fundación, el degradado de la trayectoria y el anillo de foco con teclado.
+- **Sigue en amber** el recuadro «Costo y capa gratuita» de las fichas.
+- En móvil (375 px) no hay scroll horizontal. El JavaScript de la portada sigue
+  en 4.6 KB.
+
+**Publicado el 2026-09-30 en `daf4623`**, junto con la fusión de lo que ya estaba
+en producción. Comprobado con `curl` cuando Amplify terminó, unos 2 minutos y
+medio después del push:
+
+- Producción es idéntica al build verificado en las diez páginas de
+  [la comparación](estado-y-siguientes-pasos.md#después-de-cada-push).
+- `program-icon-purple.svg` y los íconos del kit responden 200 con `#AD5CFF`.
+  `program-icon-amber.svg` ya da 404, y la portada no tiene ninguna clase
+  `marca-amber`.
+- La CSS publicada define `--color-marca-purple: #ad5cff` y lleva la caché de un año.
+- Las cabeceras siguen igual: la portada da 200 con la CSP y HSTS, `/no-existe/`
+  da 404 sin `Location` y `/eventos` redirige con un 301.
+
 ---
 
 ## Números de foto que no cambian al agregar fotos

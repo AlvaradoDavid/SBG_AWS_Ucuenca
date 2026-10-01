@@ -90,6 +90,9 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   «desplegado en AWS Amplify».
 - ✅ **Contenido de los cinco eventos, portadas elegidas y `enInicio`** (`df92410`):
   ver el punto 2.
+- ✅ **Números de foto fijos en `pnpm fotos`** (`f9c4f33`): agregar fotos a un
+  evento ya no cambia el número de las demás ni su `portada`. Ver el punto 2 y
+  [arquitectura.md](arquitectura.md#números-que-no-cambian).
 
 **Pendiente:**
 
@@ -346,3 +349,18 @@ curl -sI https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/ | grep -iE "^HTT
 Debe dar 200 con la CSP y HSTS. Una URL inexistente
 (`…/no-existe/`) debe dar **404 sin `Location`**, y un archivo de `/_astro/`,
 `Cache-Control: public, max-age=31536000, immutable`.
+
+**Cuándo terminó de publicar.** El `Last-Modified` de la portada cambia con cada
+despliegue, aunque el HTML sea el mismo. Si otra sesión empujó poco antes, hay
+dos builds en cola: el propio es el segundo cambio.
+
+**Si el cambio no se ve en el sitio** (scripts, `docs/`, el manifiesto), lo que
+se comprueba es que producción sea idéntica al `dist/` local. Hay que normalizar
+dos cosas: los `\r`, porque en Windows los `.mdx` tienen CRLF y Amplify compila
+con LF, y el id que `DiagramaAWS` sortea en cada build:
+
+```bash
+U=https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com
+norm() { sed "s#$U#http://localhost:4321#g" | tr -d '\r' | sed -E 's/(pie|punta)-[a-z0-9]+/\1-ID/g'; }
+cmp <(curl -s "$U/eventos/" | norm) <(norm < dist/eventos/index.html) && echo idénticas
+```

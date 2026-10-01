@@ -51,6 +51,25 @@ no se tocó.
   que llegaron antes que él.
 - `pnpm build` sin avisos, con 260 páginas y 256 indexadas, y `pnpm enlaces`
   en ✓.
+
+**Publicado el 2026-09-30 en `f9c4f33`**, encima de los eventos ya publicados
+(`3e363ba`). El morado (`1b1b0ac`) sigue sin publicar. El cambio no toca nada de
+lo que sirve el sitio: el script, el manifiesto y `docs/` no llegan a `dist/`.
+Comprobado con `curl` cuando Amplify terminó de publicar, unos 3 minutos después
+del push:
+
+- **Producción es idéntica al build local** en diez páginas: la portada,
+  `/eventos/`, los cinco eventos, `/servicios/`, la ficha de EC2 y la 404. Antes
+  de comparar se quitan los `\r` y el id aleatorio de cada diagrama (ver
+  [cómo comprobarlo](estado-y-siguientes-pasos.md#después-de-cada-push)).
+- La portada da 200 con la CSP y HSTS, `/no-existe/` da 404 sin `Location`,
+  `/eventos` redirige con un 301 a `/eventos/` y las fotos de `/_astro/` llevan la
+  caché de un año.
+- El `og:image` de cada evento es su portada elegida (27, 23, 1, 20 y 9) y
+  responde 200.
+- El manifiesto no se publica (`/src/assets/eventos/manifiesto.json` da 404), y
+  `program-icon-purple.svg` tampoco: el morado no entró.
+
 ---
 
 ## Eventos publicados y comprobados en producción

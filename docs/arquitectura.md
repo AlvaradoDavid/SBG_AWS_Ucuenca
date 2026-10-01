@@ -53,6 +53,7 @@ el esquema, **el build falla** — es intencional: evita publicar fichas a media
 | `lugar` | string? | |
 | `hito` | boolean | Si es `true`, aparece en la trayectoria de la portada |
 | `asistentes` | number? | |
+| `enInicio` | boolean | `true` por defecto. Con `false`, sus fotos no salen en la portada del sitio y su lugar lo ocupa el siguiente evento |
 | `portada` | number? | Número de la foto que representa al evento, el que muestra el visor (`7 / 28` → `7`). Sin él, la primera |
 
 ### `servicios`

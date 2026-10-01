@@ -88,6 +88,8 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   comprueba en `dist/` antes de cada push.
 - ✅ **Pie:** los enlaces ya no ponen el texto en amber, y la última línea dice
   «desplegado en AWS Amplify».
+- ✅ **Contenido de los cinco eventos, portadas elegidas y `enInicio`** (`df92410`):
+  ver el punto 2.
 
 **Pendiente:**
 
@@ -126,6 +128,16 @@ commit que las fotos.
 **Para cambiar la foto de portada de un evento:** abrir la galería del evento,
 hacer clic en la foto y leer el contador del visor (`7 / 28`). Ese número va en
 `portada: 7`. Es el mismo que el del archivo, `foto-07.webp`.
+
+**Para que un evento no salga en la portada del sitio:** `enInicio: false`. Lo
+lleva el webinar de infraestructura, cuya portada es un afiche: en su lugar
+entra Yachana Day. Sigue en `/eventos/`, y en la trayectoria si es hito.
+
+**Decisión abierta:** el collage del hero muestra los tres eventos más recientes
+que van en la portada. Hoy son FLISol, el stand y Los 4 Fantásticos, así que
+Yachana Day sale en «Quiénes somos» y en la galería, pero no en el collage. Si el
+club lo quiere también ahí, hace falta una forma de elegir los eventos del
+collage. Se le preguntó al cerrar la sesión del 2026-09-30 y quedó sin respuesta.
 
 ### 3. Profundizar fichas breves (prioridad media)
 

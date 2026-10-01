@@ -2,6 +2,27 @@
 
 ---
 
+## Eventos publicados y comprobados en producción
+
+El 2026-09-30, en `df92410`. Lleva los cuatro commits de los eventos: texto,
+campo `portada`, portadas elegidas y `enInicio`. El cambio de color a morado
+(`1b1b0ac`, otra sesión) seguía solo en local y **no** entró en este push: se
+publicó desde un worktree que partía del último commit propio.
+
+Comprobado con `curl` contra el sitio real, unos 2 minutos y medio después del push:
+
+- La portada, `/eventos/` y los cinco eventos responden 200. `/no-existe/` da
+  404 y `/eventos` redirige con un 301 a `/eventos/`. La CSP y HSTS siguen en su sitio.
+- Cada evento muestra su texto, su lugar corregido y sus `asistentes`, y su
+  `og:image` es la portada elegida, en el dominio real. La de Yachana Day
+  responde 200.
+- En la portada del sitio no queda ninguna foto del webinar. Yachana Day sale con
+  su foto 27 en «Quiénes somos» y en la galería.
+- Ninguna página tiene `[Placeholder]`, y el icono sigue en amber: el morado no
+  se publicó.
+
+---
+
 ## Yachana Day en la portada en lugar del webinar
 
 El 2026-09-30. La portada del sitio muestra fotos de los eventos más recientes, y

@@ -117,6 +117,12 @@ el campo.
 va en primera persona del plural y no repite el `resumen`, que ya aparece justo
 encima. Con `hito: true` sale también en la trayectoria de la portada.
 
+**Para agregar fotos a un evento ya publicado:** ponerlas en su carpeta de
+`Eventos/` y correr `pnpm fotos`. Las nuevas van al final con los números
+siguientes, sin importar su nombre, y las demás conservan el suyo, así que
+`portada` sigue apuntando a la misma foto. El manifiesto cambia: va en el mismo
+commit que las fotos.
+
 **Para cambiar la foto de portada de un evento:** abrir la galería del evento,
 hacer clic en la foto y leer el contador del visor (`7 / 28`). Ese número va en
 `portada: 7`. Es el mismo que el del archivo, `foto-07.webp`.

@@ -2,6 +2,58 @@
 
 ---
 
+## Números de foto que no cambian al agregar fotos
+
+El 2026-09-30. `pnpm fotos` numeraba las fotos de cada evento por el orden
+alfabético de sus originales y se saltaba toda salida que ya existiera. Si a un
+evento ya procesado se le agregaba una foto cuyo nombre no quedaba al final, los
+números se corrían: las salidas existentes se saltaban, la foto nueva nunca se
+convertía y el último original salía repetido con un número nuevo. Desde que
+`portada` elige la foto por su número, además habría cambiado la portada sin
+avisar.
+
+| | Antes | Ahora |
+| --- | --- | --- |
+| Número de cada foto | Posición del original en orden alfabético | El que le asigna `fuentes` en el manifiesto |
+| Foto nueva | Desplaza a las que van después | Toma el siguiente número libre |
+| Original que desaparece | Las siguientes bajan un número | Su número queda reservado y su foto se conserva |
+| Evento sin originales en esta máquina | Desaparece del manifiesto | Conserva su entrada |
+
+- **`manifiesto.json` gana un campo `fuentes`** por evento
+  (`"IMG_0365.HEIC": "foto-04"`). El resto del manifiesto no cambia. Ahora es el
+  que mantiene fijos los números, así que va en el mismo commit que las fotos.
+- **El script dice qué número recibe cada foto nueva** (`+ IMG_0407.HEIC → foto-43`)
+  y avisa de los originales que ya no están.
+- **Una conversión que falla no reserva número**, para que la foto, cuando se
+  arregle, no aparezca en medio de la galería.
+- **Un evento sin `fuentes`** se reconstruye con la regla alfabética de antes,
+  pero solo si el número de originales coincide con el de fotos generadas. Si no,
+  el script no lo toca y termina con error.
+
+La regla completa está en [arquitectura.md](arquitectura.md#números-que-no-cambian).
+
+Verificado sobre una copia de los originales en una carpeta temporal; `Eventos/`
+no se tocó.
+
+- **Con las carpetas actuales no cambia nada:** 0 convertidas y 127 ya
+  existentes en los cinco eventos, las 254 WebP idénticas byte a byte y el
+  manifiesto solo gana `fuentes`. Una segunda corrida lo deja igual.
+- **Cada `foto-NN` sale del original que `fuentes` le atribuye.** El script
+  anterior, corrido desde cero, reproduce byte a byte las 254 WebP publicadas. El
+  nuevo, también desde cero, da las mismas 254 y el mismo manifiesto.
+- **Una foto nueva que por nombre va primera**, en el webinar de
+  infraestructura (6 fotos): con el script anterior, `foto-07` salía como copia
+  exacta de `foto-06` y la nueva no aparecía. Con el nuevo, `foto-07` es la
+  nueva y `foto-01` a `foto-06` no cambian.
+- **Un original borrado, un archivo corrupto y su arreglo:** la `foto-03`
+  borrada se conserva y su número no se reutiliza; el archivo corrupto da `✗`
+  sin reservar número y, una vez arreglado, entra como `foto-09`, después de las
+  que llegaron antes que él.
+- `pnpm build` sin avisos, con 260 páginas y 256 indexadas, y `pnpm enlaces`
+  en ✓.
+
+---
+
 ## Portada elegible para cada evento
 
 El 2026-09-30. La foto que representa a cada evento era siempre la primera de su

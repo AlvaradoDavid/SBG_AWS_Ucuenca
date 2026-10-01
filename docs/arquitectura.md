@@ -96,7 +96,9 @@ src/assets/eventos/2026-05-16-aws-club-en-flisol/foto-04.webp       (1600px)
 src/assets/eventos/2026-05-16-aws-club-en-flisol/foto-04-mini.webp  (600px)
 ```
 
-Los videos se ignoran. Se generan dos tamaños:
+Los videos se ignoran, y también lo que esté en subcarpetas: así se apartan fotos
+sin borrar el original (el Community Day guarda sus tomas repetidas en
+`repetidas/`). Se generan dos tamaños:
 
 | Salida | Ancho | Uso |
 | --- | --- | --- |
@@ -128,6 +130,12 @@ foto sin que nada fallara. Por eso, una vez asignado, no cambia nunca:
 - **Un original nuevo toma el siguiente número libre**, aunque por nombre quede
   antes que los demás. El script dice cuál le tocó
   (`+ IMG_0407.HEIC → foto-43`). Si la conversión falla, no reserva número.
+- **Los nuevos se numeran en orden natural de nombre**, el del explorador de
+  archivos: `2.jpeg` antes que `10.jpeg`. Las fotos exportadas como `1.jpeg`,
+  `2.jpeg`… conservan así su orden en la galería; con el orden alfabético
+  saldrían 1, 10, 100, 101… Solo cuentan las fotos sueltas de la carpeta —ni los
+  videos ni lo que esté en subcarpetas—, así que el número de una foto puede no
+  coincidir con el de su archivo original (`46.jpeg` → `foto-09`).
 - **Un original que desaparece no libera su número**, y su foto se conserva. Un
   evento cuya carpeta no está en esta máquina conserva su entrada del manifiesto.
 - **Renombrar un original** cuenta como borrarlo y agregar uno nuevo: la foto
@@ -165,7 +173,7 @@ El sitio se aloja en **AWS Amplify Hosting**, conectado a la rama
 a esa rama dispara un build en Amplify y publica `dist/`. El porqué de Amplify
 frente al plan original con S3 + CloudFront está en [D-23](decisiones.md#d-23).
 
-Build estático a `dist/` (260 páginas, 387 fotos WebP, índice de Pagefind). No
+Build estático a `dist/` (261 páginas, 511 fotos WebP, índice de Pagefind). No
 hay servidor ni funciones de renderizado: todo el HTML se genera en `pnpm build`.
 
 ```

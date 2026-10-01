@@ -14,6 +14,7 @@
  * (foto-07.webp), el del visor («7 / 28») y el que elige la portada
  * (`portada: 7`). El manifiesto guarda qué original es cada foto-NN, y un
  * original nuevo toma el siguiente número libre aunque por nombre quede antes.
+ * Los originales nuevos se numeran en orden natural: 2.jpeg antes que 10.jpeg.
  */
 import { readdir, mkdir, readFile, writeFile, access } from 'node:fs/promises';
 import path from 'node:path';
@@ -48,6 +49,13 @@ function slugDeEvento(nombreCarpeta) {
 
   return `${fecha}-${titulo}`;
 }
+
+/**
+ * Orden natural de los nombres, el del explorador de archivos: 2.jpeg antes que
+ * 10.jpeg. Con el alfabético, unas fotos exportadas como 1.jpeg…103.jpeg quedarían
+ * 1, 10, 100, 101… y la galería saldría revuelta.
+ */
+const ordenNatural = new Intl.Collator('es', { numeric: true }).compare;
 
 /** 7 -> "foto-07" */
 const nombreDeFoto = (numero) => `foto-${String(numero).padStart(2, '0')}`;
@@ -118,10 +126,11 @@ async function procesarEvento(nombreCarpeta, previo) {
 
   const archivos = (await readdir(carpetaOrigen))
     .filter((f) => /\.(heic|jpe?g|png)$/i.test(f))
-    .sort();
+    .sort(ordenNatural);
   const generadas = await fotosGeneradas(carpetaDestino);
 
-  const fuentes = mapeoPrevio(previo, archivos, generadas);
+  // Sin manifiesto, la reconstrucción usa la regla de entonces: orden alfabético.
+  const fuentes = mapeoPrevio(previo, [...archivos].sort(), generadas);
   if (!fuentes) {
     console.error(
       `  ✗ ${slug}: hay ${generadas.length} fotos generadas y ${archivos.length} originales, ` +

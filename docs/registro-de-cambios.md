@@ -2,6 +2,62 @@
 
 ---
 
+## AWS Community Day Ecuador
+
+El 2026-10-01. Sexto evento del sitio: el AWS Community Day Ecuador, el 5 de
+septiembre de 2026 en la Universidad Politécnica Salesiana de Cuenca, con más de
+400 asistentes y 11 Student Builder Groups. El texto sale de lo que contó el club
+y de lo que se ve en las fotos: su papel en la organización, el juego para
+adivinar servicios con su premiación final, y dos de las charlas, que enlazan a
+las fichas de Control Tower y CloudFormation. Lleva `hito: true`, así que entra
+en la trayectoria.
+
+- **41 fotos** en `src/assets/eventos/2026-09-05-aws-community-day/`, de las 89
+  que trajo el club. A pedido suyo se apartaron 48 tomas repetidas: la misma
+  foto posada desde otro ángulo o con otro zoom, y las ráfagas de una charla
+  tomadas desde el mismo sitio. De cada serie quedó la más nítida o la de
+  mejores caras. No se borraron: están en `repetidas/`, dentro de la carpeta del
+  evento en `Eventos/`, y el script no entra en subcarpetas. Los 14 videos se
+  ignoran, como en los demás eventos.
+- **Portada:** la que eligió el club, `46.jpeg`, que quedó como `foto-09`.
+- **Fecha:** las fotos no traen EXIF y la carpeta se llamaba `2026-8-5`, pero el
+  club confirmó el 5 de septiembre, que fue sábado. La carpeta se renombró a
+  `2026-9-5 AWS Community Day` antes de generar las fotos, así que `carpetaFotos`
+  lleva la fecha buena.
+- **Lugar:** Cuenca, confirmado por el club. Ya lo sugerían las fotos: el
+  auditorio es el mismo de FLISol, con la bandera de Cuenca junto a la del
+  Ecuador y la de la UPS.
+- **`pnpm fotos` numera en orden natural** (`2.jpeg` antes que `10.jpeg`). Las
+  fotos llegaron como `1.jpeg`…`103.jpeg`, y con el orden alfabético la galería
+  habría salido 1, 10, 100, 101… Solo afecta a originales nuevos: los números ya
+  asignados no cambian, y la reconstrucción sin manifiesto sigue usando el orden
+  alfabético. Ver [arquitectura.md](arquitectura.md#números-que-no-cambian).
+
+**Efecto en la portada.** El Community Day pasa a ser el evento más reciente:
+encabeza el collage del hero, junto a FLISol y el stand, y entra en «Quiénes
+somos» y en la galería. Yachana Day sale de las dos y queda en la trayectoria y
+en `/eventos/`. Las cifras del hero pasan a 6 eventos y 168 fotos.
+
+**Verificado** sobre un build desde cero (borrando `dist/` y `node_modules/.astro`):
+
+- `pnpm build`: 261 páginas, 257 indexadas, sin avisos. `pnpm enlaces` da ✓ con
+  431 destinos. El JavaScript de la portada sigue en 4.6 KB.
+- **La CSP no bloquea nada.** `dist/` se sirvió con las cabeceras de
+  `customHttp.yml`: ninguna violación ni error en la portada, `/eventos/` y la
+  página del evento, cuyos 125 recursos de `/_astro/` responden 200. Ninguna de
+  las tres carga nada de otro origen.
+- **Visor:** la foto 9 abre en `9 / 41` con `foto-09.webp` y el foco en «Cerrar
+  galería»; la flecha izquierda pasa a `8 / 41` y `Escape` devuelve el foco a la
+  miniatura.
+- En móvil (375 px) no hay scroll horizontal.
+- Una segunda corrida de `pnpm fotos` no convierte nada en ningún evento.
+
+**Una primera versión no llegó a publicarse.** Llevaba las 89 fotos y la fecha
+del nombre de la carpeta, el 5 de agosto. Se deshizo el commit local antes de
+corregirla, para que las fotos descartadas no quedaran en el historial.
+
+---
+
 ## Eventos en orden cronológico
 
 El 2026-09-30. `/eventos/` listaba los eventos del más reciente al más antiguo y
@@ -19,6 +75,12 @@ La portada no cambia: sigue tomando las fotos de los eventos más recientes.
 De paso quedó anotado como pendiente, en el
 [punto 3 del estado](estado-y-siguientes-pasos.md#3-presentar-al-core-team-en-quiénes-somos),
 presentar a cada integrante del CORE Team en «Quiénes somos».
+
+**Publicado el 2026-10-01 en `1f0ffc8`.** Amplify terminó unos 150 segundos
+después del push. Comprobado con `curl`: `/eventos/` ya va de Yachana Day a
+FLISol; la portada da 200 con la CSP y HSTS; `/no-existe/` da 404 sin
+`Location`; `/eventos` redirige con un 301, y los archivos de `/_astro/` llevan
+la caché de un año.
 
 ---
 

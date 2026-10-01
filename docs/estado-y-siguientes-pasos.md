@@ -14,7 +14,7 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Portada | Completa: hero en morado profundo con collage, cifras y partículas; pilares, trayectoria, galería |
 | Galería de eventos | Completa, con visor accesible |
 | Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
-| Contenido de eventos | Completo: los 5 con texto; 3 con cifra de asistentes |
+| Contenido de eventos | Completo: los 6 con texto; 4 con cifra de asistentes |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
 | Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 5 |
 | Infraestructura AWS | ✅ **En línea en Amplify:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, con 404 real, cabeceras de seguridad y alarmas de costo. Solo queda el subdominio: ver el punto 1 |
@@ -103,11 +103,17 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   [D-28](decisiones.md#d-28) y, para reutilizar los fondos en páginas nuevas,
   [sistema-de-diseno.md](sistema-de-diseno.md#fondos-de-marca).
 
-**Hecho el 2026-09-30, pendiente de push:**
+**Publicado el 2026-10-01** y comprobado en producción:
 
-- **`/eventos/` en orden cronológico** ([D-29](decisiones.md#d-29)): del más
-  antiguo al más reciente, como la trayectoria. Verificado con `pnpm build` y
-  `pnpm enlaces`; falta publicarlo.
+- ✅ **`/eventos/` en orden cronológico** (`1f0ffc8`): del más antiguo al más
+  reciente, como la trayectoria. Ver [D-29](decisiones.md#d-29).
+
+**Hecho el 2026-10-01, pendiente de push:**
+
+- **Sexto evento: AWS Community Day Ecuador**, con 41 fotos (48 repetidas
+  apartadas sin borrar), y `pnpm fotos` numerando en orden natural (`2.jpeg`
+  antes que `10.jpeg`). Ver el punto 2. Verificado con un build desde cero,
+  `pnpm enlaces` y la CSP; falta publicarlo.
 
 **Pendiente:**
 
@@ -126,10 +132,11 @@ línea, «Los 4 Fantásticos» fue un stand con trivia y no una charla, y los lu
 de los cinco ganaron precisión. El detalle está en el
 [registro de cambios](registro-de-cambios.md).
 
-Tres llevan `asistentes`: 200 en «Los 4 Fantásticos» y en el stand de inicio de
-ciclo, y 25 en el webinar. Las dos primeras cifras son aproximadas y la etiqueta
-no lo indica. Yachana Day y FLISol no tienen cifra: si aparece, basta con añadir
-el campo.
+Cuatro llevan `asistentes`: 400 en el Community Day, 200 en «Los 4 Fantásticos»
+y en el stand de inicio de ciclo, y 25 en el webinar. Las tres primeras cifras
+son aproximadas y la etiqueta no lo indica; la del Community Day se queda corta,
+porque fueron más de 400. Yachana Day y FLISol no tienen cifra: si aparece, basta
+con añadir el campo.
 
 **Para un evento nuevo:** poner las fotos en `Eventos/<fecha> <nombre>/`, correr
 `pnpm fotos` y crear el `.mdx` con los campos de `src/content.config.ts`;
@@ -141,8 +148,21 @@ Las fotos van sueltas dentro de esa carpeta: el script no entra en subcarpetas y
 solo lee HEIC, JPG y PNG. Los videos se ignoran, y el sitio hoy no publica
 ninguno.
 
-**En curso (2026-09-30):** un sexto evento. El club tiene sus fotos y videos
-fuera del proyecto y va a dejarlos en `Eventos/`.
+- **Si las fotos no traen EXIF, confirmar la fecha con el club.** El nombre de
+  la carpeta puede estar mal: el del Community Day decía `2026-8-5` y el evento
+  fue el 5 de septiembre. Se corrige renombrando la carpeta antes de la primera
+  corrida, porque de ese nombre sale `carpetaFotos`.
+- **Para dejar fotos fuera sin borrarlas,** moverlas a una subcarpeta de su
+  evento (por ejemplo `repetidas/`) antes de la primera corrida de `pnpm fotos`.
+  Después de publicar ya no sirve: la foto ya generada se conserva, y quitarla
+  corre la numeración (ver [arquitectura.md](arquitectura.md#números-que-no-cambian)).
+
+**El sexto evento, el AWS Community Day Ecuador, se agregó el 2026-10-01** con
+estos pasos. De sus 89 fotos se apartaron 48 tomas repetidas en `repetidas/`, y
+quedaron 41. Llegaron sin EXIF y numeradas `1.jpeg`…`103.jpeg`, con 14 videos
+intercalados; por esos nombres `pnpm fotos` numera ahora en orden natural, y con
+el alfabético la galería habría salido 1, 10, 100… La portada que eligió el club,
+`46.jpeg`, quedó como `foto-09`, porque ni los videos ni las apartadas cuentan.
 
 **Para agregar fotos a un evento ya publicado:** ponerlas en su carpeta de
 `Eventos/` y correr `pnpm fotos`. Las nuevas van al final con los números
@@ -158,11 +178,13 @@ hacer clic en la foto y leer el contador del visor (`7 / 28`). Ese número va en
 lleva el webinar de infraestructura, cuya portada es un afiche: en su lugar
 entra Yachana Day. Sigue en `/eventos/`, y en la trayectoria si es hito.
 
-**Decisión abierta:** el collage del hero muestra los tres eventos más recientes
-que van en la portada. Hoy son FLISol, el stand y Los 4 Fantásticos, así que
-Yachana Day sale en «Quiénes somos» y en la galería, pero no en el collage. Si el
-club lo quiere también ahí, hace falta una forma de elegir los eventos del
-collage. Se le preguntó al cerrar la sesión del 2026-09-30 y quedó sin respuesta.
+**Decisión abierta:** la portada del sitio toma siempre los eventos más
+recientes: tres para el collage, cuatro para «Quiénes somos» y ocho fotos, de dos
+en dos, para la galería. Con el Community Day, el collage muestra el Community
+Day, FLISol y el stand, y Yachana Day ya no sale en ninguna de las tres: solo en
+la trayectoria y en `/eventos/`. Si el club quiere elegir qué eventos salen ahí,
+hace falta un campo para ello. Se le preguntó el 2026-09-30 y quedó sin
+respuesta; el 2026-10-01 se le avisó de este efecto antes de agregar el evento.
 
 ### 3. Presentar al CORE Team en «Quiénes somos»
 
@@ -378,7 +400,7 @@ pnpm enlaces
 ```
 
 Vigila tres cosas en la salida: que no aparezca ningún aviso `[DiagramaAWS]`,
-que el número de páginas siga cuadrando (hoy: 256 indexadas por Pagefind, de las
+que el número de páginas siga cuadrando (hoy: 257 indexadas por Pagefind, de las
 cuales 251 son fichas de servicio) y que `pnpm enlaces` termine con ✓. Este
 último detecta enlaces internos sin barra final, destinos que no existen —por
 ejemplo un `slug` mal escrito en `alternativas`— y anclas rotas.

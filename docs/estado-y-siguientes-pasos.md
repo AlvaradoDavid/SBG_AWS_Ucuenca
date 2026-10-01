@@ -121,6 +121,10 @@ encima. Con `hito: true` sale también en la trayectoria de la portada.
 hacer clic en la foto y leer el contador del visor (`7 / 28`). Ese número va en
 `portada: 7`. Es el mismo que el del archivo, `foto-07.webp`.
 
+**Para que un evento no salga en la portada del sitio:** `enInicio: false`. Lo
+lleva el webinar de infraestructura, cuya portada es un afiche: en su lugar
+entra Yachana Day. Sigue en `/eventos/`, y en la trayectoria si es hito.
+
 ### 3. Profundizar fichas breves (prioridad media)
 
 El catálogo ya está completo en cobertura; lo que queda es profundidad. Hay 210

@@ -2,6 +2,29 @@
 
 ---
 
+## Yachana Day en la portada en lugar del webinar
+
+El 2026-09-30. La portada del sitio muestra fotos de los eventos más recientes, y
+el webinar de infraestructura aparecía en el collage, en «Quiénes somos» y en la
+galería con el afiche como foto. A pedido del club, su lugar lo ocupa Yachana Day.
+
+- Campo nuevo `enInicio` en eventos, `true` por defecto. Con `false`, el evento
+  no entra en esas tres secciones y el siguiente sube un puesto. Sigue en
+  `/eventos/`, en la trayectoria (si es hito) y en los totales de eventos y fotos.
+- `infraestructura-cloud.mdx` lleva `enInicio: false`.
+
+| Sección de la portada | Antes | Ahora |
+| --- | --- | --- |
+| Collage del hero | FLISol, Stand, webinar | FLISol, Stand, Los 4 Fantásticos |
+| «Quiénes somos» | FLISol, Stand, webinar, Los 4 Fantásticos | FLISol, Stand, Los 4 Fantásticos, Yachana Day |
+| Galería | Dos fotos de esos mismos cuatro | Dos fotos de los cuatro nuevos |
+
+Verificado en `dist/index.html`: ninguna foto del webinar en la portada, Yachana
+Day con su foto 27 en «Quiénes somos» y en la galería, y «5 eventos · 127 fotos»
+sin cambios. `pnpm build` sin avisos y `pnpm enlaces` en ✓.
+
+---
+
 ## Portada elegible para cada evento
 
 El 2026-09-30. La foto que representa a cada evento era siempre la primera de su

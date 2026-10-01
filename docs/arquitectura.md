@@ -53,6 +53,7 @@ el esquema, **el build falla** — es intencional: evita publicar fichas a media
 | `lugar` | string? | |
 | `hito` | boolean | Si es `true`, aparece en la trayectoria de la portada |
 | `asistentes` | number? | |
+| `enInicio` | boolean | `true` por defecto. Con `false`, sus fotos no salen en la portada del sitio y su lugar lo ocupa el siguiente evento |
 | `portada` | number? | Número de la foto que representa al evento, el que muestra el visor (`7 / 28` → `7`). Sin él, la primera |
 
 ### `servicios`
@@ -88,11 +89,11 @@ de megabytes y **está en `.gitignore`** — GitHub rechaza archivos de más de
 `pnpm fotos` (`scripts/procesar-fotos.mjs`) hace la conversión:
 
 ```
-Eventos/2026-05-16 AWS Club en FLISol/IMG_0365.HEIC
+Eventos/2026-5-16 AWS Club en FLISol 🎡☁️/IMG_0365.HEIC
    ↓ heic-convert → JPEG
    ↓ sharp → WebP
-src/assets/eventos/2026-05-16-aws-club-en-flisol/foto-01.webp       (1600px)
-src/assets/eventos/2026-05-16-aws-club-en-flisol/foto-01-mini.webp  (600px)
+src/assets/eventos/2026-05-16-aws-club-en-flisol/foto-04.webp       (1600px)
+src/assets/eventos/2026-05-16-aws-club-en-flisol/foto-04-mini.webp  (600px)
 ```
 
 Los videos se ignoran. Se generan dos tamaños:
@@ -109,8 +110,41 @@ empareja cada foto con su miniatura.
 `portadaDeEvento(carpeta, portada)` devuelve la foto que representa al evento. La
 usan la tarjeta de `/eventos/`, el `og:image` de la página del evento y las fotos
 de eventos de la portada del sitio: el collage, «Quiénes somos» y la galería. La
-galería de cada evento no se reordena, así que el número de cada foto no cambia.
-Un número que no existe rompe el build con un error `[portada]`.
+galería de cada evento no se reordena y el script no renumera (ver abajo), así
+que el número de cada foto no cambia. Un número que no existe rompe el build con
+un error `[portada]`.
+
+### Números que no cambian
+
+El número de una foto es a la vez su archivo (`foto-07.webp`), su posición en el
+visor (`7 / 28`) y el valor de `portada`. Si cambiara, la portada pasaría a otra
+foto sin que nada fallara. Por eso, una vez asignado, no cambia nunca:
+
+- **El manifiesto guarda qué original es cada foto.** En
+  `src/assets/eventos/manifiesto.json`, cada evento tiene un campo `fuentes`
+  (`"IMG_0365.HEIC": "foto-04"`). Va al repositorio, porque `Eventos/` no.
+- **Un original con número** se salta si sus dos WebP existen, o se regenera con
+  el mismo número si falta alguno.
+- **Un original nuevo toma el siguiente número libre**, aunque por nombre quede
+  antes que los demás. El script dice cuál le tocó
+  (`+ IMG_0407.HEIC → foto-43`). Si la conversión falla, no reserva número.
+- **Un original que desaparece no libera su número**, y su foto se conserva. Un
+  evento cuya carpeta no está en esta máquina conserva su entrada del manifiesto.
+- **Renombrar un original** cuenta como borrarlo y agregar uno nuevo: la foto
+  saldría duplicada con otro número. Los originales no se renombran.
+
+Para quitar una foto del sitio hay que borrar sus dos WebP **y** sacar su
+original de `Eventos/`; si no, la siguiente corrida la regenera. Las fotos que
+venían después suben un puesto en el visor y dejan de coincidir con su archivo,
+así que hay que revisar el `portada` del evento. El script lo avisa con una línea
+que empieza por `!`.
+
+Hasta el 2026-09-30 el número salía del orden alfabético de los originales, y una
+foto nueva que no quedara al final desplazaba a las demás (ver el
+[registro de cambios](registro-de-cambios.md)). Si un evento no tiene `fuentes`
+en el manifiesto, el script la reconstruye con esa regla, pero solo cuando el
+número de originales coincide con el de fotos generadas. Si no coincide, no toca
+el evento y termina con error.
 
 ## Fechas: siempre en UTC
 

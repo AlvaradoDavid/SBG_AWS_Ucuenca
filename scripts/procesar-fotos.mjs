@@ -7,7 +7,13 @@
  *  - Los .MOV se ignoran: un video de 480 MB no va en una galería estática.
  *
  * Uso:  pnpm fotos
- * Solo procesa lo que falta, así que se puede correr de nuevo al agregar eventos.
+ * Solo procesa lo que falta, así que se puede correr de nuevo al agregar eventos
+ * o fotos.
+ *
+ * El número de una foto ya generada no cambia nunca: es el del archivo
+ * (foto-07.webp), el del visor («7 / 28») y el que elige la portada
+ * (`portada: 7`). El manifiesto guarda qué original es cada foto-NN, y un
+ * original nuevo toma el siguiente número libre aunque por nombre quede antes.
  */
 import { readdir, mkdir, readFile, writeFile, access } from 'node:fs/promises';
 import path from 'node:path';
@@ -16,6 +22,7 @@ import heicConvert from 'heic-convert';
 
 const ORIGEN = 'Eventos';
 const DESTINO = path.join('src', 'assets', 'eventos');
+const MANIFIESTO = path.join(DESTINO, 'manifiesto.json');
 
 const ANCHO_COMPLETA = 1600;
 const ANCHO_MINIATURA = 600;
@@ -42,12 +49,38 @@ function slugDeEvento(nombreCarpeta) {
   return `${fecha}-${titulo}`;
 }
 
+/** 7 -> "foto-07" */
+const nombreDeFoto = (numero) => `foto-${String(numero).padStart(2, '0')}`;
+
+/** "foto-07" -> 7 */
+const numeroDeFoto = (base) => Number(base.slice('foto-'.length));
+
 async function existe(ruta) {
   try {
     await access(ruta);
     return true;
   } catch {
     return false;
+  }
+}
+
+/** Fotos con sus dos tamaños ya en la carpeta de destino, en orden: ["foto-01", …]. */
+async function fotosGeneradas(carpetaDestino) {
+  const nombres = new Set(await readdir(carpetaDestino));
+  return [...nombres]
+    .filter((f) => /^foto-\d+\.webp$/.test(f) && nombres.has(f.replace('.webp', '-mini.webp')))
+    .map((f) => f.replace('.webp', ''))
+    .sort((a, b) => numeroDeFoto(a) - numeroDeFoto(b));
+}
+
+/** El manifiesto de la corrida anterior, por slug. Si no existe, vacío. */
+async function leerManifiesto() {
+  try {
+    const entradas = JSON.parse(await readFile(MANIFIESTO, 'utf8'));
+    return new Map(entradas.map((entrada) => [entrada.slug, entrada]));
+  } catch (error) {
+    if (error.code === 'ENOENT') return new Map();
+    throw error;
   }
 }
 
@@ -60,7 +93,24 @@ async function bufferLegible(rutaArchivo) {
   return Buffer.from(jpeg);
 }
 
-async function procesarEvento(nombreCarpeta) {
+/**
+ * Qué original es cada foto-NN ya generada. Sale del manifiesto; si el evento
+ * se procesó antes de que el manifiesto lo guardara, se reconstruye con la regla
+ * de entonces (orden alfabético), pero solo si el número de originales coincide
+ * con el de fotos generadas. Si no coincide, devuelve null: no hay forma de
+ * saber qué número le tocó a cada original.
+ */
+function mapeoPrevio(previo, archivos, generadas) {
+  if (previo?.fuentes) return { ...previo.fuentes };
+  if (generadas.length === 0) return {};
+
+  const contiguas = generadas.every((base, i) => base === nombreDeFoto(i + 1));
+  if (!contiguas || generadas.length !== archivos.length) return null;
+
+  return Object.fromEntries(archivos.map((archivo, i) => [archivo, nombreDeFoto(i + 1)]));
+}
+
+async function procesarEvento(nombreCarpeta, previo) {
   const slug = slugDeEvento(nombreCarpeta);
   const carpetaOrigen = path.join(ORIGEN, nombreCarpeta);
   const carpetaDestino = path.join(DESTINO, slug);
@@ -69,18 +119,35 @@ async function procesarEvento(nombreCarpeta) {
   const archivos = (await readdir(carpetaOrigen))
     .filter((f) => /\.(heic|jpe?g|png)$/i.test(f))
     .sort();
+  const generadas = await fotosGeneradas(carpetaDestino);
+
+  const fuentes = mapeoPrevio(previo, archivos, generadas);
+  if (!fuentes) {
+    console.error(
+      `  ✗ ${slug}: hay ${generadas.length} fotos generadas y ${archivos.length} originales, ` +
+        'y el manifiesto no dice cuál es cuál. No se toca el evento: deja solo los originales ' +
+        'ya publicados, corre de nuevo y después agrega los nuevos.'
+    );
+    process.exitCode = 1;
+    return null;
+  }
+
+  // El siguiente número libre: después del último asignado y de cualquier
+  // foto-NN que ya esté en la carpeta, para no pisar nada.
+  let siguiente =
+    Math.max(0, ...Object.values(fuentes).map(numeroDeFoto), ...generadas.map(numeroDeFoto)) + 1;
 
   let convertidas = 0;
   let omitidas = 0;
-  const generadas = [];
+  const nuevas = [];
 
-  for (const [indice, archivo] of archivos.entries()) {
-    const base = `foto-${String(indice + 1).padStart(2, '0')}`;
+  for (const archivo of archivos) {
+    const asignada = fuentes[archivo];
+    const base = asignada ?? nombreDeFoto(siguiente);
     const salidaCompleta = path.join(carpetaDestino, `${base}.webp`);
     const salidaMini = path.join(carpetaDestino, `${base}-mini.webp`);
-    generadas.push(base);
 
-    if ((await existe(salidaCompleta)) && (await existe(salidaMini))) {
+    if (asignada && (await existe(salidaCompleta)) && (await existe(salidaMini))) {
       omitidas++;
       continue;
     }
@@ -100,6 +167,14 @@ async function procesarEvento(nombreCarpeta) {
         .webp({ quality: CALIDAD })
         .toFile(salidaMini);
 
+      // El número se reserva solo si la conversión salió bien: si se reservara
+      // antes, una foto que falla hoy y se arregla mañana aparecería en medio
+      // de la galería y correría a las que llegaron después.
+      if (!asignada) {
+        fuentes[archivo] = base;
+        nuevas.push(`${archivo} → ${base}`);
+        siguiente++;
+      }
       convertidas++;
       process.stdout.write('.');
     } catch (error) {
@@ -108,8 +183,33 @@ async function procesarEvento(nombreCarpeta) {
   }
 
   console.log(`\n  ${slug}: ${convertidas} convertidas, ${omitidas} ya existían`);
-  return { slug, nombreCarpeta, fotos: generadas };
+  for (const nueva of nuevas) console.log(`    + ${nueva}`);
+
+  // Un original que desaparece no libera su número: si se reutilizara, otra foto
+  // ocuparía su lugar en la galería y en la portada.
+  const presentes = new Set(archivos);
+  for (const [archivo, base] of Object.entries(fuentes)) {
+    if (presentes.has(archivo)) continue;
+    const sigue = await existe(path.join(carpetaDestino, `${base}.webp`));
+    console.log(
+      sigue
+        ? `    · ${base}: su original (${archivo}) ya no está en ${ORIGEN}/; la foto se conserva`
+        : `    ! ${base} (${archivo}): no hay foto ni original; desde ahí el visor ya no coincide con el número del archivo`
+    );
+  }
+
+  const ordenadas = Object.entries(fuentes).sort(
+    ([, a], [, b]) => numeroDeFoto(a) - numeroDeFoto(b)
+  );
+  return {
+    slug,
+    nombreCarpeta,
+    fotos: await fotosGeneradas(carpetaDestino),
+    fuentes: Object.fromEntries(ordenadas),
+  };
 }
+
+const anterior = await leerManifiesto();
 
 const carpetas = (await readdir(ORIGEN, { withFileTypes: true }))
   .filter((d) => d.isDirectory())
@@ -118,15 +218,29 @@ const carpetas = (await readdir(ORIGEN, { withFileTypes: true }))
 
 console.log(`Procesando ${carpetas.length} eventos…\n`);
 
-const resumen = [];
+// Parte del manifiesto anterior: un evento cuyos originales no están en esta
+// máquina conserva su entrada, y con ella los números de sus fotos.
+const resumen = new Map(anterior);
 for (const carpeta of carpetas) {
-  resumen.push(await procesarEvento(carpeta));
+  const entrada = await procesarEvento(carpeta, anterior.get(slugDeEvento(carpeta)));
+  if (entrada) resumen.set(entrada.slug, entrada);
 }
 
-// Manifiesto: qué fotos existen por evento, para que las páginas lo consuman.
+for (const slug of anterior.keys()) {
+  if (!carpetas.some((carpeta) => slugDeEvento(carpeta) === slug)) {
+    console.log(`\n  ${slug}: sin originales en ${ORIGEN}/; se conserva su entrada del manifiesto`);
+  }
+}
+
+// Manifiesto: qué fotos existen por evento y de qué original sale cada una.
+// Es lo que mantiene fijos los números entre corridas, así que va al repositorio.
 await writeFile(
-  path.join(DESTINO, 'manifiesto.json'),
-  JSON.stringify(resumen, null, 2) + '\n'
+  MANIFIESTO,
+  JSON.stringify(
+    [...resumen.values()].sort((a, b) => (a.slug < b.slug ? -1 : 1)),
+    null,
+    2
+  ) + '\n'
 );
 
-console.log(`\nListo. Manifiesto en ${path.join(DESTINO, 'manifiesto.json')}`);
+console.log(`\nListo. Manifiesto en ${MANIFIESTO}`);

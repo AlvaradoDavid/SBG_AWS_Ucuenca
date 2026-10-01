@@ -20,20 +20,23 @@ const trayectoria = eventos
   .filter((e) => e.data.hito)
   .sort((a, b) => a.data.fecha.getTime() - b.data.fecha.getTime());
 
+/** Los eventos cuyas fotos salen en la portada: todos menos los marcados `enInicio: false`. */
+const eventosInicio = eventos.filter((e) => e.data.enInicio);
+
 /** Una foto de cada uno de los cuatro eventos más recientes, para "Quiénes somos". */
-const fotosNosotros = eventos
+const fotosNosotros = eventosInicio
   .slice(0, 4)
   .map((evento) => ({ foto: portadaDeEvento(evento.data.carpetaFotos, evento.data.portada), evento }))
   .filter((f) => f.foto);
 
 /** Collage del hero: tres eventos distintos, para mostrar actividad real de entrada. */
-const fotosHero = eventos
+const fotosHero = eventosInicio
   .map((evento) => ({ foto: portadaDeEvento(evento.data.carpetaFotos, evento.data.portada), evento }))
   .filter((f) => f.foto)
   .slice(0, 3);
 
 /** Galería de portada: dos fotos de cada evento, empezando por su portada. */
-const galeria = eventos
+const galeria = eventosInicio
   .flatMap((evento) => {
     const portada = portadaDeEvento(evento.data.carpetaFotos, evento.data.portada);
     if (!portada) return [];

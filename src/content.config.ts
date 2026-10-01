@@ -86,6 +86,11 @@ const eventos = defineCollection({
      * («7 / 28» → 7). Sin él, la portada es la primera foto.
      */
     portada: z.number().int().positive().optional(),
+    /**
+     * Con `false`, sus fotos no salen en la portada del sitio (collage, «Quiénes
+     * somos» y galería) y su lugar lo ocupa el siguiente evento. Sigue en /eventos/.
+     */
+    enInicio: z.boolean().optional().default(true),
   }),
 });
 

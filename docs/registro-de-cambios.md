@@ -16,6 +16,120 @@ El porqué y el detalle están en [D-27](decisiones.md#d-27).
 
 ---
 
+## Números de foto que no cambian al agregar fotos
+
+El 2026-09-30. `pnpm fotos` numeraba las fotos de cada evento por el orden
+alfabético de sus originales y se saltaba toda salida que ya existiera. Si a un
+evento ya procesado se le agregaba una foto cuyo nombre no quedaba al final, los
+números se corrían: las salidas existentes se saltaban, la foto nueva nunca se
+convertía y el último original salía repetido con un número nuevo. Desde que
+`portada` elige la foto por su número, además habría cambiado la portada sin
+avisar.
+
+| | Antes | Ahora |
+| --- | --- | --- |
+| Número de cada foto | Posición del original en orden alfabético | El que le asigna `fuentes` en el manifiesto |
+| Foto nueva | Desplaza a las que van después | Toma el siguiente número libre |
+| Original que desaparece | Las siguientes bajan un número | Su número queda reservado y su foto se conserva |
+| Evento sin originales en esta máquina | Desaparece del manifiesto | Conserva su entrada |
+
+- **`manifiesto.json` gana un campo `fuentes`** por evento
+  (`"IMG_0365.HEIC": "foto-04"`). El resto del manifiesto no cambia. Ahora es el
+  que mantiene fijos los números, así que va en el mismo commit que las fotos.
+- **El script dice qué número recibe cada foto nueva** (`+ IMG_0407.HEIC → foto-43`)
+  y avisa de los originales que ya no están.
+- **Una conversión que falla no reserva número**, para que la foto, cuando se
+  arregle, no aparezca en medio de la galería.
+- **Un evento sin `fuentes`** se reconstruye con la regla alfabética de antes,
+  pero solo si el número de originales coincide con el de fotos generadas. Si no,
+  el script no lo toca y termina con error.
+
+La regla completa está en [arquitectura.md](arquitectura.md#números-que-no-cambian).
+
+Verificado sobre una copia de los originales en una carpeta temporal; `Eventos/`
+no se tocó.
+
+- **Con las carpetas actuales no cambia nada:** 0 convertidas y 127 ya
+  existentes en los cinco eventos, las 254 WebP idénticas byte a byte y el
+  manifiesto solo gana `fuentes`. Una segunda corrida lo deja igual.
+- **Cada `foto-NN` sale del original que `fuentes` le atribuye.** El script
+  anterior, corrido desde cero, reproduce byte a byte las 254 WebP publicadas. El
+  nuevo, también desde cero, da las mismas 254 y el mismo manifiesto.
+- **Una foto nueva que por nombre va primera**, en el webinar de
+  infraestructura (6 fotos): con el script anterior, `foto-07` salía como copia
+  exacta de `foto-06` y la nueva no aparecía. Con el nuevo, `foto-07` es la
+  nueva y `foto-01` a `foto-06` no cambian.
+- **Un original borrado, un archivo corrupto y su arreglo:** la `foto-03`
+  borrada se conserva y su número no se reutiliza; el archivo corrupto da `✗`
+  sin reservar número y, una vez arreglado, entra como `foto-09`, después de las
+  que llegaron antes que él.
+- `pnpm build` sin avisos, con 260 páginas y 256 indexadas, y `pnpm enlaces`
+  en ✓.
+
+**Publicado el 2026-09-30 en `f9c4f33`**, encima de los eventos ya publicados
+(`3e363ba`). El morado (`1b1b0ac`) sigue sin publicar. El cambio no toca nada de
+lo que sirve el sitio: el script, el manifiesto y `docs/` no llegan a `dist/`.
+Comprobado con `curl` cuando Amplify terminó de publicar, unos 3 minutos después
+del push:
+
+- **Producción es idéntica al build local** en diez páginas: la portada,
+  `/eventos/`, los cinco eventos, `/servicios/`, la ficha de EC2 y la 404. Antes
+  de comparar se quitan los `\r` y el id aleatorio de cada diagrama (ver
+  [cómo comprobarlo](estado-y-siguientes-pasos.md#después-de-cada-push)).
+- La portada da 200 con la CSP y HSTS, `/no-existe/` da 404 sin `Location`,
+  `/eventos` redirige con un 301 a `/eventos/` y las fotos de `/_astro/` llevan la
+  caché de un año.
+- El `og:image` de cada evento es su portada elegida (27, 23, 1, 20 y 9) y
+  responde 200.
+- El manifiesto no se publica (`/src/assets/eventos/manifiesto.json` da 404), y
+  `program-icon-purple.svg` tampoco: el morado no entró.
+
+---
+
+## Eventos publicados y comprobados en producción
+
+El 2026-09-30, en `df92410`. Lleva los cuatro commits de los eventos: texto,
+campo `portada`, portadas elegidas y `enInicio`. El cambio de color a morado
+(`1b1b0ac`, otra sesión) seguía solo en local y **no** entró en este push: se
+publicó desde un worktree que partía del último commit propio.
+
+Comprobado con `curl` contra el sitio real, unos 2 minutos y medio después del push:
+
+- La portada, `/eventos/` y los cinco eventos responden 200. `/no-existe/` da
+  404 y `/eventos` redirige con un 301 a `/eventos/`. La CSP y HSTS siguen en su sitio.
+- Cada evento muestra su texto, su lugar corregido y sus `asistentes`, y su
+  `og:image` es la portada elegida, en el dominio real. La de Yachana Day
+  responde 200.
+- En la portada del sitio no queda ninguna foto del webinar. Yachana Day sale con
+  su foto 27 en «Quiénes somos» y en la galería.
+- Ninguna página tiene `[Placeholder]`, y el icono sigue en amber: el morado no
+  se publicó.
+
+---
+
+## Yachana Day en la portada en lugar del webinar
+
+El 2026-09-30. La portada del sitio muestra fotos de los eventos más recientes, y
+el webinar de infraestructura aparecía en el collage, en «Quiénes somos» y en la
+galería con el afiche como foto. A pedido del club, su lugar lo ocupa Yachana Day.
+
+- Campo nuevo `enInicio` en eventos, `true` por defecto. Con `false`, el evento
+  no entra en esas tres secciones y el siguiente sube un puesto. Sigue en
+  `/eventos/`, en la trayectoria (si es hito) y en los totales de eventos y fotos.
+- `infraestructura-cloud.mdx` lleva `enInicio: false`.
+
+| Sección de la portada | Antes | Ahora |
+| --- | --- | --- |
+| Collage del hero | FLISol, Stand, webinar | FLISol, Stand, Los 4 Fantásticos |
+| «Quiénes somos» | FLISol, Stand, webinar, Los 4 Fantásticos | FLISol, Stand, Los 4 Fantásticos, Yachana Day |
+| Galería | Dos fotos de esos mismos cuatro | Dos fotos de los cuatro nuevos |
+
+Verificado en `dist/index.html`: ninguna foto del webinar en la portada, Yachana
+Day con su foto 27 en «Quiénes somos» y en la galería, y «5 eventos · 127 fotos»
+sin cambios. `pnpm build` sin avisos y `pnpm enlaces` en ✓.
+
+---
+
 ## Portada elegible para cada evento
 
 El 2026-09-30. La foto que representa a cada evento era siempre la primera de su

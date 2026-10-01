@@ -31,7 +31,37 @@
       "foto-26",
       "foto-27",
       "foto-28"
-    ]
+    ],
+    "fuentes": {
+      "IMG_5331.HEIC": "foto-01",
+      "IMG_5333.HEIC": "foto-02",
+      "IMG_5334.HEIC": "foto-03",
+      "IMG_5336.HEIC": "foto-04",
+      "IMG_5340.HEIC": "foto-05",
+      "IMG_5342.HEIC": "foto-06",
+      "IMG_5343.HEIC": "foto-07",
+      "IMG_5346.HEIC": "foto-08",
+      "IMG_5351.HEIC": "foto-09",
+      "IMG_5352.HEIC": "foto-10",
+      "IMG_5354.HEIC": "foto-11",
+      "IMG_5355.HEIC": "foto-12",
+      "IMG_5357.HEIC": "foto-13",
+      "IMG_5358.HEIC": "foto-14",
+      "IMG_5359.HEIC": "foto-15",
+      "IMG_5360.HEIC": "foto-16",
+      "IMG_5361.HEIC": "foto-17",
+      "IMG_5362.HEIC": "foto-18",
+      "IMG_5363.HEIC": "foto-19",
+      "IMG_5364.HEIC": "foto-20",
+      "IMG_5365.HEIC": "foto-21",
+      "IMG_5367.HEIC": "foto-22",
+      "IMG_5368.HEIC": "foto-23",
+      "IMG_5371.HEIC": "foto-24",
+      "IMG_5375.HEIC": "foto-25",
+      "IMG_5376.HEIC": "foto-26",
+      "IMG_5380.HEIC": "foto-27",
+      "IMG_5384.HEIC": "foto-28"
+    }
   },
   {
     "slug": "2026-01-09-los-4-fantasticos-de-aws",
@@ -64,7 +94,36 @@
       "foto-25",
       "foto-26",
       "foto-27"
-    ]
+    ],
+    "fuentes": {
+      "78c95b12-3aa4-432e-8442-4a3ec77ee3b3.jpg": "foto-01",
+      "IMG_5401.HEIC": "foto-02",
+      "IMG_5402.HEIC": "foto-03",
+      "IMG_5403.HEIC": "foto-04",
+      "IMG_5406.HEIC": "foto-05",
+      "IMG_5409.HEIC": "foto-06",
+      "IMG_5410.HEIC": "foto-07",
+      "IMG_5411.HEIC": "foto-08",
+      "IMG_5412.HEIC": "foto-09",
+      "IMG_5413.HEIC": "foto-10",
+      "IMG_5423.HEIC": "foto-11",
+      "IMG_5426.HEIC": "foto-12",
+      "IMG_5427.HEIC": "foto-13",
+      "IMG_5433.HEIC": "foto-14",
+      "IMG_5437.HEIC": "foto-15",
+      "IMG_5438.HEIC": "foto-16",
+      "IMG_5443.HEIC": "foto-17",
+      "IMG_5446.HEIC": "foto-18",
+      "IMG_5452.HEIC": "foto-19",
+      "IMG_5456.HEIC": "foto-20",
+      "IMG_5462.HEIC": "foto-21",
+      "IMG_5464.HEIC": "foto-22",
+      "IMG_5474.HEIC": "foto-23",
+      "IMG_5479.HEIC": "foto-24",
+      "IMG_5480.HEIC": "foto-25",
+      "IMG_5482.HEIC": "foto-26",
+      "IMG_5486.HEIC": "foto-27"
+    }
   },
   {
     "slug": "2026-03-10-introduccion-a-infraestructura-cloud",
@@ -76,7 +135,15 @@
       "foto-04",
       "foto-05",
       "foto-06"
-    ]
+    ],
+    "fuentes": {
+      "PHOTO-2026-03-07-18-50-27.jpg": "foto-01",
+      "PHOTO-2026-03-10-14-18-08.jpg": "foto-02",
+      "PHOTO-2026-03-10-14-21-41.jpg": "foto-03",
+      "PHOTO-2026-03-10-14-24-41.jpg": "foto-04",
+      "PHOTO-2026-03-10-14-48-11.jpg": "foto-05",
+      "PHOTO-2026-03-10-15-15-00.jpg": "foto-06"
+    }
   },
   {
     "slug": "2026-03-23-stand-de-inicio-de-ciclo",
@@ -106,7 +173,33 @@
       "foto-22",
       "foto-23",
       "foto-24"
-    ]
+    ],
+    "fuentes": {
+      "2947bfef-277c-4d1c-a6c8-8ad81f5df9fe.jpg": "foto-01",
+      "39297c22-098e-4efe-963f-10b353505d2f.jpg": "foto-02",
+      "472f4771-d2f5-49bd-bc02-32a5fa0b0b4a.jpg": "foto-03",
+      "4dfdc903-1051-4d17-a498-94d81b61385d.jpg": "foto-04",
+      "7625ad05-42fb-420e-a300-23e395a490ad.jpg": "foto-05",
+      "IMG_6870.HEIC": "foto-06",
+      "IMG_6872.HEIC": "foto-07",
+      "IMG_6874.HEIC": "foto-08",
+      "IMG_6878.HEIC": "foto-09",
+      "IMG_6879.HEIC": "foto-10",
+      "IMG_6883.HEIC": "foto-11",
+      "IMG_6887.HEIC": "foto-12",
+      "IMG_6889.HEIC": "foto-13",
+      "IMG_6893.HEIC": "foto-14",
+      "IMG_6895.HEIC": "foto-15",
+      "IMG_6896.HEIC": "foto-16",
+      "IMG_6897.HEIC": "foto-17",
+      "IMG_6900.HEIC": "foto-18",
+      "IMG_6914.PNG": "foto-19",
+      "a6ade7a9-5b08-4dc8-a553-109c608f7a8a.jpg": "foto-20",
+      "ad48b432-edc0-4a44-9243-cde2d1ce41b9.jpg": "foto-21",
+      "bda713fc-7ccb-4702-b061-1ccac2f4958b.jpg": "foto-22",
+      "fa7d1c7b-2557-4359-8109-f8666df04d89.jpg": "foto-23",
+      "ff8ef085-e33a-4f18-9198-41161d76e871.jpg": "foto-24"
+    }
   },
   {
     "slug": "2026-05-16-aws-club-en-flisol",
@@ -154,6 +247,50 @@
       "foto-40",
       "foto-41",
       "foto-42"
-    ]
+    ],
+    "fuentes": {
+      "0C6E1BAF-E0AD-4EAA-BDDE-FA79F31F33BB.jpg": "foto-01",
+      "A6394441-EC85-4EA4-A4DD-27B0E4ABB4B3.jpg": "foto-02",
+      "C568F20D-B309-40F8-B58C-8B4F6C8E29EA.jpg": "foto-03",
+      "IMG_0365.HEIC": "foto-04",
+      "IMG_0366.HEIC": "foto-05",
+      "IMG_0367.HEIC": "foto-06",
+      "IMG_0368.HEIC": "foto-07",
+      "IMG_0369.HEIC": "foto-08",
+      "IMG_0370.HEIC": "foto-09",
+      "IMG_0371.HEIC": "foto-10",
+      "IMG_0372.HEIC": "foto-11",
+      "IMG_0373.HEIC": "foto-12",
+      "IMG_0374.HEIC": "foto-13",
+      "IMG_0375.HEIC": "foto-14",
+      "IMG_0376.HEIC": "foto-15",
+      "IMG_0377.HEIC": "foto-16",
+      "IMG_0379.HEIC": "foto-17",
+      "IMG_0380.HEIC": "foto-18",
+      "IMG_0381.HEIC": "foto-19",
+      "IMG_0382.HEIC": "foto-20",
+      "IMG_0383.HEIC": "foto-21",
+      "IMG_0386.HEIC": "foto-22",
+      "IMG_0389.HEIC": "foto-23",
+      "IMG_0390.HEIC": "foto-24",
+      "IMG_0392.HEIC": "foto-25",
+      "IMG_0393.HEIC": "foto-26",
+      "IMG_0396.HEIC": "foto-27",
+      "IMG_0397.HEIC": "foto-28",
+      "IMG_0399.HEIC": "foto-29",
+      "IMG_0404.jpg": "foto-30",
+      "IMG_0405.jpg": "foto-31",
+      "IMG_8055.HEIC": "foto-32",
+      "IMG_8076.HEIC": "foto-33",
+      "IMG_8078.HEIC": "foto-34",
+      "IMG_8084.HEIC": "foto-35",
+      "IMG_8085.HEIC": "foto-36",
+      "IMG_8086.HEIC": "foto-37",
+      "IMG_8087.HEIC": "foto-38",
+      "IMG_8088.HEIC": "foto-39",
+      "IMG_8089.HEIC": "foto-40",
+      "IMG_8091.HEIC": "foto-41",
+      "IMG_8093.HEIC": "foto-42"
+    }
   }
 ]

@@ -766,6 +766,10 @@ mejor sobre un neutro. Las fichas del catálogo conservan sus recuadros neutros 
 el recuadro de costo sigue en amber ([D-27](#d-27)). Las tarjetas de servicio
 siguen tomando el color de su categoría.
 
+Las versiones moradas de los íconos de equipo y trofeo (`icono-teams.svg` e
+`icono-trophy.svg`) siguen en `public/marca/` aunque ya no se usen: el club
+prefirió conservarlas por si vuelve a los pilares en un solo color.
+
 **Lo que se descartó.** Animar los degradados (las «auroras» en movimiento):
 añadirían movimiento continuo a una página que ya tiene partículas, y con
 `prefers-reduced-motion` habría que apagarlos igual.

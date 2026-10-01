@@ -19,6 +19,10 @@ Cuatro cosas que cuestan tiempo si no se saben:
 - **Tras añadir muchos archivos de contenido de golpe, reinicia el servidor.** Su
   caché de colecciones se queda a medias y sigue sirviendo un número de fichas
   viejo. `pnpm build` es la fuente de verdad; el servidor de desarrollo, no.
+  Si reiniciar no basta —por ejemplo, la portada sale sin fotos porque la caché
+  es anterior a un campo nuevo del esquema, como `enInicio`—, para el servidor y
+  borra `.astro/data-store.json` y `node_modules/.astro/data-store.json`.
+  `astro sync --force` no los regenera si los archivos de contenido no cambiaron.
 - **La CSP de `customHttp.yml` bloquea todo lo que venga de otro origen.** Un
   video embebido, analítica o una API nueva pasan el build y fallan en
   producción, en silencio. Hay que declararlos en la CSP antes del push (D-25).

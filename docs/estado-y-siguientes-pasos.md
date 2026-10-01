@@ -9,9 +9,9 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 
 | Área | Estado |
 | --- | --- |
-| Diseño y sistema de tokens | Completo y documentado |
+| Diseño y sistema de tokens | Completo y documentado. El morado ocupa superficies: hero, pie y fondos aurora ([D-28](decisiones.md#d-28)) |
 | Navegación (escritorio y móvil) | Completa |
-| Portada | Completa: hero con collage, cifras, partículas, trayectoria, galería |
+| Portada | Completa: hero en morado profundo con collage, cifras y partículas; pilares, trayectoria, galería |
 | Galería de eventos | Completa, con visor accesible |
 | Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
 | Contenido de eventos | Completo: los 5 con texto; 3 con cifra de asistentes |
@@ -97,13 +97,11 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   trayectoria, pie e íconos. El amber sigue como advertencia en el recuadro de
   costo de las fichas y entre los acentos de las categorías del catálogo. Ver
   [D-27](decisiones.md#d-27).
-
-**Hecho el 2026-09-30, pendiente de push:**
-
-- **Más presencia del morado** ([D-28](decisiones.md#d-28)): hero y pie en
-  morado profundo, secciones alternas en lavanda, cabeceras interiores con
-  halos y línea de marca bajo la barra. Verificado con `pnpm build` y
-  `pnpm enlaces`; falta publicarlo.
+- ✅ **Más presencia del morado** (`f4125b2`): hero y pie en morado profundo,
+  secciones alternas en lavanda, cabeceras interiores con halos, línea de marca
+  bajo la barra y pilares en morado, celeste y amber. Ver
+  [D-28](decisiones.md#d-28) y, para reutilizar los fondos en páginas nuevas,
+  [sistema-de-diseno.md](sistema-de-diseno.md#fondos-de-marca).
 
 **Pendiente:**
 

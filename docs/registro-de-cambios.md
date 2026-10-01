@@ -23,10 +23,36 @@ porqué y el detalle están en [D-28](decisiones.md#d-28).
 - **Contraste corregido en el pie:** el texto pequeño estaba en 2.67:1 y ahora
   queda en 5.24:1.
 
-Verificado sobre el servidor de desarrollo y el build: `pnpm build` termina sin
-avisos, `pnpm enlaces` da ✓, el JavaScript de la portada sigue en 4.6 KB y en
-móvil (375 px) no hay scroll horizontal. Cada halo se midió en su punto más
-intenso contra el texto que puede caer encima; ninguno baja de 4.5:1.
+Cada halo se midió en su punto más intenso contra el texto que puede caer
+encima; ninguno baja de 4.5:1. El club vio las capturas de antes y después y dio
+el visto bueno.
+
+Verificado antes del push sobre un build desde cero de `f4125b2` (borrando
+`dist/` y `node_modules/.astro`):
+
+- `pnpm build`: 260 páginas, 256 indexadas, sin avisos. `pnpm enlaces` da ✓. El
+  JavaScript de la portada sigue en 4.6 KB; su HTML pasa de 34.9 a 38.7 KB por
+  el marcado de las tarjetas de pilares.
+- **La CSP no bloquea nada.** `dist/` se sirvió en local con las cabeceras de
+  `customHttp.yml` y no apareció ningún `Refused` en la portada, el catálogo, la
+  ficha de EC2, los eventos, FLISol ni la 404.
+- **Interacciones:** el filtro del catálogo marca el botón activo en
+  `morado-700` (10 servicios en «Bases de datos»), el visor de fotos abre en
+  `1 / 42` con el foco en «Cerrar galería» y el menú móvil abre y se cierra con
+  `Escape`. Las partículas del hero leen `tinta-400`, el tono oscuro.
+- En móvil (375 px) no hay scroll horizontal.
+
+**Publicado el 2026-09-30 en `f4125b2`.** Amplify terminó unos 2 minutos y
+medio después del push. Comprobado con `curl`:
+
+- Producción es idéntica al build verificado en ocho páginas: portada,
+  catálogo, eventos, las fichas de Lambda y EC2, FLISol, Yachana Day y la 404.
+- La CSS publicada define `--color-morado-950: #13092d` y la utilidad
+  `fondo-noche`, con la caché de un año.
+- `icono-teams-blue.svg` responde 200 con `#42B4FF` e `icono-trophy-amber.svg`
+  con `#FF9900`. Las versiones moradas siguen ahí: se conservan a propósito.
+- Las cabeceras siguen igual: la portada da 200 con la CSP y HSTS, `/no-existe/`
+  da 404 sin `Location` y `/eventos` redirige con un 301.
 
 **Nota sobre el servidor de desarrollo:** al empezar, la portada salía sin
 fotos. La caché de contenido (`.astro/data-store.json`) era anterior al campo

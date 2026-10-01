@@ -16,7 +16,7 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
 | Contenido de eventos | Completo: los 5 con texto; 3 con cifra de asistentes |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
-| Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 4 |
+| Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 5 |
 | Infraestructura AWS | ✅ **En línea en Amplify:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, con 404 real, cabeceras de seguridad y alarmas de costo. Solo queda el subdominio: ver el punto 1 |
 
 ### Las dos profundidades de ficha
@@ -103,6 +103,12 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   [D-28](decisiones.md#d-28) y, para reutilizar los fondos en páginas nuevas,
   [sistema-de-diseno.md](sistema-de-diseno.md#fondos-de-marca).
 
+**Hecho el 2026-09-30, pendiente de push:**
+
+- **`/eventos/` en orden cronológico** ([D-29](decisiones.md#d-29)): del más
+  antiguo al más reciente, como la trayectoria. Verificado con `pnpm build` y
+  `pnpm enlaces`; falta publicarlo.
+
 **Pendiente:**
 
 - **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como
@@ -131,6 +137,13 @@ el campo.
 va en primera persona del plural y no repite el `resumen`, que ya aparece justo
 encima. Con `hito: true` sale también en la trayectoria de la portada.
 
+Las fotos van sueltas dentro de esa carpeta: el script no entra en subcarpetas y
+solo lee HEIC, JPG y PNG. Los videos se ignoran, y el sitio hoy no publica
+ninguno.
+
+**En curso (2026-09-30):** un sexto evento. El club tiene sus fotos y videos
+fuera del proyecto y va a dejarlos en `Eventos/`.
+
 **Para agregar fotos a un evento ya publicado:** ponerlas en su carpeta de
 `Eventos/` y correr `pnpm fotos`. Las nuevas van al final con los números
 siguientes, sin importar su nombre, y las demás conservan el suyo, así que
@@ -151,7 +164,49 @@ Yachana Day sale en «Quiénes somos» y en la galería, pero no en el collage. 
 club lo quiere también ahí, hace falta una forma de elegir los eventos del
 collage. Se le preguntó al cerrar la sesión del 2026-09-30 y quedó sin respuesta.
 
-### 3. Profundizar fichas breves (prioridad media)
+### 3. Presentar al CORE Team en «Quiénes somos»
+
+**Pedido por el club el 2026-09-30. Sin empezar: falta el contenido.** Una
+presentación breve de cada integrante del CORE Team dentro de «Quiénes somos»
+(`/#nosotros`), para que quien visita el sitio conozca a las personas que llevan
+el club y no solo al club.
+
+**Lo que tiene que dar el club**, porque nada de esto se puede inventar:
+
+- Por persona: el nombre como quiere que aparezca, su rol en el club, su carrera
+  y dos o tres líneas en primera persona: qué estudia, qué le interesa de la
+  nube y qué hace en el grupo.
+- Una foto de cada una, de frente y con buena luz, idealmente todas con un
+  encuadre parecido. Sirven las del celular.
+- Opcional: LinkedIn o GitHub, y las certificaciones de AWS que ya tenga.
+- **El visto bueno de cada persona** sobre su texto, su foto y sus enlaces antes
+  del push: son datos personales y quedan públicos.
+
+**Cómo construirlo sin romper las reglas del proyecto:**
+
+- **Una colección `equipo`** en `src/content.config.ts`, con un archivo por
+  persona en `src/content/equipo/` y el mismo patrón que `eventos`: `nombre`,
+  `rol`, `carrera`, `orden`, `foto`, `presentacion` y `enlaces` opcionales. Un
+  `.max()` en `presentacion` mantiene las tarjetas parejas, y el helper `image()`
+  en `foto` hace que una foto que falta rompa el build, como hoy una `portada`
+  inexistente.
+- **Las fotos en `src/assets/equipo/`**, no en `public/`, para que Astro las
+  optimice y genere los `srcset` como con las de eventos. Si llegan en HEIC hay
+  que convertirlas antes: `pnpm fotos` solo procesa `Eventos/`.
+- **Fotos siempre locales.** La CSP solo admite imágenes del propio dominio
+  (`img-src 'self'`), así que una foto enlazada desde LinkedIn o Gravatar se
+  bloquearía en producción sin que el build se queje. Los enlaces a los perfiles
+  sí funcionan: la CSP no limita la navegación.
+- **Sin JavaScript:** tarjetas estáticas. Si alguna presentación necesita más
+  espacio, un `<details>` nativo antes que un modal. El JavaScript de la portada
+  no debería moverse de 4.6 KB.
+- **Texto en la escala `tinta`;** el morado va en el marco o el halo de la foto.
+  El `alt` de cada foto es el nombre de la persona.
+- **Dónde:** bajo el bloque actual de «Quiénes somos», con su propio subtítulo.
+  Si el equipo pasa de ocho personas, la portada se alarga demasiado: entonces
+  conviene una página `/equipo/` enlazada desde ahí.
+
+### 4. Profundizar fichas breves (prioridad media)
 
 El catálogo ya está completo en cobertura; lo que queda es profundidad. Hay 210
 fichas breves esperando su frontmatter completo y su diagrama. El orden sensato
@@ -161,7 +216,7 @@ en certificación, y el resto según haga falta.
 Las 19 categorías de `src/lib/categorias.ts` están todas en uso, así que ampliar
 una ficha no exige tocar ese archivo.
 
-### 4. El peso del catálogo (decisión pendiente)
+### 5. El peso del catálogo (decisión pendiente)
 
 `src/pages/servicios/index.astro` embebe un índice de búsqueda con `define:vars`.
 Con 6 fichas pesaba unos pocos KB; con 251 pesa **51.4 KB sin comprimir, 14.7 KB
@@ -175,7 +230,7 @@ partir de las propias tarjetas y ahorrar los 51 KB sin cambiar el comportamiento
 pide discutir antes cualquier cosa que mueva el presupuesto en un orden de
 magnitud.
 
-### 5. Ideas que quedaron sobre la mesa
+### 6. Ideas que quedaron sobre la mesa
 
 - **Buscador de todo el sitio.** `pnpm build` genera el índice de Pagefind en
   `dist/pagefind/`, pero **ninguna página lo carga**: la única búsqueda que existe

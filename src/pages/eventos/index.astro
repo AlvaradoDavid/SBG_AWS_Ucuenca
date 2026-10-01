@@ -5,8 +5,9 @@ import { getCollection } from 'astro:content';
 import { fotosDeEvento, portadaDeEvento } from '../../lib/fotos';
 import { fechaLarga } from '../../lib/fechas';
 
+/** En orden cronológico, del más antiguo al más reciente, como la trayectoria de la portada (D-29). */
 const eventos = (await getCollection('eventos')).sort(
-  (a, b) => b.data.fecha.getTime() - a.data.fecha.getTime()
+  (a, b) => a.data.fecha.getTime() - b.data.fecha.getTime()
 );
 
 const conFotos = eventos.map((evento) => ({

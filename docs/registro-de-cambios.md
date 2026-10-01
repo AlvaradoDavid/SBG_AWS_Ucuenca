@@ -2,6 +2,26 @@
 
 ---
 
+## Eventos en orden cronológico
+
+El 2026-09-30. `/eventos/` listaba los eventos del más reciente al más antiguo y
+al club no le parecía un orden cronológico. Ahora van del más antiguo al más
+reciente: Yachana Day primero y FLISol al final, en el mismo sentido que la
+trayectoria de la portada. El porqué está en [D-29](decisiones.md#d-29).
+
+Antes de cambiar nada se comprobaron las fechas. Las de captura de los
+originales de `Eventos/` coinciden con el frontmatter de los cinco eventos; el
+webinar no trae EXIF, pero sus archivos de WhatsApp llevan la fecha en el
+nombre. Los datos estaban bien: lo que cambió es la dirección.
+
+La portada no cambia: sigue tomando las fotos de los eventos más recientes.
+
+De paso quedó anotado como pendiente, en el
+[punto 3 del estado](estado-y-siguientes-pasos.md#3-presentar-al-core-team-en-quiénes-somos),
+presentar a cada integrante del CORE Team en «Quiénes somos».
+
+---
+
 ## Más presencia del morado
 
 El 2026-09-30. El club pidió que el morado tuviera más protagonismo y que el

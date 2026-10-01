@@ -773,3 +773,25 @@ prefirió conservarlas por si vuelve a los pilares en un solo color.
 **Lo que se descartó.** Animar los degradados (las «auroras» en movimiento):
 añadirían movimiento continuo a una página que ya tiene partículas, y con
 `prefers-reduced-motion` habría que apagarlos igual.
+
+---
+
+<a id="d-29"></a>
+
+## D-29 · `/eventos/` en orden cronológico
+
+**Decisión.** La página de eventos los lista del más antiguo al más reciente.
+Hasta el 2026-09-30 iba al revés.
+
+**Por qué.** El club lo pidió: el orden anterior no le parecía cronológico. Las
+fechas estaban bien —coinciden con las de captura de las fotos de cada evento—,
+así que lo único que cambia es la dirección. Con ella, la página cuenta la
+historia del club en el mismo sentido que la trayectoria de la portada.
+
+**Lo que no cambia.** La portada sigue tomando las fotos de los eventos **más
+recientes** para el collage, «Quiénes somos» y la galería: ahí lo que importa es
+mostrar que el grupo está activo.
+
+**El costo.** El evento más reciente queda al final de la lista. Con cinco o
+seis eventos no pesa; si la lista crece mucho, conviene agruparla por año antes
+que volver a invertirla.

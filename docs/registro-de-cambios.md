@@ -23,6 +23,10 @@ archivo (`foto-07.webp`).
   por la portada y sigue con la primera foto que no lo sea.
 - Un número fuera de rango rompe el build:
   `[portada] … tiene 42 fotos; no existe la foto 99.`
+- **Portadas elegidas por el club:** Yachana Day 27, Los 4 Fantásticos 23,
+  Infraestructura Cloud 1 (el afiche del webinar), Stand de Inicio de Ciclo 20 y
+  FLISol 9. Las cinco son horizontales, así que la tarjeta y la vista previa al
+  compartir apenas las recortan.
 
 Verificado: sin ningún `portada`, el HTML de `dist/` es idéntico al del build
 anterior (lo único que cambia es el lugar de Yachana Day, corregido a Campus

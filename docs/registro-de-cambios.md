@@ -2,6 +2,20 @@
 
 ---
 
+## El morado pasa a ser el color principal
+
+El 2026-09-30. El club se identifica más con el morado, así que `marca-purple`
+(`#ad5cff`, el morado oficial del kit) reemplaza al amber como color principal.
+El porqué y el detalle están en [D-27](decisiones.md#d-27).
+
+- Foco, hito de fundación, halo del hero, partículas y subrayado del pie en morado.
+- El segundo halo del hero pasa a blue; la trayectoria va de purple a blue.
+- Ícono del programa e íconos del kit en su versión «Purple» oficial.
+- El recuadro de costo de las fichas sigue en amber: ahí es una advertencia.
+- El anillo de foco sube de 2.14:1 a 3.65:1 sobre blanco.
+
+---
+
 ## Portada elegible para cada evento
 
 El 2026-09-30. La foto que representa a cada evento era siempre la primera de su

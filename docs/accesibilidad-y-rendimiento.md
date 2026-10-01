@@ -18,7 +18,7 @@ colores vibrantes no llegan a 4.5:1 sobre blanco.
 ### Teclado
 
 - Enlace **«Saltar al contenido»** como primer elemento enfocable
-- `:focus-visible` global en amber de 2 px con `outline-offset`
+- `:focus-visible` global en `marca-purple` de 2 px con `outline-offset` (3.65:1 sobre blanco)
 - El visor de fotos atrapa el foco mientras está abierto y lo devuelve al cerrar
 - El menú móvil se cierra con `Escape` y devuelve el foco al botón
 - Nada depende de hover para ser accesible

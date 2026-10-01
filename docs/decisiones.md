@@ -669,3 +669,39 @@ enlace escrito a mano o uno antiguo en un buscador: nadie cae en un 404.
   por el `href`.
 - La navegación compara con prefijos que terminan en `/`, así que `/servicios/`
   no puede marcar una futura `/servicios-x/`.
+
+---
+
+<a id="d-27"></a>
+
+## D-27 · El morado de marca es el color principal
+
+**Decisión.** El color principal del sitio pasa de `marca-amber` (`#ff9900`) a
+`marca-purple` (`#ad5cff`). Es el morado oficial del kit: los SVG «Purple» de
+`Branding/` usan exactamente ese valor, así que no se añade ningún color nuevo a
+la paleta.
+
+**Por qué.** El club se identifica más con el morado que con el amber, que es el
+color de AWS y no el del grupo. De paso mejora el foco: el anillo amber daba
+2.14:1 sobre blanco, por debajo del 3:1 que WCAG exige a los indicadores; el
+morado da 3.65:1 sobre blanco y 4.65:1 sobre `marca-grey`.
+
+**Qué cambió.**
+
+- Foco global, hito de fundación de la trayectoria, halo superior del hero,
+  partículas del hero y subrayado de los enlaces del pie: amber → purple.
+- El halo inferior del hero, que antes era purple, pasa a blue para no repetir
+  tono. El degradado de la trayectoria queda purple → blue.
+- Ícono del programa (barra, pie, favicon, chip del hero) e íconos del kit
+  (llave, equipo, trofeo, rayo): sus versiones «Purple» oficiales, copiadas sin
+  modificar de `Branding/`.
+
+**Lo que se queda en amber.**
+
+- El recuadro «Costo y capa gratuita» de las fichas del catálogo. Ahí el amber
+  no es marca sino advertencia (acompaña a «Cuidado con los créditos»), y en
+  morado perdería ese significado.
+- Las categorías del catálogo siguen rotando los cinco acentos, amber incluido.
+
+**Consecuencia.** D-01 sigue intacta: el morado tampoco llega a 4.5:1 sobre
+blanco, así que nunca es color de texto.

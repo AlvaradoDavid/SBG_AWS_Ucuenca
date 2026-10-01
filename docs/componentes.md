@@ -60,7 +60,7 @@ Pie sobre `marca-grey`. Tres columnas: descripción del club, mapa del sitio y
 redes (LinkedIn e Instagram, con SVG en línea, sin librería de iconos). Debajo,
 el año, el nombre del club y «Construido con Astro y desplegado en AWS Amplify».
 
-Al pasar el cursor, el texto de los enlaces se aclara y el amber aparece como
+Al pasar el cursor, el texto de los enlaces se aclara y el morado aparece como
 subrayado, nunca como color del texto. En los enlaces con icono, el subrayado va
 solo bajo el texto. Ver [Enlaces sobre fondo oscuro](sistema-de-diseno.md#enlaces-sobre-fondo-oscuro).
 
@@ -154,10 +154,10 @@ contenido debe ir en un elemento posicionado para quedar por encima.
 ### Qué dibuja
 
 Nodos con glifos monoespaciados que caen lentamente, líneas entre los que están
-a menos de 110 px, haces ascendentes en amber, y conexiones al puntero cuando
+a menos de 110 px, haces ascendentes en el morado de marca, y conexiones al puntero cuando
 se acerca a menos de 150 px.
 
-Los colores se leen de los tokens (`--color-marca-amber`, `--color-tinta-500`),
+Los colores se leen de los tokens (`--color-marca-purple`, `--color-tinta-500`),
 así que siguen a la marca sin duplicar valores.
 
 ### Decisiones que lo hacen barato y accesible

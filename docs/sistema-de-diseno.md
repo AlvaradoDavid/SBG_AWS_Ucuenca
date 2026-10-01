@@ -1,8 +1,8 @@
 # Sistema de diseño
 
 Todo vive en `src/styles/global.css`, dentro del bloque `@theme` de Tailwind 4.
-Eso convierte cada token en una utilidad (`bg-marca-amber`) y en una variable
-CSS (`var(--color-marca-amber)`) al mismo tiempo.
+Eso convierte cada token en una utilidad (`bg-marca-purple`) y en una variable
+CSS (`var(--color-marca-purple)`) al mismo tiempo.
 
 ## La regla del color
 
@@ -18,10 +18,10 @@ El texto siempre sale de la escala `tinta`, derivada del Grey 850 de la marca.
 
 | Token | Hex | Dónde se usa |
 | --- | --- | --- |
-| `marca-amber` | `#ff9900` | Color principal. Foco, hito de fundación, halo del hero, subrayado de los enlaces del pie |
-| `marca-blue` | `#42b4ff` | Categorías, fin del degradado de trayectoria |
+| `marca-purple` | `#ad5cff` | **Color principal** ([D-27](decisiones.md#d-27)). Foco, hito de fundación, halo del hero, partículas del hero, subrayado de los enlaces del pie, íconos del kit, categorías |
+| `marca-amber` | `#ff9900` | Categorías y recuadro de costo del catálogo (advertencia) |
+| `marca-blue` | `#42b4ff` | Categorías, segundo halo del hero, fin del degradado de trayectoria |
 | `marca-mint` | `#00e582` | Categorías |
-| `marca-purple` | `#ad5cff` | Categorías, halo del hero, medio del degradado |
 | `marca-magenta` | `#ff57e9` | Categorías |
 | `marca-grey` | `#161d26` | Fondos oscuros: footer, botones, visor de fotos |
 
@@ -98,21 +98,24 @@ viene del dato, no de una clase.
 
 ```css
 :focus-visible {
-  outline: 2px solid var(--color-marca-amber);
+  outline: 2px solid var(--color-marca-purple);
   outline-offset: 2px;
 }
 ```
 
-Global y en amber, para que sea consistente y visible en fondos claros y oscuros.
+Global y en el morado de marca, para que sea consistente y visible en fondos
+claros y oscuros: 3.65:1 sobre blanco y 4.65:1 sobre `marca-grey`, ambos por
+encima del 3:1 que WCAG pide a los indicadores de foco. El amber anterior se
+quedaba en 2.14:1 sobre blanco.
 
 ### Enlaces sobre fondo oscuro
 
 En el pie, sobre `marca-grey`, el enlace en reposo va en `tinta-300`. Al pasar el
-cursor, el texto sube a `tinta-50` y el amber aparece como subrayado:
+cursor, el texto sube a `tinta-50` y el morado aparece como subrayado:
 
 ```html
 <a class="transition underline decoration-transparent decoration-2 underline-offset-4
-          hover:text-tinta-50 hover:decoration-marca-amber">Eventos</a>
+          hover:text-tinta-50 hover:decoration-marca-purple">Eventos</a>
 ```
 
 El subrayado existe siempre, pero transparente, para que `transition` funda su

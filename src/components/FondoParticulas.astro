@@ -64,7 +64,7 @@ const { class: className = '' } = Astro.props;
 
     // Los colores salen de los tokens de @theme, así que siguen a la marca.
     const raiz = getComputedStyle(document.documentElement);
-    const ACENTO = aRgb(raiz.getPropertyValue('--color-marca-amber'), '255, 153, 0');
+    const ACENTO = aRgb(raiz.getPropertyValue('--color-marca-purple'), '173, 92, 255');
     const NEUTRO = aRgb(raiz.getPropertyValue('--color-tinta-500'), '85, 96, 114');
 
     const quietud = window.matchMedia('(prefers-reduced-motion: reduce)');

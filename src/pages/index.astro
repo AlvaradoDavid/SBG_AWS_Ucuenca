@@ -74,12 +74,12 @@ const pilares = [
     <!-- Acentos de la paleta de marca, muy tenues para no competir con el texto. -->
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute -right-24 -top-32 h-[28rem] w-[28rem] rounded-full bg-marca-amber/20 blur-3xl"
+      class="pointer-events-none absolute -right-24 -top-32 h-[28rem] w-[28rem] rounded-full bg-marca-purple/20 blur-3xl"
     >
     </div>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute -bottom-40 left-1/4 h-[24rem] w-[24rem] rounded-full bg-marca-purple/15 blur-3xl"
+      class="pointer-events-none absolute -bottom-40 left-1/4 h-[24rem] w-[24rem] rounded-full bg-marca-blue/15 blur-3xl"
     >
     </div>
 
@@ -89,7 +89,7 @@ const pilares = [
     <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[1.1fr_1fr]">
       <div>
         <p class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-tinta-500">
-          <img src="/marca/program-icon-amber.svg" alt="" width="16" height="16" class="h-4 w-4" />
+          <img src="/marca/program-icon-purple.svg" alt="" width="16" height="16" class="h-4 w-4" />
           {club.universidad}
         </p>
         <h1 class="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-tinta-900 sm:text-5xl">
@@ -267,10 +267,10 @@ const pilares = [
       <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Trayectoria</p>
       <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">Nuestros hitos</h2>
       <ol
-        class="relative mt-10 max-w-2xl space-y-10 pl-8 before:absolute before:left-0 before:top-1 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-marca-amber before:via-marca-purple before:to-marca-blue before:opacity-40 before:content-['']"
+        class="relative mt-10 max-w-2xl space-y-10 pl-8 before:absolute before:left-0 before:top-1 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-marca-purple before:to-marca-blue before:opacity-40 before:content-['']"
       >
         <li class="relative">
-          <span class="absolute -left-[41px] flex h-5 w-5 rounded-full border-2 border-marca-amber bg-marca-amber ring-4 ring-marca-amber/20"></span>
+          <span class="absolute -left-[41px] flex h-5 w-5 rounded-full border-2 border-marca-purple bg-marca-purple ring-4 ring-marca-purple/20"></span>
           <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">
             Diciembre de 2025
           </p>
@@ -284,7 +284,7 @@ const pilares = [
         </li>
         {trayectoria.map((hito) => (
           <li class="relative" data-reveal>
-            <span class="absolute -left-[41px] flex h-5 w-5 rounded-full border-2 border-marca-amber bg-white"></span>
+            <span class="absolute -left-[41px] flex h-5 w-5 rounded-full border-2 border-marca-purple bg-white"></span>
             <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">
               {fechaLarga(hito.data.fecha)}
             </p>

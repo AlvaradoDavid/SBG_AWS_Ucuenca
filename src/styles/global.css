@@ -77,7 +77,7 @@ html {
 
 /* Foco visible y consistente en todo el sitio. */
 :focus-visible {
-  outline: 2px solid var(--color-marca-amber);
+  outline: 2px solid var(--color-marca-purple);
   outline-offset: 2px;
   border-radius: 0.25rem;
 }

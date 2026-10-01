@@ -42,6 +42,18 @@
   --color-marca-magenta: #ff57e9;
   --color-marca-grey: #161d26;
 
+  /* Escala morada derivada de marca-purple en OKLCH (ver D-28). Es para fondos
+     y bordes: los claros llevan texto en tinta, los oscuros en blanco o tinta-300.
+     No hay 500: ese tono es marca-purple. */
+  --color-morado-50: #f9f6ff;
+  --color-morado-100: #f2ebfe;
+  --color-morado-200: #e7d7ff;
+  --color-morado-300: #d4b7fe;
+  --color-morado-700: #6d2cbe;
+  --color-morado-800: #4a1d8d;
+  --color-morado-900: #281253;
+  --color-morado-950: #13092d;
+
   /* Escala neutra derivada del Grey 850 de marca */
   --color-tinta-50: #f6f7f9;
   --color-tinta-100: #eceef2;
@@ -80,6 +92,59 @@ html {
   outline: 2px solid var(--color-marca-purple);
   outline-offset: 2px;
   border-radius: 0.25rem;
+}
+
+::selection {
+  background-color: var(--color-morado-200);
+  color: var(--color-tinta-900);
+}
+
+/* ---------------------------------------------------------------
+   Fondos de marca (D-28). El morado manda; celeste y amber entran
+   como halos secundarios. Son degradados de CSS, sin imágenes ni
+   filtros blur, así que no pesan ni cuestan al pintar.
+
+   Cada halo lleva su alfa medido: subirlo puede bajar el contraste
+   del texto que cae encima. Los valores están en sistema-de-diseno.md.
+   --------------------------------------------------------------- */
+
+/* Fondo oscuro del hero: el morado profundo de los afiches del club. */
+@utility fondo-noche {
+  background-color: var(--color-morado-950);
+  background-image:
+    radial-gradient(55% 70% at 90% 0%, color-mix(in srgb, var(--color-marca-purple) 40%, transparent), transparent 72%),
+    radial-gradient(45% 60% at 0% 100%, color-mix(in srgb, var(--color-marca-blue) 26%, transparent), transparent 72%),
+    radial-gradient(35% 45% at 65% 105%, color-mix(in srgb, var(--color-marca-amber) 16%, transparent), transparent 72%),
+    linear-gradient(160deg, var(--color-morado-950) 0%, var(--color-morado-900) 55%, var(--color-morado-950) 100%);
+}
+
+/* Fondo claro para secciones alternas: lavanda con halos tenues. */
+@utility fondo-aurora {
+  background-color: var(--color-morado-50);
+  background-image:
+    radial-gradient(45% 70% at 100% 0%, color-mix(in srgb, var(--color-marca-purple) 20%, transparent), transparent 70%),
+    radial-gradient(40% 70% at 0% 100%, color-mix(in srgb, var(--color-marca-blue) 16%, transparent), transparent 70%),
+    radial-gradient(30% 50% at 80% 100%, color-mix(in srgb, var(--color-marca-amber) 12%, transparent), transparent 70%);
+}
+
+/* Cabecera de las páginas interiores: el mismo aire, confinado arriba y
+   fundido con el blanco para que el contenido de debajo no cambie. */
+@utility fondo-aurora-superior {
+  background-color: white;
+  background-image:
+    radial-gradient(40% 100% at 95% 0%, color-mix(in srgb, var(--color-marca-purple) 22%, transparent), transparent 70%),
+    radial-gradient(35% 90% at 0% 10%, color-mix(in srgb, var(--color-marca-blue) 15%, transparent), transparent 70%),
+    linear-gradient(to bottom, var(--color-morado-50), white);
+  background-size: 100% 26rem;
+  background-repeat: no-repeat;
+}
+
+/* Línea de marca: amber → morado → celeste. El morado ocupa el centro.
+   La segunda declaración interpola en OKLCH, que pasa por magenta e índigo
+   en vez de por grises; el navegador que no la entienda se queda con la primera. */
+@utility linea-marca {
+  background-image: linear-gradient(90deg, var(--color-marca-amber), var(--color-marca-purple) 40%, var(--color-marca-purple) 60%, var(--color-marca-blue));
+  background-image: linear-gradient(in oklch 90deg, var(--color-marca-amber), var(--color-marca-purple) 40%, var(--color-marca-purple) 60%, var(--color-marca-blue));
 }
 
 /* ---------------------------------------------------------------

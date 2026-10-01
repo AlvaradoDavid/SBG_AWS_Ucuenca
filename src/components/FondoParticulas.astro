@@ -12,15 +12,18 @@
  *   · Con prefers-reduced-motion dibuja un solo fotograma y se queda quieto.
  *
  * La sección contenedora necesita `relative` y `overflow-hidden`.
+ * Con `tono="oscuro"` los nodos se aclaran para fondos como `fondo-noche`.
  */
 interface Props {
   class?: string;
+  tono?: 'claro' | 'oscuro';
 }
-const { class: className = '' } = Astro.props;
+const { class: className = '', tono = 'claro' } = Astro.props;
 ---
 
 <canvas
   data-particulas
+  data-tono={tono}
   aria-hidden="true"
   class={`pointer-events-none absolute inset-0 h-full w-full ${className}`}></canvas>
 
@@ -33,8 +36,17 @@ const { class: className = '' } = Astro.props;
      fotos ocupa el 53 % derecho y es opaco, así que el efecto quedaba más fuerte
      justo donde las fotos lo tapaban, y al 14 % de alfa donde sí se veía. */
   canvas[data-particulas] {
+    /* Los colores viven aquí y no en el script: así cada tono los ajusta en CSS. */
+    --particula-acento: var(--color-marca-purple);
+    --particula-neutro: var(--color-tinta-500);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+  }
+
+  /* Sobre morado profundo, tinta-400 al 44 % deja el blanco del titular en
+     9.5:1 y el tinta-300 de las etiquetas en 5:1, incluso encima de un glifo. */
+  canvas[data-tono='oscuro'] {
+    --particula-neutro: var(--color-tinta-400);
   }
 </style>
 
@@ -62,10 +74,11 @@ const { class: className = '' } = Astro.props;
     const ctx = lienzo.getContext('2d');
     if (!ctx) return;
 
-    // Los colores salen de los tokens de @theme, así que siguen a la marca.
-    const raiz = getComputedStyle(document.documentElement);
-    const ACENTO = aRgb(raiz.getPropertyValue('--color-marca-purple'), '173, 92, 255');
-    const NEUTRO = aRgb(raiz.getPropertyValue('--color-tinta-500'), '85, 96, 114');
+    // Los colores salen de los tokens de @theme, a través de las variables del
+    // propio lienzo, así que siguen a la marca y al tono elegido.
+    const estilo = getComputedStyle(lienzo);
+    const ACENTO = aRgb(estilo.getPropertyValue('--particula-acento'), '173, 92, 255');
+    const NEUTRO = aRgb(estilo.getPropertyValue('--particula-neutro'), '85, 96, 114');
 
     const quietud = window.matchMedia('(prefers-reduced-motion: reduce)');
     const punteroFino = window.matchMedia('(pointer: fine)');

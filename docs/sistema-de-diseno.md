@@ -14,16 +14,38 @@ se usan solo como **marcador visual**: puntos, bordes, barras, halos y degradado
 
 El texto siempre sale de la escala `tinta`, derivada del Grey 850 de la marca.
 
+**Sobre fondos oscuros** (los morados profundos del hero y el pie), el texto va
+en blanco o en la escala `tinta` clara: `tinta-200`, `tinta-300` o `tinta-400`.
+Esos fondos no son el morado de marca sino tonos derivados mucho más oscuros, y
+la regla sigue igual: nada de texto en un color vibrante. Ver [D-28](decisiones.md#d-28).
+
 ### Colores de marca
 
 | Token | Hex | Dónde se usa |
 | --- | --- | --- |
-| `marca-purple` | `#ad5cff` | **Color principal** ([D-27](decisiones.md#d-27)). Foco, hito de fundación, halo del hero, partículas del hero, subrayado de los enlaces del pie, íconos del kit, categorías |
-| `marca-amber` | `#ff9900` | Categorías y recuadro de costo del catálogo (advertencia) |
-| `marca-blue` | `#42b4ff` | Categorías, segundo halo del hero, fin del degradado de trayectoria |
+| `marca-purple` | `#ad5cff` | **Color principal** ([D-27](decisiones.md#d-27)). Foco, halo principal de los fondos de marca, centro de la línea de marca, partículas del hero, subrayado de la barra y del pie, hito de fundación, íconos del kit, categorías |
+| `marca-amber` | `#ff9900` | Secundario: tercer halo de los fondos, extremo de la línea de marca, pilar «Camino a la certificación», final de la trayectoria. Además, recuadro de costo del catálogo (advertencia) y categorías |
+| `marca-blue` | `#42b4ff` | Secundario: segundo halo de los fondos, extremo de la línea de marca, pilar «Comunidad abierta», tramo medio de la trayectoria, categorías |
 | `marca-mint` | `#00e582` | Categorías |
 | `marca-magenta` | `#ff57e9` | Categorías |
-| `marca-grey` | `#161d26` | Fondos oscuros: footer, botones, visor de fotos |
+| `marca-grey` | `#161d26` | Visor de fotos, enlace «Saltar al contenido». El pie y los botones pasaron a morado ([D-28](decisiones.md#d-28)) |
+
+### Escala morada
+
+Derivada de `marca-purple` en OKLCH ([D-28](decisiones.md#d-28)): mismo tono,
+otra luminosidad. Es para fondos y bordes. No hay `morado-500`: ese es
+`marca-purple`.
+
+| Token | Hex | Uso | Texto encima |
+| --- | --- | --- | --- |
+| `morado-50` | `#f9f6ff` | Base de `fondo-aurora` y de las cabeceras interiores | `tinta-500` 5.95:1 · `tinta-600` 8.8:1 |
+| `morado-100` | `#f2ebfe` | Bordes de secciones y tarjetas de pilares, etiqueta de asistentes | `tinta-700` |
+| `morado-200` | `#e7d7ff` | Selección de texto, borde de la etiqueta de asistentes | `tinta-900` 12.6:1 |
+| `morado-300` | `#d4b7fe` | Borde al pasar el cursor (filtros, tarjetas de eventos) | — |
+| `morado-700` | `#6d2cbe` | Botón principal, filtro activo, borde del buscador con foco | blanco 7.6:1 |
+| `morado-800` | `#4a1d8d` | Botón principal al pasar el cursor | blanco 11.3:1 |
+| `morado-900` | `#281253` | Tramo central del degradado de `fondo-noche` | blanco 16.1:1 · `tinta-300` 8.4:1 |
+| `morado-950` | `#13092d` | Base de `fondo-noche` y fondo del pie | blanco 19:1 · `tinta-300` 9.95:1 · `tinta-400` 5.24:1 |
 
 ### Escala neutra
 
@@ -44,6 +66,43 @@ De `tinta-50` a `tinta-900`, derivada del Grey 850 oficial.
 
 Combinaciones verificadas sobre blanco: `tinta-600` da 8.6:1 y `tinta-900`
 da 14.8:1. Ambas superan AA con holgura.
+
+## Fondos de marca
+
+Cuatro utilidades en `global.css`, declaradas con `@utility` para que acepten
+variantes de Tailwind. Son degradados de CSS: sin imágenes, sin `filter: blur`
+y sin JavaScript.
+
+| Utilidad | Dónde | Qué pinta |
+| --- | --- | --- |
+| `fondo-noche` | Hero de la portada | `morado-950` → `morado-900` → `morado-950`, con halos morado (arriba a la derecha), celeste (abajo a la izquierda) y amber (abajo) |
+| `fondo-aurora` | «Del catálogo» y «Trayectoria» | `morado-50` con halos morado, celeste y amber |
+| `fondo-aurora-superior` | Cabecera de catálogo, eventos, fichas y 404 | Lo mismo, confinado a los primeros 26 rem y fundido con el blanco |
+| `linea-marca` | Bajo la barra, sobre el pie, halo de «Quiénes somos» | Amber → morado → celeste, con el morado ocupando el centro |
+
+`linea-marca` declara el degradado dos veces: la segunda interpola en OKLCH, que
+pasa de amber a morado por el magenta y de morado a celeste por el índigo, sin
+grises. Un navegador que no entienda `in oklch` se queda con la primera.
+
+### Contraste en el peor punto
+
+Cada halo es más intenso en su centro. La tabla mide el texto que puede caer
+encima contra ese punto, el más desfavorable, no contra el fondo promedio:
+
+| Halo | Alfa | Color en el centro | Texto más débil encima |
+| --- | --- | --- | --- |
+| Morado de `fondo-noche` sobre `morado-900` | 40 % | `#5d3098` | `tinta-300` 4.69:1 · `tinta-200` 6.5:1 · blanco 9:1 |
+| Celeste de `fondo-noche` | 26 % | `#2f3c80` | `tinta-300` 5.28:1 |
+| Amber de `fondo-noche` | 16 % | `#392026` | `tinta-300` 7.8:1 |
+| Morado de `fondo-aurora` | 20 % | `#ead7ff` | `tinta-500` 4.74:1 · `tinta-600` 7:1 |
+| Celeste de `fondo-aurora` | 16 % | `#dcebff` | `tinta-500` 5.26:1 |
+| Amber de `fondo-aurora` | 12 % | `#faebe0` | `tinta-500` 5.46:1 |
+| Morado de `fondo-aurora-superior` | 22 % | `#e8d4ff` | `tinta-500` 4.63:1 |
+
+**Subir un alfa puede bajar a alguno de estos por debajo de 4.5:1.** El morado
+de `fondo-noche` estuvo en 45 % y dejaba el `tinta-300` en 4.35:1; por eso
+quedó en 40 %. El pie no lleva halos por la misma razón: su texto pequeño va en
+`tinta-400`, que solo pasa sobre `morado-950` liso.
 
 ## Tipografía
 
@@ -104,13 +163,13 @@ viene del dato, no de una clase.
 ```
 
 Global y en el morado de marca, para que sea consistente y visible en fondos
-claros y oscuros: 3.65:1 sobre blanco y 4.65:1 sobre `marca-grey`, ambos por
-encima del 3:1 que WCAG pide a los indicadores de foco. El amber anterior se
+claros y oscuros: 3.65:1 sobre blanco, 4.65:1 sobre `marca-grey` y 5.21:1 sobre
+`morado-950`, todos por encima del 3:1 que WCAG pide a los indicadores de foco. El amber anterior se
 quedaba en 2.14:1 sobre blanco.
 
 ### Enlaces sobre fondo oscuro
 
-En el pie, sobre `marca-grey`, el enlace en reposo va en `tinta-300`. Al pasar el
+En el pie, sobre `morado-950`, el enlace en reposo va en `tinta-300`. Al pasar el
 cursor, el texto sube a `tinta-50` y el morado aparece como subrayado:
 
 ```html
@@ -119,8 +178,12 @@ cursor, el texto sube a `tinta-50` y el morado aparece como subrayado:
 ```
 
 El subrayado existe siempre, pero transparente, para que `transition` funda su
-color en lugar de hacerlo aparecer de golpe. El contraste sube de 8.9:1 en reposo
-a 15.8:1 en hover. Con el texto en amber, como estaba antes, *bajaba* a 7.9:1.
+color en lugar de hacerlo aparecer de golpe. El contraste sube de 9.95:1 en
+reposo a 17.7:1 en hover. Con el texto en amber, como estaba antes, *bajaba*.
+
+La barra superior usa el mismo patrón sobre blanco: el enlace pasa de
+`tinta-600` a `tinta-900` y aparece el subrayado morado. En la página actual el
+subrayado se queda fijo, junto con la negrita.
 
 ### Reveals al hacer scroll
 
@@ -141,5 +204,6 @@ neutraliza todas las transiciones del sitio.
 
 - Ancho máximo de contenido: `max-w-6xl` (72 rem) con `px-6`
 - Artículos de texto largo: `max-w-3xl`, para no pasar de ~75 caracteres por línea
-- Secciones: `py-16` a `py-20`; alternan fondo blanco y `bg-tinta-50`
+- Secciones: `py-16` a `py-20`; alternan fondo blanco y `fondo-aurora`, con un
+  borde `morado-100`
 - Radios: `rounded-lg` en controles, `rounded-xl` en tarjetas, `rounded-2xl` en el collage

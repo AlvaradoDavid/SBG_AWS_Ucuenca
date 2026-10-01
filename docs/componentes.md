@@ -43,7 +43,9 @@ Barra fija superior.
 
 - En escritorio, lista de enlaces horizontal
 - En móvil, **menú hamburguesa** con botón de 44×44 px
-- Marca la página actual con `aria-current="page"` y negrita
+- Marca la página actual con `aria-current="page"`, negrita y subrayado morado
+- Una `linea-marca` de 2 px reemplaza al borde gris inferior: es lo que lleva el
+  morado a todas las páginas
 - El menú se cierra con `Escape` (y devuelve el foco al botón) o al tocar un enlace
 - `aria-expanded` se mantiene sincronizado con el estado real
 
@@ -56,7 +58,9 @@ final (`/eventos/`), como todos los enlaces internos. «Quiénes somos»
 
 ## `Footer.astro`
 
-Pie sobre `marca-grey`. Tres columnas: descripción del club, mapa del sitio y
+Pie sobre `morado-950`, con una `linea-marca` en el borde superior. Sin halos:
+su texto pequeño va en `tinta-400`, que necesita el fondo liso para pasar AA.
+Tres columnas: descripción del club, mapa del sitio y
 redes (LinkedIn e Instagram, con SVG en línea, sin librería de iconos). Debajo,
 el año, el nombre del club y «Construido con Astro y desplegado en AWS Amplify».
 
@@ -150,6 +154,7 @@ contenido debe ir en un elemento posicionado para quedar por encima.
 | Prop | Tipo | Notas |
 | --- | --- | --- |
 | `class` | string? | Clases extra para el `<canvas>` |
+| `tono` | `'claro'` \| `'oscuro'` | Por defecto `'claro'`. Con `'oscuro'` los nodos pasan de `tinta-500` a `tinta-400`, para fondos como `fondo-noche` |
 
 ### Qué dibuja
 
@@ -157,8 +162,10 @@ Nodos con glifos monoespaciados que caen lentamente, líneas entre los que está
 a menos de 110 px, haces ascendentes en el morado de marca, y conexiones al puntero cuando
 se acerca a menos de 150 px.
 
-Los colores se leen de los tokens (`--color-marca-purple`, `--color-tinta-500`),
-así que siguen a la marca sin duplicar valores.
+Los colores se leen de dos variables del propio lienzo, `--particula-acento` y
+`--particula-neutro`, que apuntan a los tokens (`--color-marca-purple` y
+`--color-tinta-500` o `--color-tinta-400` según el tono). Siguen a la marca sin
+duplicar valores, y un tono nuevo se define en CSS sin tocar el script.
 
 ### Decisiones que lo hacen barato y accesible
 
@@ -180,6 +187,10 @@ así que siguen a la marca sin duplicar valores.
 El píxel más oscuro que llega a pintar es `rgb(174, 180, 189)`. Un titular en
 `tinta-900` sobre ese peor caso mide **8.13:1**, por encima del 7:1 de AAA.
 Medido sobre el canvas real, no estimado.
+
+Con `tono="oscuro"` el riesgo se invierte: un glifo aclara el fondo. Sobre
+`morado-950`, un glifo en `tinta-400` al 44 % deja el titular blanco en 9.5:1 y
+las etiquetas en `tinta-300` en 5:1.
 
 ---
 

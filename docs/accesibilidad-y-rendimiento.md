@@ -14,6 +14,15 @@ colores vibrantes no llegan a 4.5:1 sobre blanco.
 | `tinta-600` sobre blanco | 8.6:1 | AAA |
 | `tinta-500` sobre blanco | 6.3:1 | AA |
 | Blanco sobre `marca-grey` | 15.2:1 | AAA |
+| Blanco sobre `morado-950` (hero, pie) | 19:1 | AAA |
+| `tinta-300` sobre `morado-950` | 9.95:1 | AAA |
+| `tinta-400` sobre `morado-950` (texto pequeño del pie) | 5.24:1 | AA |
+| Blanco sobre `morado-700` (botón principal, filtro activo) | 7.6:1 | AAA |
+| `tinta-500` sobre `morado-50` (etiquetas en secciones lavanda) | 5.95:1 | AA |
+
+Sobre los halos de los fondos de marca, el peor punto de cada uno está medido
+en [sistema-de-diseno.md](sistema-de-diseno.md#contraste-en-el-peor-punto).
+Ningún texto baja de 4.5:1.
 
 ### Teclado
 
@@ -74,7 +83,7 @@ Medido sobre `dist/` después de `pnpm build`:
 
 | Página | JS en línea | HTML |
 | --- | --- | --- |
-| Portada | 4.6 KB | 34.9 KB |
+| Portada | 4.6 KB | 38.7 KB |
 | Página de evento | 1.0 KB | 43.3 KB |
 | Ficha de servicio | 1.0 KB | 24.3 KB |
 | **Catálogo de servicios** | **52.4 KB** | **503.5 KB** |

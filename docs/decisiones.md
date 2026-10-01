@@ -705,3 +705,67 @@ morado da 3.65:1 sobre blanco y 4.65:1 sobre `marca-grey`.
 
 **Consecuencia.** D-01 sigue intacta: el morado tampoco llega a 4.5:1 sobre
 blanco, así que nunca es color de texto.
+
+---
+
+<a id="d-28"></a>
+
+## D-28 · Más presencia del morado: hero oscuro, fondos aurora y línea de marca
+
+**Decisión.** El morado deja de ser solo un acento y pasa a ocupar superficies.
+El hero de la portada y el pie van en morado profundo; las secciones alternas,
+en lavanda con halos tenues; una línea amber → morado → celeste separa la barra
+superior y el pie del resto. Celeste y amber entran como secundarios: halos,
+íconos de los pilares y extremos de la línea.
+
+**Por qué.** El club pidió que el morado tuviera más protagonismo y que el
+fondo dejara de ser casi todo blanco. Sus propios afiches (el banner y la
+pancarta de `Branding/`) usan un fondo de degradado morado profundo con acentos
+celestes: el sitio ahora se parece a lo que el club ya imprime.
+
+**Cómo se hizo sin romper D-01.** El texto sigue sin ir en color de marca. Lo
+que cambia es el fondo:
+
+- Sobre los morados oscuros, el texto va en blanco o en la escala `tinta`
+  clara (`tinta-200`, `tinta-300`, `tinta-400`). Blanco sobre `morado-950` da
+  19:1.
+- Los morados oscuros no son el morado de marca: son tonos derivados en OKLCH
+  (`morado-700` a `morado-950`), muy por debajo de su luminosidad. El de marca,
+  `#ad5cff`, sigue sin llevar texto encima: blanco sobre él da 3.65:1.
+- Cada halo tiene su alfa medido en el punto más intenso, contra el texto que
+  puede caer encima. Ningún texto baja de 4.5:1. Las cifras están en
+  [sistema-de-diseno.md](sistema-de-diseno.md#fondos-de-marca).
+
+**Qué cambió.**
+
+- **Tokens:** escala `morado-50` a `morado-950` en `@theme`, sin 500 (ese tono
+  es `marca-purple`).
+- **Utilidades:** `fondo-noche`, `fondo-aurora`, `fondo-aurora-superior` y
+  `linea-marca` en `global.css`. Son degradados de CSS: no hay imágenes ni
+  filtros, y no suman JavaScript.
+- **Portada:** hero en `fondo-noche` con las partículas aclaradas
+  (`FondoParticulas tono="oscuro"`); «Del catálogo» y «Trayectoria» en
+  `fondo-aurora`; los pilares como tarjetas con su ícono del kit en morado,
+  celeste y amber; un halo con la línea de marca detrás de las fotos de
+  «Quiénes somos»; la trayectoria va de morado a celeste y a amber.
+- **Páginas interiores:** cabecera en `fondo-aurora-superior`, que se funde con
+  el blanco a los 26 rem.
+- **Barra superior:** la línea de marca reemplaza al borde gris, y la página
+  actual se subraya en morado.
+- **Botones y filtros:** el botón principal y el filtro activo pasan de
+  `marca-grey` a `morado-700` (blanco encima: 7.6:1).
+- **Pie:** de `marca-grey` a `morado-950`, sin halos para que el texto pequeño
+  tenga un fondo parejo.
+
+**De paso se corrigió un contraste.** El pie ponía el año, el «Desde diciembre
+de 2025» y la última línea en `tinta-500` sobre `marca-grey`: 2.67:1, por debajo
+de AA. Ahora van en `tinta-400` sobre `morado-950`: 5.24:1.
+
+**Lo que no cambia.** El visor de fotos sigue en `marca-grey`: las fotos se ven
+mejor sobre un neutro. Las fichas del catálogo conservan sus recuadros neutros y
+el recuadro de costo sigue en amber ([D-27](#d-27)). Las tarjetas de servicio
+siguen tomando el color de su categoría.
+
+**Lo que se descartó.** Animar los degradados (las «auroras» en movimiento):
+añadirían movimiento continuo a una página que ya tiene partículas, y con
+`prefers-reduced-motion` habría que apagarlos igual.

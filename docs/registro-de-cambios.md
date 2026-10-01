@@ -2,6 +2,42 @@
 
 ---
 
+## Más presencia del morado
+
+El 2026-09-30. El club pidió que el morado tuviera más protagonismo y que el
+fondo dejara de ser casi todo blanco, con celeste y amber como secundarios. El
+porqué y el detalle están en [D-28](decisiones.md#d-28).
+
+- **Hero de la portada en morado profundo** (`fondo-noche`), como los afiches del
+  club, con halos morado, celeste y amber. Texto en blanco y `tinta` clara;
+  partículas aclaradas con `FondoParticulas tono="oscuro"`.
+- **Secciones alternas en lavanda** (`fondo-aurora`) y cabeceras de las páginas
+  interiores con el mismo aire (`fondo-aurora-superior`).
+- **Línea de marca** amber → morado → celeste bajo la barra y sobre el pie; la
+  página actual se subraya en morado.
+- **Pilares como tarjetas**, con los íconos oficiales del kit en morado, celeste
+  y amber (`icono-teams-blue.svg` e `icono-trophy-amber.svg`, copiados sin
+  modificar de `Branding/`).
+- **Botón principal y filtro activo** en `morado-700`; **pie** en `morado-950`.
+- Escala `morado-50` a `morado-950` en `@theme`.
+- **Contraste corregido en el pie:** el texto pequeño estaba en 2.67:1 y ahora
+  queda en 5.24:1.
+
+Verificado sobre el servidor de desarrollo y el build: `pnpm build` termina sin
+avisos, `pnpm enlaces` da ✓, el JavaScript de la portada sigue en 4.6 KB y en
+móvil (375 px) no hay scroll horizontal. Cada halo se midió en su punto más
+intenso contra el texto que puede caer encima; ninguno baja de 4.5:1.
+
+**Nota sobre el servidor de desarrollo:** al empezar, la portada salía sin
+fotos. La caché de contenido (`.astro/data-store.json`) era anterior al campo
+`enInicio` y no lo tenía, así que ningún evento entraba en la portada. Ni
+reiniciar ni `astro sync --force` la regeneraron, porque los archivos de
+eventos no habían cambiado. Lo arregló borrar `.astro/data-store.json` y
+`node_modules/.astro/data-store.json` con el servidor parado. El build no se
+veía afectado.
+
+---
+
 ## El morado pasa a ser el color principal
 
 El 2026-09-30. El club se identifica más con el morado, así que `marca-purple`

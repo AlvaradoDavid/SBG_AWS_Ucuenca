@@ -3,18 +3,21 @@ import { club } from '../lib/categorias';
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-24 border-t border-tinta-200 bg-marca-grey text-tinta-300">
+<!-- Morado profundo, sin halos: el texto pequeño necesita un fondo parejo para
+     mantener el contraste (tinta-400 da 5.2:1 sobre morado-950). -->
+<footer class="relative mt-24 bg-morado-950 text-tinta-300">
+  <span aria-hidden="true" class="linea-marca absolute inset-x-0 top-0 h-0.5"></span>
   <div class="mx-auto grid max-w-6xl gap-10 px-6 py-14 sm:grid-cols-[2fr_1fr_1fr]">
     <div>
       <div class="flex items-center gap-3">
         <img src="/marca/program-icon-purple.svg" alt="" width="32" height="32" class="h-8 w-8" />
         <span class="font-display text-base font-bold text-white">{club.nombre}</span>
       </div>
-      <p class="mt-4 max-w-sm text-sm text-tinta-400">
+      <p class="mt-4 max-w-sm text-sm text-tinta-300">
         Comunidad enfocada en cloud computing, innovación y tecnologías AWS. Parte del programa
         global de AWS Student Builder Groups.
       </p>
-      <p class="mt-3 font-mono text-xs uppercase tracking-widest text-tinta-500">
+      <p class="mt-3 font-mono text-xs uppercase tracking-widest text-tinta-400">
         Desde diciembre de 2025 · Cuenca, Ecuador
       </p>
     </div>
@@ -63,8 +66,8 @@ const year = new Date().getFullYear();
     </div>
   </div>
 
-  <div class="border-t border-tinta-800">
-    <div class="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-6 text-xs text-tinta-500 sm:flex-row sm:items-center sm:justify-between">
+  <div class="border-t border-white/10">
+    <div class="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-6 text-xs text-tinta-400 sm:flex-row sm:items-center sm:justify-between">
       <p>© {year} {club.nombre} · {club.universidad}</p>
       <p>Construido con Astro y desplegado en AWS Amplify</p>
     </div>

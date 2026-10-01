@@ -18,7 +18,9 @@ const esActivo = (href: string) =>
   !href.includes('#') && (href === '/' ? ruta === '/' : ruta.startsWith(href));
 ---
 
-<header class="sticky top-0 z-50 border-b border-tinta-200 bg-white/90 backdrop-blur">
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur">
+  <!-- Línea de marca en lugar del borde gris: el morado presente en todas las páginas. -->
+  <span aria-hidden="true" class="linea-marca absolute inset-x-0 bottom-0 h-0.5"></span>
   <nav
     aria-label="Navegación principal"
     class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4"
@@ -38,8 +40,8 @@ const esActivo = (href: string) =>
             href={enlace.href}
             aria-current={esActivo(enlace.href) ? 'page' : undefined}
             class:list={[
-              'transition hover:text-marca-grey',
-              esActivo(enlace.href) && 'font-bold text-tinta-900',
+              'underline decoration-2 underline-offset-8 transition hover:text-tinta-900 hover:decoration-marca-purple',
+              esActivo(enlace.href) ? 'font-bold text-tinta-900 decoration-marca-purple' : 'decoration-transparent',
             ]}
           >
             {enlace.texto}

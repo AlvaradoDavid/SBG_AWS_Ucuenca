@@ -52,19 +52,23 @@ const totalFotos = eventos.reduce(
   0
 );
 
+/** Cada pilar lleva un color de la paleta, con su ícono oficial del kit en ese mismo color. */
 const pilares = [
   {
     icono: '/marca/icono-wrench.svg',
+    color: 'var(--color-marca-purple)',
     titulo: 'Aprender construyendo',
     texto: 'Talleres prácticos donde cada participante despliega algo real en su propia cuenta de AWS.',
   },
   {
-    icono: '/marca/icono-teams.svg',
+    icono: '/marca/icono-teams-blue.svg',
+    color: 'var(--color-marca-blue)',
     titulo: 'Comunidad abierta',
     texto: 'Sin requisitos previos: recibimos a cualquier estudiante con curiosidad por la nube.',
   },
   {
-    icono: '/marca/icono-trophy.svg',
+    icono: '/marca/icono-trophy-amber.svg',
+    color: 'var(--color-marca-amber)',
     titulo: 'Camino a la certificación',
     texto: 'Sesiones de estudio y material propio orientado a las certificaciones oficiales de AWS.',
   },
@@ -73,32 +77,22 @@ const pilares = [
 
 <Layout title="Inicio">
   <!-- Hero -->
-  <section class="relative overflow-hidden border-b border-tinta-200 bg-tinta-50">
-    <!-- Acentos de la paleta de marca, muy tenues para no competir con el texto. -->
-    <div
-      aria-hidden="true"
-      class="pointer-events-none absolute -right-24 -top-32 h-[28rem] w-[28rem] rounded-full bg-marca-purple/20 blur-3xl"
-    >
-    </div>
-    <div
-      aria-hidden="true"
-      class="pointer-events-none absolute -bottom-40 left-1/4 h-[24rem] w-[24rem] rounded-full bg-marca-blue/15 blur-3xl"
-    >
-    </div>
-
+  <!-- Morado profundo, como los afiches del club. Los halos morado, celeste y
+       amber salen del propio degradado de fondo-noche (global.css). -->
+  <section class="fondo-noche relative overflow-hidden">
     <!-- Campo de partículas: va sobre los halos y bajo el contenido. -->
-    <FondoParticulas />
+    <FondoParticulas tono="oscuro" />
 
     <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 sm:py-24 lg:grid-cols-[1.1fr_1fr]">
       <div>
-        <p class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-tinta-500">
+        <p class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-tinta-300">
           <img src="/marca/program-icon-purple.svg" alt="" width="16" height="16" class="h-4 w-4" />
           {club.universidad}
         </p>
-        <h1 class="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-tinta-900 sm:text-5xl">
+        <h1 class="mt-4 font-display text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl">
           AWS Student<br />Builder Group
         </h1>
-        <p class="mt-6 max-w-xl text-lg leading-relaxed text-tinta-600">
+        <p class="mt-6 max-w-xl text-lg leading-relaxed text-tinta-200">
           Comunidad enfocada en cloud computing, innovación y tecnologías AWS. Conectamos a personas
           apasionadas por la tecnología mediante eventos, workshops, networking y experiencias
           prácticas en la nube.
@@ -106,31 +100,31 @@ const pilares = [
         <div class="mt-8 flex flex-wrap gap-3">
           <a
             href="/servicios/"
-            class="rounded-lg bg-marca-grey px-6 py-3 text-sm font-bold text-white transition hover:bg-tinta-700"
+            class="rounded-lg bg-white px-6 py-3 text-sm font-bold text-tinta-900 transition hover:bg-morado-50 hover:shadow-[0_0_28px_-4px_var(--color-marca-purple)]"
           >
             Explorar el catálogo
           </a>
           <a
             href="#nosotros"
-            class="rounded-lg border border-tinta-300 bg-white/60 px-6 py-3 text-sm font-bold text-tinta-700 transition hover:border-tinta-500"
+            class="rounded-lg border border-white/30 bg-white/5 px-6 py-3 text-sm font-bold text-white transition hover:border-white/60 hover:bg-white/10"
           >
             Conocer al grupo
           </a>
         </div>
 
-        <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-tinta-200 pt-6">
+        <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-white/15 pt-6">
           {[
             { etiqueta: 'Eventos', valor: eventos.length },
             { etiqueta: 'Fichas de servicios', valor: servicios.length },
             { etiqueta: 'Fotos del grupo', valor: totalFotos },
           ].map((dato) => (
             <div>
-              <dt class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">
+              <dt class="font-mono text-[11px] uppercase tracking-widest text-tinta-300">
                 {dato.etiqueta}
               </dt>
               <dd
                 data-contador={dato.valor}
-                class="mt-1 font-display text-2xl font-bold tabular-nums text-tinta-900"
+                class="mt-1 font-display text-2xl font-bold tabular-nums text-white"
               >
                 {dato.valor}
               </dd>
@@ -144,7 +138,7 @@ const pilares = [
         <div class="grid grid-cols-2 gap-3 sm:gap-4">
           <a
             href={`/eventos/${fotosHero[0].evento.id}/`}
-            class="group relative row-span-2 block overflow-hidden rounded-2xl bg-tinta-200 shadow-sm ring-1 ring-tinta-900/5"
+            class="group relative row-span-2 block overflow-hidden rounded-2xl bg-morado-900 shadow-lg shadow-morado-950/40 ring-1 ring-white/10"
           >
             <Image
               src={fotosHero[0].foto.miniatura}
@@ -154,14 +148,14 @@ const pilares = [
               loading="eager"
               class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             />
-            <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-marca-grey/90 to-transparent p-4 pt-10 text-xs font-bold text-white">
+            <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-morado-950/90 to-transparent p-4 pt-10 text-xs font-bold text-white">
               {fotosHero[0].evento.data.titulo}
             </span>
           </a>
           {fotosHero.slice(1).map(({ foto, evento }) => (
             <a
               href={`/eventos/${evento.id}/`}
-              class="group block overflow-hidden rounded-2xl bg-tinta-200 shadow-sm ring-1 ring-tinta-900/5"
+              class="group block overflow-hidden rounded-2xl bg-morado-900 shadow-lg shadow-morado-950/40 ring-1 ring-white/10"
               title={evento.data.titulo}
             >
               <Image
@@ -181,12 +175,23 @@ const pilares = [
 
   <!-- Pilares -->
   <section class="mx-auto max-w-6xl px-6 py-16">
-    <div class="grid gap-8 sm:grid-cols-3">
+    <div class="grid gap-6 sm:grid-cols-3">
       {pilares.map((pilar) => (
-        <div data-reveal>
-          <img src={pilar.icono} alt="" width="36" height="36" class="h-9 w-9" />
-          <h3 class="mt-4 font-display text-lg font-bold text-tinta-900">{pilar.titulo}</h3>
-          <p class="mt-2 text-sm leading-relaxed text-tinta-600">{pilar.texto}</p>
+        <div
+          data-reveal
+          style={`--color-pilar: ${pilar.color}`}
+          class="relative overflow-hidden rounded-2xl border border-morado-100 bg-white p-6 shadow-sm shadow-morado-900/5"
+        >
+          <!-- Halo del color del pilar en la esquina: da color sin tocar el texto. -->
+          <span
+            aria-hidden="true"
+            class="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-pilar)_20%,transparent),transparent)]"
+          ></span>
+          <span class="relative flex h-14 w-14 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--color-pilar)_12%,white)] ring-1 ring-[color-mix(in_srgb,var(--color-pilar)_30%,transparent)]">
+            <img src={pilar.icono} alt="" width="32" height="32" class="h-8 w-8" />
+          </span>
+          <h3 class="relative mt-5 font-display text-lg font-bold text-tinta-900">{pilar.titulo}</h3>
+          <p class="relative mt-2 text-sm leading-relaxed text-tinta-600">{pilar.texto}</p>
         </div>
       ))}
     </div>
@@ -194,7 +199,7 @@ const pilares = [
 
   <!-- Servicios destacados -->
   {destacados.length > 0 && (
-    <section class="border-y border-tinta-200 bg-tinta-50">
+    <section class="fondo-aurora border-y border-morado-100">
       <div class="mx-auto max-w-6xl px-6 py-16">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -242,35 +247,42 @@ const pilares = [
           Fundado en diciembre de 2025 · Cuenca, Ecuador
         </p>
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        {fotosNosotros.map(({ foto, evento }) => (
-          <a
-            href={`/eventos/${evento.id}/`}
-            data-reveal
-            class="group block overflow-hidden rounded-xl bg-tinta-100"
-            title={evento.data.titulo}
-          >
-            <Image
-              src={foto.miniatura}
-              alt={evento.data.titulo}
-              widths={[300, 600]}
-              sizes="(max-width: 1024px) 45vw, 22vw"
-              loading="lazy"
-              class="aspect-square h-full w-full object-cover transition duration-300 group-hover:scale-105"
-            />
-          </a>
-        ))}
+      <div class="relative">
+        <!-- Halo de marca detrás de las fotos: el color vive en el fondo, no en el texto. -->
+        <div
+          aria-hidden="true"
+          class="linea-marca pointer-events-none absolute -inset-6 rounded-[2rem] opacity-25 blur-2xl"
+        ></div>
+        <div class="relative grid grid-cols-2 gap-3">
+          {fotosNosotros.map(({ foto, evento }) => (
+            <a
+              href={`/eventos/${evento.id}/`}
+              data-reveal
+              class="group block overflow-hidden rounded-xl bg-tinta-100"
+              title={evento.data.titulo}
+            >
+              <Image
+                src={foto.miniatura}
+                alt={evento.data.titulo}
+                widths={[300, 600]}
+                sizes="(max-width: 1024px) 45vw, 22vw"
+                loading="lazy"
+                class="aspect-square h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              />
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Trayectoria -->
-  <section id="trayectoria" class="scroll-mt-24 border-y border-tinta-200 bg-tinta-50">
+  <section id="trayectoria" class="fondo-aurora scroll-mt-24 border-y border-morado-100">
     <div class="mx-auto max-w-6xl px-6 py-20">
       <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Trayectoria</p>
       <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">Nuestros hitos</h2>
       <ol
-        class="relative mt-10 max-w-2xl space-y-10 pl-8 before:absolute before:left-0 before:top-1 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-marca-purple before:to-marca-blue before:opacity-40 before:content-['']"
+        class="relative mt-10 max-w-2xl space-y-10 pl-8 before:absolute before:left-0 before:top-1 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-marca-purple before:via-marca-blue before:to-marca-amber before:opacity-60 before:content-['']"
       >
         <li class="relative">
           <span class="absolute -left-[41px] flex h-5 w-5 rounded-full border-2 border-marca-purple bg-marca-purple ring-4 ring-marca-purple/20"></span>

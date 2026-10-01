@@ -30,70 +30,72 @@ const indice = servicios.map((s) => ({
   title="Servicios AWS"
   description="Catálogo de servicios de AWS explicados en español por el AWS Student Builder Group de la Universidad de Cuenca."
 >
-  <section class="mx-auto max-w-6xl px-6 py-14">
-    <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Catálogo</p>
-    <h1 class="mt-3 font-display text-4xl font-bold tracking-tight text-tinta-900">
-      Servicios de AWS, explicados uno por uno
-    </h1>
-    <p class="mt-4 max-w-2xl leading-relaxed text-tinta-600">
-      El catálogo cubre los {servicios.length} servicios que AWS ofrece hoy: qué hace cada uno y
-      cuándo aplicarlo. Las fichas más desarrolladas añaden una analogía para entrar en tema, el
-      vocabulario mínimo, casos de uso, qué entra en la capa gratuita y cuándo conviene usar otro
-      servicio.
-    </p>
+  <div class="fondo-aurora-superior">
+    <section class="mx-auto max-w-6xl px-6 py-14">
+      <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Catálogo</p>
+      <h1 class="mt-3 font-display text-4xl font-bold tracking-tight text-tinta-900">
+        Servicios de AWS, explicados uno por uno
+      </h1>
+      <p class="mt-4 max-w-2xl leading-relaxed text-tinta-600">
+        El catálogo cubre los {servicios.length} servicios que AWS ofrece hoy: qué hace cada uno y
+        cuándo aplicarlo. Las fichas más desarrolladas añaden una analogía para entrar en tema, el
+        vocabulario mínimo, casos de uso, qué entra en la capa gratuita y cuándo conviene usar otro
+        servicio.
+      </p>
 
-    <!-- Buscador -->
-    <div class="mt-8 max-w-md">
-      <label for="buscador" class="sr-only">Buscar un servicio</label>
-      <input
-        type="search"
-        id="buscador"
-        placeholder="Buscar un servicio (ej. lambda, almacenamiento…)"
-        autocomplete="off"
-        class="w-full rounded-lg border border-tinta-300 px-4 py-2.5 text-sm text-tinta-900 placeholder:text-tinta-400 focus:border-tinta-900 focus:outline-none"
-      />
-    </div>
-
-    <!-- Filtros -->
-    <div class="mt-6 space-y-3">
-      <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por categoría">
-        <span class="mr-1 font-mono text-[11px] uppercase tracking-widest text-tinta-400">Categoría</span>
-        <button type="button" data-filtro-cat="todas" aria-pressed="true" class="filtro-cat filtro-activo">
-          Todas
-        </button>
-        {categoriasConServicios.map((cat) => (
-          <button type="button" data-filtro-cat={cat.slug} aria-pressed="false" class="filtro-cat">
-            <span class="punto-categoria" style={`background-color: ${cat.color}`}></span>
-            {cat.etiqueta}
-          </button>
-        ))}
+      <!-- Buscador -->
+      <div class="mt-8 max-w-md">
+        <label for="buscador" class="sr-only">Buscar un servicio</label>
+        <input
+          type="search"
+          id="buscador"
+          placeholder="Buscar un servicio (ej. lambda, almacenamiento…)"
+          autocomplete="off"
+          class="w-full rounded-lg border border-tinta-300 bg-white px-4 py-2.5 text-sm text-tinta-900 placeholder:text-tinta-400 focus:border-morado-700 focus:outline-none focus:ring-4 focus:ring-marca-purple/20"
+        />
       </div>
-      <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por nivel">
-        <span class="mr-1 font-mono text-[11px] uppercase tracking-widest text-tinta-400">Nivel</span>
-        <button type="button" data-filtro-nivel="todos" aria-pressed="true" class="filtro-nivel filtro-activo">
-          Todos
-        </button>
-        {niveles.map((n) => (
-          <button type="button" data-filtro-nivel={n.slug} aria-pressed="false" class="filtro-nivel">
-            {n.etiqueta}
+
+      <!-- Filtros -->
+      <div class="mt-6 space-y-3">
+        <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por categoría">
+          <span class="mr-1 font-mono text-[11px] uppercase tracking-widest text-tinta-400">Categoría</span>
+          <button type="button" data-filtro-cat="todas" aria-pressed="true" class="filtro-cat filtro-activo">
+            Todas
           </button>
-        ))}
+          {categoriasConServicios.map((cat) => (
+            <button type="button" data-filtro-cat={cat.slug} aria-pressed="false" class="filtro-cat">
+              <span class="punto-categoria" style={`background-color: ${cat.color}`}></span>
+              {cat.etiqueta}
+            </button>
+          ))}
+        </div>
+        <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por nivel">
+          <span class="mr-1 font-mono text-[11px] uppercase tracking-widest text-tinta-400">Nivel</span>
+          <button type="button" data-filtro-nivel="todos" aria-pressed="true" class="filtro-nivel filtro-activo">
+            Todos
+          </button>
+          {niveles.map((n) => (
+            <button type="button" data-filtro-nivel={n.slug} aria-pressed="false" class="filtro-nivel">
+              {n.etiqueta}
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
 
-    <p id="contador" aria-live="polite" class="mt-6 text-sm text-tinta-500">
-      {servicios.length} servicios
-    </p>
+      <p id="contador" aria-live="polite" class="mt-6 text-sm text-tinta-500">
+        {servicios.length} servicios
+      </p>
 
-    <!-- Grid -->
-    <div id="grid-servicios" class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {servicios.map((servicio) => <TarjetaServicio servicio={servicio} />)}
-    </div>
+      <!-- Grid -->
+      <div id="grid-servicios" class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {servicios.map((servicio) => <TarjetaServicio servicio={servicio} />)}
+      </div>
 
-    <p id="sin-resultados" class="mt-10 hidden text-center text-tinta-500">
-      No encontramos servicios con esos criterios.
-    </p>
-  </section>
+      <p id="sin-resultados" class="mt-10 hidden text-center text-tinta-500">
+        No encontramos servicios con esos criterios.
+      </p>
+    </section>
+  </div>
 </Layout>
 
 <style>
@@ -108,16 +110,18 @@ const indice = servicios.map((s) => ({
     padding: 0.375rem 0.875rem;
     font-size: 0.8125rem;
     color: var(--color-tinta-600);
+    background-color: white;
     transition: all 150ms;
     cursor: pointer;
   }
   .filtro-cat:hover,
   .filtro-nivel:hover {
-    border-color: var(--color-tinta-400);
+    border-color: var(--color-morado-300);
   }
+  /* Blanco sobre morado-700: 7.6:1. */
   .filtro-activo {
-    background-color: var(--color-marca-grey);
-    border-color: var(--color-marca-grey);
+    background-color: var(--color-morado-700);
+    border-color: var(--color-morado-700);
     color: white;
     font-weight: 700;
   }

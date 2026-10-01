@@ -98,6 +98,13 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   costo de las fichas y entre los acentos de las categorías del catálogo. Ver
   [D-27](decisiones.md#d-27).
 
+**Hecho el 2026-09-30, pendiente de push:**
+
+- **Más presencia del morado** ([D-28](decisiones.md#d-28)): hero y pie en
+  morado profundo, secciones alternas en lavanda, cabeceras interiores con
+  halos y línea de marca bajo la barra. Verificado con `pnpm build` y
+  `pnpm enlaces`; falta publicarlo.
+
 **Pendiente:**
 
 - **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como

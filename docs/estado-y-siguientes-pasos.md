@@ -112,6 +112,10 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   (`2.jpeg` antes que `10.jpeg`). Ver el punto 2.
 - ✅ **Séptimo evento: la charla «Serverless en AWS»** (`af542ed`), con el
   afiche como única foto y `pnpm fotos` aceptando AVIF y WebP. Ver el punto 2.
+- ✅ **Tomas repetidas fuera de los demás eventos** (`c59be34`): salen 42 fotos de
+  Yachana Day, «Los 4 Fantásticos», el stand y FLISol, y el sitio queda con 127.
+  Las portadas son las mismas imágenes con otro número. Ver el punto 2 y
+  [D-30](decisiones.md#d-30).
 
 **Pendiente:**
 

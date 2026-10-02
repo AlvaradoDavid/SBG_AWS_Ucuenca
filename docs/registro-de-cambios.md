@@ -52,6 +52,22 @@ del hero y el enlace de la galería pasan a 127 fotos.
 - `/eventos/` dice 127 fotos, y las tarjetas, 18, 18, 6, 15, 28 y 41. El visor de
   Yachana Day abre la foto de grupo como `17 / 18`, sin errores en la consola.
 
+**Publicado el 2026-10-01 en `c59be34`.** `/eventos/` pasó a 127 fotos unos 170
+segundos después del push. Comprobado con `curl`:
+
+- La portada dice «Ver las 127 fotos» y `/eventos/`, 127 fotos con 18, 18, 6, 15,
+  28 y 41 por tarjeta.
+- Las siete páginas de evento dan 200 con su cuenta de fotos, y cada `og:image`
+  es su portada (`foto-17`, `foto-16`, `foto-05`, `foto-07`, `foto-09` y
+  `foto-01` en las dos de afiche) y responde 200. El de la portada del sitio
+  sigue siendo la `foto-01` del stand.
+- La CSP y HSTS siguen, `/no-existe/` da 404, la ruta de un evento sin barra
+  redirige con un 301, y las fotos se sirven como `image/webp` con la caché de
+  un año.
+- La portada, `/eventos/` y las cinco páginas de evento con fotos son idénticas
+  al build local, una vez cambiado `http://localhost:4321` por el dominio
+  público en las URL absolutas: el build local no tiene `AWS_APP_ID`.
+
 ---
 
 ## Serverless en AWS

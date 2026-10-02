@@ -14,7 +14,7 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Portada | Completa: hero en morado profundo con collage, cifras y partículas; pilares, trayectoria, galería |
 | Galería de eventos | Completa, con visor accesible |
 | Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
-| Contenido de eventos | Completo: los 6 con texto; 4 con cifra de asistentes |
+| Contenido de eventos | Completo: los 7 con texto; 5 con cifra de asistentes |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
 | Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 5 |
 | Infraestructura AWS | ✅ **En línea en Amplify:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, con 404 real, cabeceras de seguridad y alarmas de costo. Solo queda el subdominio: ver el punto 1 |
@@ -128,8 +128,8 @@ línea, «Los 4 Fantásticos» fue un stand con trivia y no una charla, y los lu
 de los cinco ganaron precisión. El detalle está en el
 [registro de cambios](registro-de-cambios.md).
 
-Cuatro llevan `asistentes`: 400 en el Community Day, 200 en «Los 4 Fantásticos»
-y en el stand de inicio de ciclo, y 25 en el webinar. Las tres primeras cifras
+Cinco llevan `asistentes`: 400 en el Community Day, 200 en «Los 4 Fantásticos»
+y en el stand de inicio de ciclo, 51 en la charla de Serverless y 25 en el webinar. Las tres primeras cifras
 son aproximadas y la etiqueta no lo indica; la del Community Day se queda corta,
 porque fueron más de 400. Yachana Day y FLISol no tienen cifra: si aparece, basta
 con añadir el campo.
@@ -141,7 +141,8 @@ va en primera persona del plural y no repite el `resumen`, que ya aparece justo
 encima. Con `hito: true` sale también en la trayectoria de la portada.
 
 Las fotos van sueltas dentro de esa carpeta: el script no entra en subcarpetas y
-solo lee HEIC, JPG y PNG. Los videos se ignoran, y el sitio hoy no publica
+lee HEIC, JPG, PNG, AVIF y WebP; los dos últimos son el formato en que llegan los
+afiches descargados de Meetup. Los videos se ignoran, y el sitio hoy no publica
 ninguno.
 
 - **Si las fotos no traen EXIF, confirmar la fecha con el club.** El nombre de
@@ -160,6 +161,12 @@ intercalados; por esos nombres `pnpm fotos` numera ahora en orden natural, y con
 el alfabético la galería habría salido 1, 10, 100… La portada que eligió el club,
 `46.jpeg`, quedó como `foto-09`, porque ni los videos ni las apartadas cuentan.
 
+**El séptimo, la charla «Serverless en AWS», se agregó el mismo día** sin más
+imagen que su afiche, un AVIF descargado de Meetup. Por él `pnpm fotos` acepta
+ahora AVIF y WebP. Es el patrón para un evento sin fotos: el afiche como única
+foto, `portada: 1` y `enInicio: false`, para que no entre en el collage. La
+tarjeta y la galería dicen «Ver la foto» y «1 foto» cuando hay una sola.
+
 **Para agregar fotos a un evento ya publicado:** ponerlas en su carpeta de
 `Eventos/` y correr `pnpm fotos`. Las nuevas van al final con los números
 siguientes, sin importar su nombre, y las demás conservan el suyo, así que
@@ -171,8 +178,8 @@ hacer clic en la foto y leer el contador del visor (`7 / 28`). Ese número va en
 `portada: 7`. Es el mismo que el del archivo, `foto-07.webp`.
 
 **Para que un evento no salga en la portada del sitio:** `enInicio: false`. Lo
-lleva el webinar de infraestructura, cuya portada es un afiche: en su lugar
-entra Yachana Day. Sigue en `/eventos/`, y en la trayectoria si es hito.
+llevan el webinar de infraestructura y la charla de Serverless, cuyas portadas
+son afiches: en su lugar entra Yachana Day. Sigue en `/eventos/`, y en la trayectoria si es hito.
 
 **Decisión abierta:** la portada del sitio toma siempre los eventos más
 recientes: tres para el collage, cuatro para «Quiénes somos» y ocho fotos, de dos
@@ -396,7 +403,7 @@ pnpm enlaces
 ```
 
 Vigila tres cosas en la salida: que no aparezca ningún aviso `[DiagramaAWS]`,
-que el número de páginas siga cuadrando (hoy: 257 indexadas por Pagefind, de las
+que el número de páginas siga cuadrando (hoy: 258 indexadas por Pagefind, de las
 cuales 251 son fichas de servicio) y que `pnpm enlaces` termine con ✓. Este
 último detecta enlaces internos sin barra final, destinos que no existen —por
 ejemplo un `slug` mal escrito en `alternativas`— y anclas rotas.

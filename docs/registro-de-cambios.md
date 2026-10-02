@@ -2,6 +2,46 @@
 
 ---
 
+## Serverless en AWS
+
+El 2026-10-01. Séptimo evento del sitio: la charla en línea «Despliega como
+Senior, paga como estudiante: Serverless en AWS», del 28 de mayo de 2026, con
+Hernán Villavicencio S. y 51 participantes. El texto sale de la invitación del
+club y del afiche: los tres servicios de la charla, que enlazan a las fichas de
+Lambda, API Gateway y DynamoDB, el demo en vivo dentro de la capa gratuita y las
+muchas preguntas del público, que contó el club.
+
+- **Sin fotos, con el afiche.** El club no tiene fotos de la charla, solo el
+  afiche (`highres_534328035.avif`), que quedó como `foto-01` y portada. Se
+  descartó fusionarla con el webinar de infraestructura: el esquema admite una
+  sola fecha y una sola cifra de asistentes, y la charla de mayo habría quedado
+  dentro de un evento de marzo.
+- **`enInicio: false`,** como el webinar, cuya portada también es un afiche. Sin
+  él, el afiche habría entrado como segunda imagen del collage del hero.
+- **`pnpm fotos` lee AVIF y WebP.** Antes solo HEIC, JPG y PNG, así que el afiche
+  se habría ignorado sin avisar. `sharp` ya los decodifica.
+- **Singular con una sola foto.** La tarjeta de `/eventos/` decía «Ver las 1
+  fotos» y la página del evento «1 fotos»; ahora dicen «Ver la foto» y «1 foto».
+
+**Efecto en la portada.** Ninguno en las fotos: el collage, «Quiénes somos» y la
+galería siguen igual. Las cifras del hero pasan a 7 eventos y 169 fotos.
+
+**Verificado** sobre un build desde cero:
+
+- `pnpm build`: 262 páginas, 258 indexadas, sin avisos. `pnpm enlaces` da ✓ con
+  433 destinos. El JavaScript de la portada sigue en 4.6 KB.
+- **La CSP no bloquea nada.** `dist/` se sirvió con las cabeceras de
+  `customHttp.yml`: sin errores en la consola en `/eventos/`, la página del
+  evento y la portada, y el afiche responde 200.
+- **Visor con una sola foto:** abre en `1 / 1` con la versión de 1600 px, sin
+  flechas y con el foco en «Cerrar galería»; `Escape` devuelve el foco a la
+  miniatura.
+- En móvil (375 px) no hay scroll horizontal en `/eventos/` ni en la página del
+  evento.
+- Una segunda corrida de `pnpm fotos` no convierte nada en ningún evento.
+
+---
+
 ## AWS Community Day Ecuador
 
 El 2026-10-01. Sexto evento del sitio: el AWS Community Day Ecuador, el 5 de

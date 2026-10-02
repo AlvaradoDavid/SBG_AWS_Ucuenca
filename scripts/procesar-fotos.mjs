@@ -125,7 +125,8 @@ async function procesarEvento(nombreCarpeta, previo) {
   await mkdir(carpetaDestino, { recursive: true });
 
   const archivos = (await readdir(carpetaOrigen))
-    .filter((f) => /\.(heic|jpe?g|png)$/i.test(f))
+    // AVIF y WebP: los afiches que se descargan de Meetup llegan así.
+    .filter((f) => /\.(heic|jpe?g|png|avif|webp)$/i.test(f))
     .sort(ordenNatural);
   const generadas = await fotosGeneradas(carpetaDestino);
 

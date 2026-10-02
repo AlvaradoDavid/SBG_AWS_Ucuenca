@@ -82,7 +82,8 @@ carpetas.
 
 ## Pipeline de fotos
 
-`Eventos/` guarda el material original: HEIC de iPhone, MOV, JPG. Pesa cientos
+`Eventos/` guarda el material original: HEIC de iPhone, MOV, JPG, y algún afiche
+en AVIF o WebP descargado de Meetup. Pesa cientos
 de megabytes y **está en `.gitignore`** — GitHub rechaza archivos de más de
 100 MB y el video de Yachana Day pesa ~348 MB.
 

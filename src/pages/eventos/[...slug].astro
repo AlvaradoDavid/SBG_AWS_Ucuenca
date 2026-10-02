@@ -56,7 +56,7 @@ const fecha = fechaLarga(evento.data.fecha);
       {fotos.length > 0 && (
         <section class="mt-12">
           <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">
-            {fotos.length} fotos
+            {fotos.length} {fotos.length === 1 ? 'foto' : 'fotos'}
           </p>
           <div class="mt-4">
             <GaleriaEvento fotos={fotos} titulo={evento.data.titulo} />

@@ -98,7 +98,7 @@ src/assets/eventos/2026-05-16-aws-club-en-flisol/foto-04-mini.webp  (600px)
 ```
 
 Los videos se ignoran, y también lo que esté en subcarpetas: así se apartan fotos
-sin borrar el original (el Community Day guarda sus tomas repetidas en
+sin borrar el original (cada evento guarda sus tomas repetidas en
 `repetidas/`). Se generan dos tamaños:
 
 | Salida | Ancho | Uso |
@@ -114,14 +114,15 @@ empareja cada foto con su miniatura.
 usan la tarjeta de `/eventos/`, el `og:image` de la página del evento y las fotos
 de eventos de la portada del sitio: el collage, «Quiénes somos» y la galería. La
 galería de cada evento no se reordena y el script no renumera (ver abajo), así
-que el número de cada foto no cambia. Un número que no existe rompe el build con
-un error `[portada]`.
+que el número de cada foto no cambia salvo cuando se quitan fotos. Un número que
+no existe rompe el build con un error `[portada]`.
 
 ### Números que no cambian
 
 El número de una foto es a la vez su archivo (`foto-07.webp`), su posición en el
 visor (`7 / 28`) y el valor de `portada`. Si cambiara, la portada pasaría a otra
-foto sin que nada fallara. Por eso, una vez asignado, no cambia nunca:
+foto sin que nada fallara. Por eso, una vez asignado, el script no lo cambia
+nunca:
 
 - **El manifiesto guarda qué original es cada foto.** En
   `src/assets/eventos/manifiesto.json`, cada evento tiene un campo `fuentes`
@@ -142,11 +143,23 @@ foto sin que nada fallara. Por eso, una vez asignado, no cambia nunca:
 - **Renombrar un original** cuenta como borrarlo y agregar uno nuevo: la foto
   saldría duplicada con otro número. Los originales no se renombran.
 
-Para quitar una foto del sitio hay que borrar sus dos WebP **y** sacar su
-original de `Eventos/`; si no, la siguiente corrida la regenera. Las fotos que
-venían después suben un puesto en el visor y dejan de coincidir con su archivo,
-así que hay que revisar el `portada` del evento. El script lo avisa con una línea
-que empieza por `!`.
+**Quitar fotos es la excepción: ahí sí se renumera** ([D-30](decisiones.md#d-30)).
+Si solo se borran los WebP, las fotos que venían después suben un puesto en el
+visor y dejan de coincidir con su archivo y con `portada`, y el script lo avisa
+en cada corrida con una línea que empieza por `!`. Así se apartaron las tomas
+repetidas de cuatro eventos el 2026-10-01, todo en un mismo commit:
+
+1. Mover los originales a `repetidas/`, dentro de la carpeta del evento en
+   `Eventos/`. Si se quedan sueltos, la siguiente corrida los vuelve a convertir.
+2. Borrar sus dos WebP.
+3. Renombrar las que quedan, en orden ascendente, para que vuelvan a ser
+   `foto-01`…`foto-NN` seguidas y en el mismo orden. El número nuevo nunca es
+   mayor que el viejo, así que el destino siempre está libre.
+4. Reescribir `fuentes` y `fotos` del evento en el manifiesto con los números
+   nuevos, y corregir su `portada` en el `.mdx`.
+5. Comprobar que `pnpm fotos` dice `0 convertidas` en todos los eventos, sin
+   líneas `·` ni `!`, y que el `og:image` de la página del evento sigue siendo la
+   misma imagen: el nombre del archivo en `dist/` empieza por el `foto-NN` nuevo.
 
 Hasta el 2026-09-30 el número salía del orden alfabético de los originales, y una
 foto nueva que no quedara al final desplazaba a las demás (ver el
@@ -174,7 +187,7 @@ El sitio se aloja en **AWS Amplify Hosting**, conectado a la rama
 a esa rama dispara un build en Amplify y publica `dist/`. El porqué de Amplify
 frente al plan original con S3 + CloudFront está en [D-23](decisiones.md#d-23).
 
-Build estático a `dist/` (261 páginas, 511 fotos WebP, índice de Pagefind). No
+Build estático a `dist/` (262 páginas, 389 fotos WebP, índice de Pagefind). No
 hay servidor ni funciones de renderizado: todo el HTML se genera en `pnpm build`.
 
 ```

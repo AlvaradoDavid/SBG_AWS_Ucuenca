@@ -153,8 +153,8 @@ ninguno.
   corrida, porque de ese nombre sale `carpetaFotos`.
 - **Para dejar fotos fuera sin borrarlas,** moverlas a una subcarpeta de su
   evento (por ejemplo `repetidas/`) antes de la primera corrida de `pnpm fotos`.
-  Después de publicar ya no sirve: la foto ya generada se conserva, y quitarla
-  corre la numeración (ver [arquitectura.md](arquitectura.md#números-que-no-cambian)).
+  Después de publicar no basta con moverlas: la foto ya generada se conserva.
+  Ver «Para quitar fotos de un evento ya publicado», más abajo.
 
 **El sexto evento, el AWS Community Day Ecuador, se agregó el 2026-10-01** con
 estos pasos. De sus 89 fotos se apartaron 48 tomas repetidas en `repetidas/`, y
@@ -174,6 +174,20 @@ tarjeta y la galería dicen «Ver la foto» y «1 foto» cuando hay una sola.
 siguientes, sin importar su nombre, y las demás conservan el suyo, así que
 `portada` sigue apuntando a la misma foto. El manifiesto cambia: va en el mismo
 commit que las fotos.
+
+**Para quitar fotos de un evento ya publicado:** apartar los originales en
+`repetidas/`, borrar sus WebP, renumerar las que quedan sin huecos, reescribir
+el manifiesto y corregir `portada`, todo en el mismo commit. Los pasos están en
+[arquitectura.md](arquitectura.md#números-que-no-cambian) y el porqué en
+[D-30](decisiones.md#d-30).
+
+**Tomas repetidas fuera de los demás eventos (2026-10-01).** A pedido del club,
+el criterio del Community Day se aplicó a los cuatro eventos con varias fotos:
+Yachana Day pasa de 28 a 18, «Los 4 Fantásticos» de 27 a 18, el stand de 24 a
+15 y FLISol de 42 a 28, y el sitio queda con 127 fotos. El webinar y la charla
+de Serverless no tenían repetidas. Las portadas siguen siendo las mismas
+imágenes con otro número: 17, 16, 5 y 7. El detalle está en el
+[registro de cambios](registro-de-cambios.md).
 
 **Para cambiar la foto de portada de un evento:** abrir la galería del evento,
 hacer clic en la foto y leer el contador del visor (`7 / 28`). Ese número va en

@@ -2,6 +2,58 @@
 
 ---
 
+## Tomas repetidas fuera de los demás eventos
+
+El 2026-10-01. A pedido del club, el mismo trabajo que se hizo con el Community
+Day, ahora en los eventos ya publicados: de cada serie de tomas repetidas queda
+una. Salen 42 fotos y el sitio pasa de 169 a 127.
+
+| Evento | Antes | Después | Portada |
+| --- | --- | --- | --- |
+| Yachana Day | 28 | 18 | 27 → 17 |
+| «Los 4 Fantásticos» | 27 | 18 | 23 → 16 |
+| Stand de inicio de ciclo | 24 | 15 | 20 → 5 |
+| FLISol | 42 | 28 | 9 → 7 |
+
+El webinar de infraestructura (seis capturas de diapositivas distintas) y la
+charla de Serverless (solo el afiche) no tenían repetidas.
+
+- **El criterio es el del Community Day:** la misma foto posada con otro zoom o
+  desde otro ángulo, y las ráfagas tomadas desde el mismo sitio con segundos de
+  diferencia. De cada serie quedó la más nítida o la de mejores caras. Una pose
+  distinta del mismo grupo cuenta como otra foto: en FLISol quedan la foto seria
+  y la de broma con los certificados, y la de grupo normal y la de los corazones.
+- **Dos copias exactas en el stand.** Dos fotos estaban dos veces: una del
+  original y otra comprimida, de 1600 px, como las que pasan por WhatsApp. Quedó
+  la del original. Una de ellas era la portada, `foto-20`: ahora es la misma
+  imagen sacada del original de 3431 px, que queda como `foto-05`.
+- **El collage de FLISol se queda** (`foto-02`). Arriba repite una de las fotos
+  de la charla, pero es una pieza armada por el club, no una toma repetida.
+- **No se borró nada:** los originales están en `repetidas/`, dentro de la
+  carpeta de cada evento en `Eventos/`, como los del Community Day.
+- **Numeración sin huecos** ([D-30](decisiones.md#d-30)). Las fotos que quedan
+  conservan su orden y vuelven a ser `foto-01`…`foto-NN` seguidas. El manifiesto
+  y las cuatro `portada` cambian en este mismo commit.
+
+**Efecto en la portada.** Ninguno en las fotos: el collage, «Quiénes somos» y la
+galería muestran las mismas imágenes, porque las portadas son las mismas y la
+segunda foto de cada evento de la galería sigue siendo la `foto-01`. La cifra
+del hero y el enlace de la galería pasan a 127 fotos.
+
+**Verificado:**
+
+- Los 254 WebP que quedan (127 fotos × 2 tamaños) son byte a byte los que ya se
+  publicaban para su original, comparados contra el commit anterior.
+- `pnpm fotos`: 0 convertidas en los siete eventos y ningún aviso.
+- `pnpm build`: 262 páginas, sin avisos. `pnpm enlaces` da ✓ con 391 destinos.
+- El `og:image` de cada evento sigue siendo su portada (`foto-17`, `foto-16`,
+  `foto-05` y `foto-07`; el Community Day, `foto-09`) y el de la portada del
+  sitio sigue siendo la `foto-01` del stand.
+- `/eventos/` dice 127 fotos, y las tarjetas, 18, 18, 6, 15, 28 y 41. El visor de
+  Yachana Day abre la foto de grupo como `17 / 18`, sin errores en la consola.
+
+---
+
 ## Serverless en AWS
 
 El 2026-10-01. Séptimo evento del sitio: la charla en línea «Despliega como

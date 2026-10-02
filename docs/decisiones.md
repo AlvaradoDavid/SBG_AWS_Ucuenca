@@ -795,3 +795,30 @@ mostrar que el grupo está activo.
 **El costo.** El evento más reciente queda al final de la lista. Con cinco o
 seis eventos no pesa; si la lista crece mucho, conviene agruparla por año antes
 que volver a invertirla.
+
+---
+
+<a id="d-30"></a>
+
+## D-30 · Quitar fotos de un evento publicado cierra los huecos de la numeración
+
+**Decisión.** El 2026-10-01 se apartaron 42 tomas repetidas de cuatro eventos ya
+publicados, y las fotos que quedaron se renumeraron seguidas, sin huecos, en el
+mismo commit que corrige su `portada`. Es la excepción a la regla de que un
+número asignado no cambia ([arquitectura.md](arquitectura.md#números-que-no-cambian)).
+
+**Por qué.** La regla existe para que agregar una foto no mueva la portada a otra
+sin que nada falle. Quitar fotos sin renumerar rompía otra cosa: el visor y
+`portada` cuentan posiciones (`7 / 18`), así que desde el primer hueco el número
+del archivo dejaba de coincidir con los dos, y `pnpm fotos` lo habría avisado con
+una línea `!` en cada corrida. Renumerando, archivo, visor y `portada` vuelven a
+decir lo mismo.
+
+**Por qué es seguro.** Nada enlaza a una foto por su número: Astro sirve las
+imágenes desde `/_astro/` con un hash en el nombre, el visor no pone la foto en
+la URL y el `og:image` sale de `portada`. Basta con cambiar `portada` en el mismo
+commit y comprobar que cada evento sigue compartiendo la misma imagen.
+
+**El costo.** El número de una foto ya publicada puede cambiar cuando se quitan
+otras. Por eso solo se hace así al quitar; al agregar, las fotos nuevas siguen
+yendo al final.

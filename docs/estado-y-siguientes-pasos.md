@@ -107,13 +107,9 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
 
 - ✅ **`/eventos/` en orden cronológico** (`1f0ffc8`): del más antiguo al más
   reciente, como la trayectoria. Ver [D-29](decisiones.md#d-29).
-
-**Hecho el 2026-10-01, pendiente de push:**
-
-- **Sexto evento: AWS Community Day Ecuador**, con 41 fotos (48 repetidas
-  apartadas sin borrar), y `pnpm fotos` numerando en orden natural (`2.jpeg`
-  antes que `10.jpeg`). Ver el punto 2. Verificado con un build desde cero,
-  `pnpm enlaces` y la CSP; falta publicarlo.
+- ✅ **Sexto evento: AWS Community Day Ecuador** (`2a27505`), con 41 fotos (48
+  repetidas apartadas sin borrar), y `pnpm fotos` numerando en orden natural
+  (`2.jpeg` antes que `10.jpeg`). Ver el punto 2.
 
 **Pendiente:**
 

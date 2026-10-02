@@ -56,6 +56,17 @@ en `/eventos/`. Las cifras del hero pasan a 6 eventos y 168 fotos.
 del nombre de la carpeta, el 5 de agosto. Se deshizo el commit local antes de
 corregirla, para que las fotos descartadas no quedaran en el historial.
 
+**Publicado el 2026-10-01 en `2a27505`.** Amplify terminó unos 150 segundos
+después del push. Comprobado con `curl`:
+
+- La página del evento da 200 con la fecha, las 41 fotos y los 400 asistentes.
+  Su `og:image` apunta al dominio público y responde 200.
+- `/eventos/` termina con el Community Day, y la portada lo pone primero en el
+  collage, con las cifras en 6 eventos y 168 fotos.
+- La CSP y HSTS siguen, `/no-existe/` da 404, la ruta del evento sin barra
+  redirige con un 301 y la foto de portada lleva la caché de un año.
+- La portada, `/eventos/` y la página del evento son idénticas al build local.
+
 ---
 
 ## Eventos en orden cronológico

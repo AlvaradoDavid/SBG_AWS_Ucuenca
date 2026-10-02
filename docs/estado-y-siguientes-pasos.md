@@ -110,6 +110,8 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
 - ✅ **Sexto evento: AWS Community Day Ecuador** (`2a27505`), con 41 fotos (48
   repetidas apartadas sin borrar), y `pnpm fotos` numerando en orden natural
   (`2.jpeg` antes que `10.jpeg`). Ver el punto 2.
+- ✅ **Séptimo evento: la charla «Serverless en AWS»** (`af542ed`), con el
+  afiche como única foto y `pnpm fotos` aceptando AVIF y WebP. Ver el punto 2.
 
 **Pendiente:**
 
@@ -441,7 +443,9 @@ Debe dar 200 con la CSP y HSTS. Una URL inexistente
 
 **Cuándo terminó de publicar.** El `Last-Modified` de la portada cambia con cada
 despliegue, aunque el HTML sea el mismo. Si otra sesión empujó poco antes, hay
-dos builds en cola: el propio es el segundo cambio.
+dos builds en cola: el propio es el segundo cambio. Si el push crea una página
+nueva, es más directo esperar a que esa URL deje de dar 404, y el
+`Last-Modified` puede tardar unos segundos más en cambiar.
 
 **Si el cambio no se ve en el sitio** (scripts, `docs/`, el manifiesto), lo que
 se comprueba es que producción sea idéntica al `dist/` local. Hay que normalizar

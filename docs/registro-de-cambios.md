@@ -40,6 +40,18 @@ galería siguen igual. Las cifras del hero pasan a 7 eventos y 169 fotos.
   evento.
 - Una segunda corrida de `pnpm fotos` no convierte nada en ningún evento.
 
+**Publicado el 2026-10-01 en `af542ed`.** La página del evento respondió 200
+unos 140 segundos después del push. Comprobado con `curl`:
+
+- La página del evento da 200 con la fecha, «1 foto», los 51 asistentes y el
+  nombre del ponente. Su `og:image` apunta al dominio público y responde 200, y
+  la miniatura del afiche se sirve como `image/webp` con la caché de un año.
+- `/eventos/` dice «7 eventos realizados y 169 fotos» y la tarjeta, «Ver la
+  foto →». La portada no enlaza al evento y sus cifras pasan a 7 y 169.
+- La CSP y HSTS siguen, `/no-existe/` da 404 y la ruta del evento sin barra
+  redirige con un 301.
+- La portada, `/eventos/` y la página del evento son idénticas al build local.
+
 ---
 
 ## AWS Community Day Ecuador

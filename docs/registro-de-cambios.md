@@ -37,6 +37,12 @@ tarjeta flotante y llegara a los bordes, como en la página del evento.
 más dentro de su `header`. La portada a 320, 375, 768 y 1440 px: la franja va de
 borde a borde, sin desplazamiento horizontal.
 
+**Publicado el 2026-10-06 en `124fcc0` + `0afca36`.** Comprobado con `curl`: la
+portada mantiene la CSP y HSTS, `/no-existe/` da 404 sin redirección, el `.ics`
+sale como `text/calendar` y ni la portada, ni `/student-community-day/`, ni el
+`.ics` mencionan meetup.com. La portada, `/student-community-day/`,
+`/servicios/` y `/eventos/` son idénticas al build local.
+
 ---
 
 ## El Student Community Day en la barra de navegación

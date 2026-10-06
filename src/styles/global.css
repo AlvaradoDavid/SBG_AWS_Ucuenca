@@ -42,6 +42,11 @@
   --color-marca-magenta: #ff57e9;
   --color-marca-grey: #161d26;
 
+  /* Azul marino del afiche del Student Community Day (D-31). Solo para su cartel:
+     la catedral recortada del afiche trae este fondo, y así se funde con él.
+     Blanco encima: 17.9:1; tinta-300: 9.35:1; el foco morado, 4.89:1. */
+  --color-afiche: #0b1828;
+
   /* Escala morada derivada de marca-purple en OKLCH (ver D-28). Es para fondos
      y bordes: los claros llevan texto en tinta, los oscuros en blanco o tinta-300.
      No hay 500: ese tono es marca-purple. */

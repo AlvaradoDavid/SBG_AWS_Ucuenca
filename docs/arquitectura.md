@@ -18,9 +18,12 @@ el cliente.
 ```
 src/
 ├── assets/eventos/         Fotos ya optimizadas a WebP (las procesa pnpm fotos)
+├── assets/proximos/        Afiche y foto del cartel de cada próximo evento
+├── assets/patrocinadores/  Logos de los patrocinadores
 ├── components/             Componentes .astro
 ├── content/
 │   ├── eventos/            Un .mdx por evento
+│   ├── proximos/           Un .mdx por evento que organizamos y aún no ocurre
 │   └── servicios/          Un .mdx por servicio de AWS, en carpetas por categoría
 ├── layouts/Layout.astro    Envoltura común: head, nav, footer, script de reveals
 ├── lib/                    Lógica compartida sin UI
@@ -55,6 +58,38 @@ el esquema, **el build falla** — es intencional: evita publicar fichas a media
 | `asistentes` | number? | |
 | `enInicio` | boolean | `true` por defecto. Con `false`, sus fotos no salen en la portada del sitio y su lugar lo ocupa el siguiente evento |
 | `portada` | number? | Número de la foto que representa al evento, el que muestra el visor (`7 / 28` → `7`). Sin él, la primera |
+
+### `proximos`
+
+Los eventos que el club organiza y todavía no ocurren ([D-31](decisiones.md#d-31)).
+Cada uno tiene su cartel en la portada mientras no termina, y su página en la raíz
+con el nombre del archivo: `student-community-day.mdx` → `/student-community-day/`.
+
+| Campo | Tipo | Notas |
+| --- | --- | --- |
+| `titulo` | string | Nombre oficial: `<title>` y vista previa al compartir |
+| `cartel` | `{ antetitulo?, lineas[], cierre? }` | El nombre como lo compone el afiche: «Primer» / «Student» / «Community Day» / «Ecuador» |
+| `lema` | string[] | |
+| `resumen` | string (máx. 220) | Meta descripción y texto del calendario |
+| `inicio`, `fin` | date | **Con hora y zona:** `2026-11-14T09:00:00-05:00`. Se formatean en la hora de Ecuador, no en UTC |
+| `lugar` | string[] | Un renglón por línea del cartel |
+| `mapa` | url | Google Maps. El del Student Community Day usa el código plus de Meetup |
+| `acceso` | string | «Entrada gratuita, con cupos limitados» |
+| `entradas`, `registro` | `{ url, sitio }` | TicketIn y Meetup |
+| `incluye` | string[] | «Qué incluye», en la página |
+| `imagen`, `afiche` | image | La foto del cartel y el afiche completo (`og:image`) |
+| `participantes` | `{ siglas, universidad, ciudad, anfitrion }[]` | |
+| `patrocinadores` | `{ nombre, logo, sobreBlanco }[]` | `logo` es una imagen de `src/assets/patrocinadores/` |
+
+El cuerpo del `.mdx` es la sección «El evento» de la página. Las imágenes van
+con el helper `image()`: un logo o un afiche que falta rompe el build.
+
+**El arte no pasa por `pnpm fotos`.** Los originales están en
+`Eventos/2026-11-14 AWS Student Community Day/arte/`, una subcarpeta que el
+script no lee: así, las fotos del día se numeran desde la 1. Mientras llega la
+foto original de la catedral, la del cartel es un recorte del afiche horizontal:
+de `x` = 918 a 1600, con toda la altura. Antes de 918 hay cuadros del afiche
+cortados por la mitad, que en móvil asomaban como tiras magenta en el borde.
 
 ### `servicios`
 
@@ -175,6 +210,11 @@ el evento y termina con error.
 Las fechas del frontmatter (`2026-05-16`) se parsean como medianoche UTC. Si se
 formatearan en la zona local de Ecuador (UTC−5), el día retrocedería uno y un
 evento del 16 aparecería como 15. Por eso el formateo es explícitamente UTC.
+
+**La excepción son los próximos eventos.** `inicio` y `fin` llevan hora y zona
+(`2026-11-14T09:00:00-05:00`): son un instante, no una fecha suelta, y
+`diaDeEvento()` y `horaDeEvento()` los formatean en `America/Guayaquil`. En UTC,
+las 09h00 saldrían como las 14h00.
 
 ## Despliegue
 

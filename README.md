@@ -8,6 +8,8 @@ hemos hecho y un catálogo en español de los servicios de AWS.
 ## Qué hay en el sitio
 
 - **Portada** con la trayectoria del club, cifras y fotos reales de los eventos.
+- **Próximo evento:** el AWS Student Community Day Ecuador, que organizamos el 14 de noviembre de
+  2026, con su cartel en la portada y su página en `/student-community-day/`.
 - **Eventos**, cada uno con su galería y un visor de fotos accesible.
 - **Catálogo de servicios**: los 251 servicios del directorio de AWS en 19 categorías. 41 fichas
   completas —con analogía, vocabulario, costos, trampas de gasto y un diagrama— y 210 breves.
@@ -55,6 +57,7 @@ El sitio queda en `http://localhost:4321`.
 src/
 ├── content/servicios/   Una ficha .mdx por servicio, en una carpeta por categoría
 ├── content/eventos/     Un .mdx por evento
+├── content/proximos/    Un .mdx por evento que organizamos y aún no ocurre
 ├── components/          Componentes .astro
 ├── pages/               Rutas
 └── lib/                 Categorías, fechas, fotos y datos del club
@@ -85,6 +88,9 @@ Todo el detalle está en [`docs/`](docs/README.md). Si retomas el proyecto, empi
 ## Cómo añadir contenido
 
 - **Un evento:** procesa sus fotos con `pnpm fotos` y crea un `.mdx` en `src/content/eventos/`.
+- **Un evento que organizamos y aún no ocurre:** crea un `.mdx` en `src/content/proximos/`. Sale en
+  la portada hasta que termina y tiene su página en la raíz. Ver
+  [el Student Community Day](docs/estado-y-siguientes-pasos.md#lo-urgente-el-aws-student-community-day-14-de-noviembre).
 - **Una ficha de servicio**, o ampliar una breve a completa: sigue la
   [guía paso a paso](docs/estado-y-siguientes-pasos.md#cómo-añadir-una-ficha-de-servicio-nueva).
   El esquema de `src/content.config.ts` hace fallar el build si algo no cuadra.

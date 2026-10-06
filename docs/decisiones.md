@@ -822,3 +822,55 @@ commit y comprobar que cada evento sigue compartiendo la misma imagen.
 **El costo.** El número de una foto ya publicada puede cambiar cuando se quitan
 otras. Por eso solo se hace así al quitar; al agregar, las fotos nuevas siguen
 yendo al final.
+
+---
+
+<a id="d-31"></a>
+
+## D-31 · Los eventos que organizamos se anuncian aparte: cartel bajo el hero y página en la raíz
+
+**Decisión.** Los eventos que el club organiza y todavía no ocurren van en una
+colección propia, `proximos`. Mientras uno no termina, la portada lo anuncia con
+un cartel justo debajo del hero, antes de los pilares, y tiene su página en la
+raíz del sitio: `/student-community-day/`. El primero es el AWS Student Community
+Day Ecuador, el 14 de noviembre de 2026, en el que el club es anfitrión. El club
+pidió que fuera lo más visible del sitio y que quedara en ese lugar.
+
+**Por qué no va en `eventos`.** Todo el sitio da por hecho que un evento de
+`eventos` ya pasó: la cifra del hero los cuenta, `/eventos/` dice «N eventos
+realizados» y los cuenta en pasado, y la portada toma de ahí sus fotos. Un evento
+futuro en esa colección obligaba a poner una excepción en cada una de esas
+piezas. Además, lo que anuncia un evento —entradas, registro, horario,
+participantes, patrocinadores— no es lo que lo documenta después: fotos,
+asistentes y crónica. Cuando pase, sus fotos entran en `eventos` como las de
+cualquier otro.
+
+**Por qué la página va en la raíz.** Es la URL que el club pone en Instagram, en
+los QR de los afiches y en WhatsApp, y la de Amplify ya es larga. Una redirección
+desde una URL corta no sirve: Amplify solo redirige desde la consola, y la que
+genera Astro es una página con `meta refresh`, sin `og:image`, así que la vista
+previa del enlace saldría vacía. La ruta sale del nombre del archivo
+(`[proximo].astro`), como el `.ics` (`[proximo].ics.ts`).
+
+**Cómo se retira.** El cartel sale mientras el `fin` del evento sea posterior al
+momento del build. Como el sitio es estático, sigue publicado hasta el primer
+build después del evento: el push de las fotos, o un *Redeploy* desde la consola
+de Amplify. La página no desaparece: sigue en su URL, ya sin la inscripción.
+
+**El fondo es el azul marino del afiche, no el morado del hero.** El token
+`afiche` (`#0b1828`) separa el cartel del hero que tiene encima y deja que la
+catedral recortada del afiche, que trae ese fondo, se funda con él. La regla 1 no
+cambia: «Community» va en blanco, como pidió el club, y el morado y el magenta del
+afiche quedan en los íconos, los píxeles y la foto. El logo de AWS es el del kit
+(`Branding/Logos & Icons/aws.svg`) con las letras en blanco, su versión para fondo
+oscuro; la sonrisa sigue en naranja.
+
+**Lo que se descartó.**
+
+- **Reemplazar el hero del club.** Se propuso, y el club prefirió conservarlo y
+  poner el evento debajo.
+- **Incrustar TicketIn, Meetup o un mapa de Google.** La CSP los bloquearía
+  ([D-25](#d-25)). Van como enlaces que abren otra pestaña, como las redes del pie.
+- **Servir el `.ics` como descarga a secas.** `customHttp.yml` le pone
+  `Content-Type: text/calendar` para que el iPhone ofrezca agregarlo al
+  calendario.

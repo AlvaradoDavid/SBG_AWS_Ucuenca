@@ -1,0 +1,214 @@
+---
+/**
+ * La página de cada próximo evento, en la raíz y con el nombre de su archivo:
+ * src/content/proximos/student-community-day.mdx → /student-community-day/.
+ * Es la URL corta para Instagram, los QR y WhatsApp (D-31). Sigue publicada
+ * después del evento, ya sin inscripción.
+ */
+import Layout from '../layouts/Layout.astro';
+import CartelEvento from '../components/CartelEvento.astro';
+import Patrocinadores from '../components/Patrocinadores.astro';
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import { club } from '../lib/categorias';
+import { diaDeEvento, horaDeEvento } from '../lib/fechas';
+import { estaVigente, type Proximo } from '../lib/proximos';
+
+export async function getStaticPaths() {
+  const proximos = await getCollection('proximos');
+  return proximos.map((evento) => ({ params: { proximo: evento.id }, props: { evento } }));
+}
+
+const { evento } = Astro.props as { evento: Proximo };
+const { Content } = await render(evento);
+const {
+  titulo, resumen, inicio, fin, lugar, mapa, acceso, entradas, registro,
+  incluye, imagen, afiche, participantes, patrocinadores,
+} = evento.data;
+
+const vigente = estaVigente(evento);
+const ciudades = new Set(participantes.map((p) => p.ciudad)).size;
+const instagram = `@${new URL(club.instagram).pathname.replaceAll('/', '')}`;
+
+const boton =
+  'inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-bold transition';
+const botonPrincipal = `${boton} bg-morado-700 text-white hover:bg-morado-800`;
+const botonSecundario = `${boton} border border-tinta-300 bg-white text-tinta-900 hover:border-morado-300 hover:bg-morado-50`;
+---
+
+<Layout
+  title={titulo}
+  description={resumen}
+  imagen={afiche}
+  imagenAlt={`Afiche del ${titulo}: ${diaDeEvento(inicio)}, ${lugar.join(', ')}`}
+>
+  <div data-pagefind-body>
+    <!-- Cartel: la composición del afiche, con la foto hasta el borde derecho. -->
+    <header class="relative isolate overflow-hidden bg-afiche">
+      <span aria-hidden="true" class="absolute left-0 top-0 z-10 h-10 w-10 bg-marca-magenta sm:h-12 sm:w-12"></span>
+      <div class="mx-auto max-w-6xl px-6 lg:grid lg:grid-cols-2">
+        <div class="relative z-10 pb-12 pt-16 sm:pb-14 sm:pt-20 lg:py-20 lg:pr-6">
+          <CartelEvento evento={evento} nivel="h1" idTitulo="titulo-evento" />
+        </div>
+      </div>
+      <div class="relative h-72 sm:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[46%]">
+        <Image
+          src={imagen}
+          alt=""
+          widths={[480, 720]}
+          sizes="(min-width: 1024px) 46vw, 100vw"
+          loading="eager"
+          fetchpriority="high"
+          class="absolute inset-0 h-full w-full object-cover object-[50%_45%] [mask-image:linear-gradient(to_bottom,transparent,#000_30%)] lg:[mask-image:linear-gradient(to_right,transparent,#000_22%)]"
+        />
+      </div>
+    </header>
+
+    <!-- El evento -->
+    <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <div class="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+        <div data-reveal>
+          <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">El evento</p>
+          <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">
+            Una conferencia de un día, hecha por estudiantes
+          </h2>
+          <div class="prose prose-tinta mt-5 max-w-none leading-relaxed">
+            <Content />
+          </div>
+        </div>
+        <div data-reveal class="self-start rounded-2xl border border-morado-100 bg-morado-50 p-6 sm:p-8">
+          <h3 class="font-display text-lg font-bold text-tinta-900">Qué incluye</h3>
+          <ul class="mt-5 space-y-4">
+            {incluye.map((cosa) => (
+              <li class="flex gap-3 leading-snug text-tinta-700">
+                <span aria-hidden="true" class="mt-1.5 h-2.5 w-2.5 shrink-0 bg-marca-purple"></span>
+                {cosa}
+              </li>
+            ))}
+          </ul>
+          <p class="mt-6 border-t border-morado-100 pt-5 text-sm leading-relaxed text-tinta-600">
+            <span class="font-bold text-tinta-900 first-letter:uppercase inline-block">{diaDeEvento(inicio, { conAnio: true })}</span>,
+            de {horaDeEvento(inicio)} a {horaDeEvento(fin)}.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cómo participar -->
+    {vigente && (
+      <section class="fondo-aurora border-y border-morado-100">
+        <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+          <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Cómo participar</p>
+          <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">{acceso}</h2>
+          <ol class="mt-10 grid gap-6 md:grid-cols-3">
+            <li data-reveal class="flex flex-col rounded-2xl border border-morado-100 bg-white p-6 shadow-sm shadow-morado-900/5">
+              <span class="font-mono text-xs uppercase tracking-widest text-tinta-500">Paso 1</span>
+              <h3 class="mt-2 font-display text-lg font-bold text-tinta-900">Reserva tu entrada</h3>
+              <p class="mt-2 flex-1 text-sm leading-relaxed text-tinta-600">
+                La entrada es gratuita y se reserva en {entradas.sitio}.
+              </p>
+              <a href={entradas.url} target="_blank" rel="noopener noreferrer" class:list={[botonPrincipal, 'mt-5']}>
+                Reservar en {entradas.sitio}
+              </a>
+            </li>
+            <li data-reveal class="flex flex-col rounded-2xl border border-morado-100 bg-white p-6 shadow-sm shadow-morado-900/5">
+              <span class="font-mono text-xs uppercase tracking-widest text-tinta-500">Paso 2</span>
+              <h3 class="mt-2 font-display text-lg font-bold text-tinta-900">Regístrate en {registro.sitio}</h3>
+              <p class="mt-2 flex-1 text-sm leading-relaxed text-tinta-600">
+                El registro es obligatorio: los cupos son limitados.
+              </p>
+              <a href={registro.url} target="_blank" rel="noopener noreferrer" class:list={[botonPrincipal, 'mt-5']}>
+                Registrarme en {registro.sitio}
+              </a>
+            </li>
+            <li data-reveal class="flex flex-col rounded-2xl border border-morado-100 bg-white p-6 shadow-sm shadow-morado-900/5">
+              <span class="font-mono text-xs uppercase tracking-widest text-tinta-500">El día</span>
+              <h3 class="mt-2 font-display text-lg font-bold text-tinta-900">Cómo llegar</h3>
+              <p class="mt-2 flex-1 text-sm leading-relaxed text-tinta-600">
+                {lugar.map((renglon, i) => (
+                  <span class:list={['block', i === 0 && 'font-bold text-tinta-900']}>{renglon}</span>
+                ))}
+              </p>
+              <a href={mapa} target="_blank" rel="noopener noreferrer" class:list={[botonSecundario, 'mt-5']}>
+                Abrir en Google Maps
+              </a>
+            </li>
+          </ol>
+        </div>
+      </section>
+    )}
+
+    <!-- Comunidades participantes -->
+    <section class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+      <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Comunidades participantes</p>
+      <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">
+        {participantes.length} Student Builder Groups de {ciudades} ciudades
+      </h2>
+      <p class="mt-4 max-w-2xl leading-relaxed text-tinta-600">
+        Los grupos universitarios de AWS de todo el Ecuador que ya confirmaron su participación.
+      </p>
+      <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {participantes.map((grupo) => (
+          <li
+            data-reveal
+            class:list={[
+              'relative rounded-2xl border bg-white p-5',
+              grupo.anfitrion ? 'border-morado-300 shadow-md shadow-morado-700/10' : 'border-tinta-200',
+            ]}
+          >
+            <p class="font-mono text-[11px] uppercase tracking-widest text-tinta-500">{grupo.ciudad}</p>
+            <p class="mt-2 font-display text-xl font-bold text-tinta-900">
+              <span class="sr-only">AWS Student Builder Group at </span>{grupo.siglas}
+            </p>
+            <p class="mt-1 text-sm leading-snug text-tinta-600">{grupo.universidad}</p>
+            {grupo.anfitrion && (
+              <p class="mt-4 inline-flex items-center gap-2 rounded-full bg-morado-100 px-3 py-1 text-xs font-bold text-tinta-700 ring-1 ring-morado-200">
+                <span aria-hidden="true" class="h-1.5 w-1.5 bg-marca-purple"></span>
+                Anfitriones
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Agenda y ponentes: pendientes. Mientras tanto, las redes del club. -->
+    {vigente && (
+      <section class="fondo-aurora border-y border-morado-100">
+        <div data-reveal class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+          <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Agenda y ponentes</p>
+          <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">Muy pronto</h2>
+          <p class="mt-4 max-w-2xl leading-relaxed text-tinta-600">
+            Estamos cerrando la agenda y la lista de ponentes, y las anunciaremos en nuestras redes.
+            Síguenos para enterarte primero, y escríbenos por ahí si tienes dudas.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href={club.instagram} target="_blank" rel="noopener noreferrer" class={botonSecundario}>
+              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38C1.35 2.68.93 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.93 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/>
+              </svg>
+              Instagram · {instagram}
+            </a>
+            <a href={club.linkedin} target="_blank" rel="noopener noreferrer" class={botonSecundario}>
+              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/>
+              </svg>
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Patrocinadores: al final de la página, como pidió el club. -->
+    {patrocinadores.length > 0 && (
+      <section class="mx-auto max-w-6xl px-6 py-16 text-center sm:py-20">
+        <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Patrocinadores</p>
+        <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900">Con el apoyo de</h2>
+        <div data-reveal class="mt-10">
+          <Patrocinadores patrocinadores={patrocinadores} />
+        </div>
+      </section>
+    )}
+  </div>
+</Layout>

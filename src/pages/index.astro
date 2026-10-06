@@ -2,11 +2,16 @@
 import Layout from '../layouts/Layout.astro';
 import TarjetaServicio from '../components/TarjetaServicio.astro';
 import FondoParticulas from '../components/FondoParticulas.astro';
+import ProximoEvento from '../components/ProximoEvento.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { club } from '../lib/categorias';
 import { fotosDeEvento, portadaDeEvento } from '../lib/fotos';
 import { fechaLarga } from '../lib/fechas';
+import { proximoEvento } from '../lib/proximos';
+
+/** El evento que organizamos, si aún no termina: va entre el hero y los pilares. */
+const proximo = await proximoEvento();
 
 const servicios = await getCollection('servicios');
 const destacados = servicios.filter((s) => s.data.destacado).slice(0, 3);
@@ -172,6 +177,9 @@ const pilares = [
       )}
     </div>
   </section>
+
+  <!-- Próximo evento: desaparece solo en el primer build después de que termina. -->
+  {proximo && <ProximoEvento evento={proximo} />}
 
   <!-- Pilares -->
   <section class="mx-auto max-w-6xl px-6 py-16">

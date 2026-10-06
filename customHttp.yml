@@ -15,6 +15,13 @@ customHeaders:
       - key: 'Cache-Control'
         value: 'public, max-age=31536000, immutable'
 
+  # Los archivos de calendario de los próximos eventos (/student-community-day.ics).
+  # Con este tipo, el iPhone ofrece agregarlos al Calendario en vez de descargarlos.
+  - pattern: '/*.ics'
+    headers:
+      - key: 'Content-Type'
+        value: 'text/calendar; charset=utf-8'
+
   - pattern: '**'
     headers:
       - key: 'Strict-Transport-Security'

@@ -2,6 +2,63 @@
 
 ---
 
+## AWS Student Community Day: cartel en la portada y página propia
+
+Del 2026-10-05 al 06. El club es el anfitrión del primer AWS Student Community
+Day del Ecuador, el sábado 14 de noviembre de 2026 de 09h00 a 14h00 en el Campus
+Balzay, y pidió que fuera lo más visible del sitio. De las ideas que se le
+propusieron eligió dos: el cartel en la portada y la página propia. Ver
+[D-31](decisiones.md#d-31).
+
+- **Cartel en la portada,** justo debajo del hero y antes de los pilares, donde
+  lo pidió el club, en vez de reemplazar el hero como se había propuesto. Copia
+  la composición del afiche —texto a la izquierda, catedral con el mosaico a la
+  derecha— sobre su mismo azul marino, con botones a TicketIn y Meetup, el
+  calendario y «Ver todos los detalles». Debajo, «Patrocinan».
+- **Página `/student-community-day/`,** con el cartel a todo el ancho, «El
+  evento», «Cómo participar», las 8 comunidades participantes, «Agenda y
+  ponentes: muy pronto» con Instagram y LinkedIn como contacto, y al final los
+  patrocinadores: Deuna, TicketIn y Ambross TI. Al compartirla sale el afiche.
+- **Calendario sin JavaScript:** un enlace a Google Calendar y
+  `/student-community-day.ics`, que `customHttp.yml` sirve como `text/calendar`.
+- **Colección nueva, `proximos`,** con todos los datos del evento validados por el
+  esquema. Los textos salen de las páginas del evento en TicketIn y Meetup, y las
+  comunidades de <https://www.awsugecuador.com/comunidades/>: los 8 Student
+  Builder Groups que el club confirmó.
+- **«Community» va en blanco,** como eligió el club: el morado del afiche queda
+  en los íconos y los píxeles (regla 1).
+- **La carpeta del evento en `Eventos/` pasó a llamarse
+  `2026-11-14 AWS Student Community Day`** y el arte quedó en `arte/`. Sin la
+  fecha, `pnpm fotos` habría creado `AWS-student-community-day` con los dos
+  afiches como fotos 1 y 2.
+- **Token `afiche`** (`#0b1828`) y logo de AWS en blanco (`aws-blanco.svg`), del
+  kit de marca.
+
+**Verificado:**
+
+- Portada a 320, 375, 768 y 1440 px: sin desbordes, con «Community Day» en una
+  línea desde 320 px, y ningún texto en color de marca dentro del cartel,
+  comprobado sobre los estilos calculados. El texto más débil sobre el azul
+  marino, `tinta-300`, mide 9.35:1, y el foco 4.89:1.
+- La página del evento a 390 y 1440 px, servida con las cabeceras de
+  `customHttp.yml`: sin errores en la consola, así que la CSP no bloquea nada.
+- El `.ics` tiene 22 líneas de 75 bytes como máximo, terminadas en CRLF, con las
+  horas en UTC (14h00 a 19h00). El enlace de Google Calendar lleva las mismas.
+- `pnpm build`: 263 páginas, una más que antes, y 259 en el índice de Pagefind.
+  `pnpm enlaces` da ✓ con 393 destinos, dos más que antes: la página y el `.ics`.
+- JavaScript sin cambios: 4.6 KB en la portada y 1.0 KB en la página del evento.
+
+**El build local, con el compilador de JavaScript.** En esta máquina, Smart App
+Control bloquea los binarios nativos de satteri, el compilador de Markdown que
+Astro 7 trae por defecto, y el 2026-10-06 también el del compilador de Astro
+(`astro.win32-x64-msvc.node`). La verificación se hizo con una configuración
+temporal, fuera del repositorio, que usa `unified`, el compilador de JavaScript
+que trae Astro. Amplify compila en Linux con satteri, como siempre. Si el bloqueo
+sigue, conviene compilar en un contenedor Linux. Ver la nota de la máquina en
+[estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#el-build-local-en-esta-máquina).
+
+---
+
 ## Tomas repetidas fuera de los demás eventos
 
 El 2026-10-01. A pedido del club, el mismo trabajo que se hizo con el Community

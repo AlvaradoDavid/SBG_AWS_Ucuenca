@@ -293,6 +293,84 @@ solo con el teclado.
 
 ---
 
+## `ProximoEvento.astro`
+
+El próximo evento que organiza el club, en la portada: va entre el hero y los
+pilares mientras no haya terminado ([D-31](decisiones.md#d-31)).
+
+```astro
+{proximo && <ProximoEvento evento={proximo} />}
+```
+
+`proximo` sale de `proximoEvento()` en `src/lib/proximos.ts`: el evento de la
+colección `proximos` cuyo `fin` es posterior al build y que empieza antes. Si no
+hay ninguno, la portada queda como antes.
+
+Es una tarjeta `bg-afiche` con la composición del afiche: el texto de
+`CartelEvento` a la izquierda y la foto a la derecha, que se funde con el fondo
+con una máscara CSS (desde arriba en móvil, desde la izquierda en escritorio).
+La foto lleva `alt=""`: todo lo que dice el afiche está en el texto. Debajo de la
+tarjeta, sobre blanco, la franja «Patrocinan». Sin JavaScript.
+
+En móvil la sección usa `px-4` en vez de `px-6`, y el texto `px-5`: con los 24 px
+habituales, «Community Day» no cabía en una línea a 375 px.
+
+---
+
+## `CartelEvento.astro`
+
+El texto del cartel, compartido por la portada y la página del evento.
+
+```astro
+<CartelEvento evento={evento} nivel="h2" idTitulo="proximo-evento" conDetalles />
+```
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `evento` | `Proximo` | Una entrada de la colección `proximos` |
+| `nivel` | `'h1'` \| `'h2'` | `h1` en la página del evento, `h2` en la portada |
+| `idTitulo` | string | Para el `aria-labelledby` de la sección que lo contiene |
+| `conDetalles` | boolean? | Añade «Ver todos los detalles →» hacia la página del evento |
+
+De arriba abajo: el logo de AWS y el del grupo, la píldora «Próximo evento» con
+«Somos los anfitriones», el nombre partido como en el afiche (`cartel` en el
+frontmatter), el lema, fecha y lugar con sus íconos, el acceso, los botones de
+entrada y registro, y los enlaces de calendario. El título es un único `h1` o
+`h2`: los renglones son `span` con un espacio entre ellos, así que un lector de
+pantalla lee «Primer Student Community Day Ecuador».
+
+Va siempre sobre `bg-afiche`. Ningún texto va en color de marca: el morado y el
+magenta están en los íconos y en los píxeles (el de la esquina, el escalonado
+junto a «Ecuador» y los separadores del lema). Después del evento, la píldora
+dice «Ya se realizó» con la fecha, y los botones y el calendario desaparecen.
+
+**Calendario.** «Google» abre Google Calendar con el evento ya lleno (un enlace,
+sin API). «Apple u Outlook» descarga `/<evento>.ics`, que genera
+`pages/[proximo].ics.ts`.
+
+---
+
+## `Patrocinadores.astro`
+
+Los logos de los patrocinadores, todos a la misma altura y cada uno con su ancho
+natural.
+
+```astro
+<Patrocinadores patrocinadores={evento.data.patrocinadores} compacto />
+```
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `patrocinadores` | `{ nombre, logo, sobreBlanco }[]` | Del frontmatter de `proximos` |
+| `compacto` | boolean? | Tarjetas de 56 px para la franja de la portada; sin él, 96 px |
+
+Un logo que trae su propio fondo (TicketIn en amarillo, Ambross en azul) ocupa la
+tarjeta entera. Uno transparente (`sobreBlanco: true`, el de Deuna) va sobre
+blanco, con relleno. El `alt` es el nombre del patrocinador. Las imágenes se
+generan al doble de su alto en pantalla, sin pasar del original.
+
+---
+
 ## `ImagenPlaceholder.astro`
 
 Marco punteado para huecos de imagen pendientes.
@@ -326,6 +404,25 @@ hay que agruparlos o colapsarlos.
 Los botones de filtro llevan `aria-pressed`, van agrupados en un `role="group"`
 con etiqueta, y el contador de resultados es `aria-live="polite"` para que un
 lector de pantalla anuncie cuántos servicios quedaron.
+
+### `pages/[proximo].astro` y `pages/[proximo].ics.ts`
+
+Una página y un archivo de calendario por cada entrada de `proximos`, en la raíz:
+`student-community-day.mdx` da `/student-community-day/` y
+`/student-community-day.ics`. `rutaDeProximo()` arma la misma ruta para los
+enlaces.
+
+La página tiene, en orden: el cartel a todo el ancho, con la foto hasta el borde
+derecho en escritorio; «El evento», con el cuerpo del `.mdx` y «Qué incluye»;
+«Cómo participar», con entrada, registro y cómo llegar; las comunidades
+participantes; «Agenda y ponentes», que por ahora dice «Muy pronto» y lleva a
+Instagram y LinkedIn; y al final, los patrocinadores. Su `og:image` es el afiche
+completo. Después del evento se quedan el cartel, «El evento», las comunidades y
+los patrocinadores.
+
+El `.ics` sigue el RFC 5545: líneas terminadas en CRLF y partidas a 75 bytes
+(bytes, no letras: «Más» ocupa 4), con comas y saltos de línea escapados. Las
+horas van en UTC (`20261114T140000Z` son las 09h00 en Ecuador).
 
 ### `pages/index.astro`
 

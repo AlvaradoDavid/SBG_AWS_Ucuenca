@@ -94,4 +94,65 @@ const eventos = defineCollection({
   }),
 });
 
-export const collections = { servicios, eventos };
+/**
+ * Eventos que el club organiza y todavía no ocurren. Cada uno tiene su cartel en
+ * la portada, bajo el hero, mientras no haya terminado, y su propia página. Cuando
+ * pasa, sus fotos van a `eventos` como las de cualquier otro (ver D-31).
+ */
+const proximos = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/proximos' }),
+  schema: ({ image }) =>
+    z.object({
+      /** Nombre oficial: el de <title> y el de la vista previa al compartir. */
+      titulo: z.string(),
+      /** El nombre como lo compone el afiche, en el orden en que se lee. */
+      cartel: z.object({
+        /** Sobre el nombre, espaciado: «Primer». */
+        antetitulo: z.string().optional(),
+        /** Las líneas grandes: ["Student", "Community Day"]. */
+        lineas: z.array(z.string()).min(1),
+        /** La última línea, en peso regular: «Ecuador». */
+        cierre: z.string().optional(),
+      }),
+      lema: z.array(z.string()).min(1),
+      /** Descripción para buscadores y vistas previas, y entrada de la página. */
+      resumen: z.string().max(220),
+      /** Con hora y zona: 2026-11-14T09:00:00-05:00. */
+      inicio: z.coerce.date(),
+      fin: z.coerce.date(),
+      /** Una línea por renglón del cartel: lugar, institución, ciudad. */
+      lugar: z.array(z.string()).min(1),
+      mapa: z.string().url(),
+      /** Lo que cuesta entrar, en una frase: «Entrada gratuita, con cupos limitados». */
+      acceso: z.string(),
+      entradas: z.object({ url: z.string().url(), sitio: z.string() }),
+      registro: z.object({ url: z.string().url(), sitio: z.string() }),
+      /** Qué trae la jornada, en frases cortas. */
+      incluye: z.array(z.string()).min(1),
+      /** La foto del cartel. Va con alt vacío: todo lo que dice está en el texto. */
+      imagen: image(),
+      /** El afiche oficial completo: es la vista previa al compartir la página. */
+      afiche: image(),
+      participantes: z.array(
+        z.object({
+          siglas: z.string(),
+          universidad: z.string(),
+          ciudad: z.string(),
+          anfitrion: z.boolean().optional().default(false),
+        })
+      ),
+      patrocinadores: z.array(
+        z.object({
+          nombre: z.string(),
+          logo: image(),
+          /**
+           * Para logos de fondo transparente: van sobre una tarjeta blanca con aire
+           * alrededor. Los que traen su propio fondo ocupan la tarjeta entera.
+           */
+          sobreBlanco: z.boolean().optional().default(false),
+        })
+      ),
+    }),
+});
+
+export const collections = { servicios, eventos, proximos };

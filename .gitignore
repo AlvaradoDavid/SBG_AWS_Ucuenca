@@ -32,3 +32,7 @@ pnpm-debug.log*
 # Las versiones optimizadas que use el sitio van en public/ o src/assets/.
 /Eventos/
 /Branding/*.pptx
+
+# Config local para compilar sin el binario de satteri, que Smart App Control
+# bloquea en una de las máquinas del club. Ver docs/estado-y-siguientes-pasos.md.
+/astro.config.verificacion.mjs

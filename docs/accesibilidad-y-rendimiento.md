@@ -16,6 +16,8 @@ colores vibrantes no llegan a 4.5:1 sobre blanco.
 | Blanco sobre `marca-grey` | 15.2:1 | AAA |
 | Blanco sobre `morado-950` (hero, pie) | 19:1 | AAA |
 | `tinta-300` sobre `morado-950` | 9.95:1 | AAA |
+| Blanco sobre `afiche` (cartel del próximo evento) | 17.9:1 | AAA |
+| `tinta-300` sobre `afiche` | 9.35:1 | AAA |
 | `tinta-400` sobre `morado-950` (texto pequeño del pie) | 5.24:1 | AA |
 | Blanco sobre `morado-700` (botón principal, filtro activo) | 7.6:1 | AAA |
 | `tinta-500` sobre `morado-50` (etiquetas en secciones lavanda) | 5.95:1 | AA |
@@ -83,12 +85,16 @@ Medido sobre `dist/` después de `pnpm build`:
 
 | Página | JS en línea | HTML |
 | --- | --- | --- |
-| Portada | 4.6 KB | 38.7 KB |
+| Portada | 4.6 KB | 47.7 KB |
 | Página de evento | 1.0 KB | 43.3 KB |
+| Página de un próximo evento (`/student-community-day/`) | 1.0 KB | 30.1 KB |
 | Ficha de servicio | 1.0 KB | 24.3 KB |
 | **Catálogo de servicios** | **52.4 KB** | **503.5 KB** |
 
-De los 4.6 KB de la portada, 3.0 KB son el campo de partículas del hero.
+De los 4.6 KB de la portada, 3.0 KB son el campo de partículas del hero. El
+cartel del próximo evento no suma JavaScript, solo HTML: 8.4 KB de los 47.7 KB de
+la portada. El resto del aumento desde los 38.7 KB del 2026-09-30 vino de los
+eventos que se agregaron después.
 
 ### El catálogo es la excepción, y hay que mirarla de frente
 

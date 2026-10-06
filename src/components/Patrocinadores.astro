@@ -1,0 +1,44 @@
+---
+/**
+ * Logos de los patrocinadores de un evento, todos a la misma altura y cada uno con
+ * su ancho natural. Los que traen su propio fondo ocupan la tarjeta entera; los
+ * transparentes (`sobreBlanco`) van sobre blanco, con aire alrededor.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  patrocinadores: { nombre: string; logo: ImageMetadata; sobreBlanco: boolean }[];
+  /** Más bajos, para la franja bajo el cartel de la portada. */
+  compacto?: boolean;
+}
+
+const { patrocinadores, compacto = false } = Astro.props;
+
+// Todas las tarjetas miden lo mismo de alto: 56 px compactas y 96 px en la página.
+// En las blancas, el relleno se descuenta del logo.
+const tarjeta = compacto ? 'h-14' : 'h-24';
+const relleno = compacto ? 'px-4 py-3' : 'px-6 py-5';
+const logoSobreBlanco = compacto ? 'h-8' : 'h-14';
+// Se genera al doble del alto de pantalla, sin pasar del original.
+const altoGenerado = compacto ? 112 : 192;
+---
+
+<ul class:list={['flex flex-wrap items-center justify-center', compacto ? 'gap-3' : 'gap-4 sm:gap-6']}>
+  {patrocinadores.map(({ nombre, logo, sobreBlanco }) => (
+    <li
+      class:list={[
+        'flex items-center overflow-hidden rounded-xl ring-1 ring-tinta-200',
+        tarjeta,
+        sobreBlanco && ['bg-white', relleno],
+      ]}
+    >
+      <Image
+        src={logo}
+        alt={nombre}
+        height={Math.min(logo.height, altoGenerado)}
+        class:list={['w-auto', sobreBlanco ? logoSobreBlanco : 'h-full']}
+      />
+    </li>
+  ))}
+</ul>

@@ -47,6 +47,21 @@ otra luminosidad. Es para fondos y bordes. No hay `morado-500`: ese es
 | `morado-900` | `#281253` | Tramo central del degradado de `fondo-noche` | blanco 16.1:1 · `tinta-300` 8.4:1 |
 | `morado-950` | `#13092d` | Base de `fondo-noche` y fondo del pie | blanco 19:1 · `tinta-300` 9.95:1 · `tinta-400` 5.24:1 |
 
+### El fondo del afiche
+
+Un solo token fuera de la paleta del kit, y solo para el cartel del próximo
+evento ([D-31](decisiones.md#d-31)):
+
+| Token | Hex | Uso | Texto encima |
+| --- | --- | --- | --- |
+| `afiche` | `#0b1828` | Fondo del cartel del Student Community Day, en la portada y en su página | blanco 17.9:1 · `tinta-200` 13:1 · `tinta-300` 9.35:1 · `tinta-400` 4.93:1 |
+
+Es el azul marino del afiche oficial, medido sobre el arte. Separa el cartel del
+hero morado que tiene encima, y la catedral recortada del afiche, que trae ese
+mismo fondo, se funde con él en lugar de quedar en un recuadro. El foco morado
+mide 4.89:1 encima, y la píldora «Próximo evento» (blanco al 10 %) deja su texto
+`tinta-100` en 11.7:1.
+
 ### Escala neutra
 
 De `tinta-50` a `tinta-900`, derivada del Grey 850 oficial.

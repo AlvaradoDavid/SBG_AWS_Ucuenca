@@ -11,7 +11,8 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | --- | --- |
 | Diseño y sistema de tokens | Completo y documentado. El morado ocupa superficies: hero, pie y fondos aurora ([D-28](decisiones.md#d-28)) |
 | Navegación (escritorio y móvil) | Completa |
-| Portada | Completa: hero en morado profundo con collage, cifras y partículas; pilares, trayectoria, galería |
+| Portada | Completa: hero en morado profundo con collage, cifras y partículas; cartel del Student Community Day; pilares, trayectoria, galería |
+| Próximo evento | **AWS Student Community Day Ecuador, 14 de noviembre de 2026**: cartel bajo el hero y página en `/student-community-day/`. Faltan agenda, ponentes y el arte original: ver más abajo |
 | Galería de eventos | Completa, con visor accesible |
 | Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
 | Contenido de eventos | Completo: los 7 con texto; 5 con cifra de asistentes |
@@ -41,6 +42,60 @@ catálogo:** se le añaden los campos que faltan y su diagrama, sin tocar nada m
 Las fichas de servicios que AWS ya retiró llevan una línea **Nota:** al final del
 cuerpo, con la fecha de fin de soporte y la alternativa vigente. Se conservan
 porque aparecen en material de estudio antiguo y en arquitecturas heredadas.
+
+---
+
+## Lo urgente: el AWS Student Community Day (14 de noviembre)
+
+El primer AWS Student Community Day del Ecuador: sábado 14 de noviembre de 2026,
+de 09h00 a 14h00, en el Campus Balzay. **El club es el anfitrión** y pidió que
+fuera lo más visible del sitio. Construido el 2026-10-05 ([D-31](decisiones.md#d-31)):
+
+- **Un cartel en la portada,** justo debajo del hero y antes de los pilares, con
+  la composición del afiche, los botones de entrada (TicketIn) y registro
+  (Meetup), el calendario y los patrocinadores.
+- **Una página propia,** `/student-community-day/`, para Instagram, los QR y
+  WhatsApp: el evento, cómo participar, las 8 comunidades participantes, la
+  agenda («Muy pronto») y los patrocinadores al final. Al compartirla sale el
+  afiche.
+- **Un archivo de calendario,** `/student-community-day.ics`, y un enlace a
+  Google Calendar.
+
+Todo vive en `src/content/proximos/student-community-day.mdx`: para cambiar un
+enlace, el horario, los participantes o los patrocinadores se edita ese archivo,
+sin tocar componentes.
+
+**Pendiente del club:**
+
+- **Agenda y ponentes.** Cuando lleguen, la sección «Agenda y ponentes» de la
+  página deja de decir «Muy pronto». Hace falta un campo nuevo en el esquema
+  (`agenda`, con hora, título y ponente) y, por ponente, nombre, tema y foto con
+  su permiso, como con el CORE Team.
+- **Otros participantes,** además de los 8 Student Builder Groups.
+- **El arte original.** La foto del cartel es un recorte del afiche horizontal
+  (682 × 901 px) y se ve algo blanda en pantallas de alta densidad. Con la foto de
+  la catedral sin texto, o el diseño de Canva, se cambia
+  `src/assets/proximos/student-community-day/catedral.jpg` por la nueva y no hay
+  que tocar nada más.
+- **El logo de Ambross** mide 200 × 200 px: justo el doble de su tarjeta. Si hay
+  uno más grande, se ve más nítido.
+- **«Más información» en TicketIn y Meetup** apunta hoy a la portada. Después del
+  push conviene cambiarlo a `/student-community-day/`.
+
+**Después del 14:**
+
+1. El cartel de la portada se retira solo en el primer build después de las
+   14h00 del 14: el push de las fotos, o un *Redeploy* desde la consola de
+   Amplify si no hay nada que publicar.
+2. Las fotos van como las de cualquier evento: en
+   `Eventos/2026-11-14 AWS Student Community Day/`, sueltas, y `pnpm fotos`. La
+   carpeta ya tiene la fecha en el nombre y el arte está aparte, en `arte/`, para
+   que las fotos del día se numeren desde la 1.
+3. El `.mdx` del evento va en `src/content/eventos/`, con `hito: true` y los
+   asistentes: es el hito de la trayectoria en el que el club pasa de participar a
+   organizar.
+4. La página `/student-community-day/` sigue en línea, ya sin inscripción. Si se
+   quiere, puede enlazar a la galería del evento.
 
 ---
 
@@ -433,6 +488,49 @@ Para medir el JavaScript de una página:
 ```bash
 python -c "import re; h=open('dist/index.html',encoding='utf-8').read(); print(sum(len(m) for m in re.findall(r'<script type=\"module\">(.*?)</script>',h,re.S))/1024, 'KB')"
 ```
+
+### El build local en esta máquina
+
+Desde el 2026-10-05, **Smart App Control de Windows bloquea binarios nativos del
+build**. El mensaje dice *An Application Control policy has blocked this file*,
+aunque Astro lo presenta como `Cannot find native binding`. Son dos:
+
+| Binario | Para qué sirve | Bloqueado |
+| --- | --- | --- |
+| `satteri_napi.win32-x64-msvc.node` | Compilador de Markdown y MDX por defecto de Astro 7 | Siempre, desde el 2026-10-05 |
+| `astro.win32-x64-msvc.node` | Compilador de los `.astro` | A ratos: el 2026-10-06, con la red a ~50 KB/s |
+
+Smart App Control decide consultando la reputación de cada archivo en la nube,
+así que con la red lenta bloquea más. No se desactiva: es configuración de
+seguridad y, una vez apagado, Windows no deja volver a encenderlo sin reinstalar.
+El registro de Windows lo confirma (`Microsoft-Windows-CodeIntegrity/Operational`,
+eventos 3077 y 3118).
+
+**Para el de Markdown hay salida sin descargar nada.** Astro trae también
+`unified`, un compilador escrito en JavaScript. Se usa con una configuración
+aparte, `astro.config.verificacion.mjs`, que está en `.gitignore` porque solo
+sirve en esta máquina:
+
+```js
+import base from './astro.config.mjs';
+import { unified } from './node_modules/.pnpm/@astrojs+markdown-remark@7.2.2/node_modules/@astrojs/markdown-remark/dist/index.js';
+
+export default { ...base, markdown: { ...base.markdown, processor: unified() } };
+```
+
+```bash
+pnpm exec astro build --config astro.config.verificacion.mjs && pnpm exec pagefind --site dist
+```
+
+La ruta del `import` lleva la versión: si Astro se actualiza, hay que corregirla.
+El HTML puede diferir en detalles del de satteri, como las comillas tipográficas o
+los identificadores de los títulos. Para verificar un cambio basta, pero lo que se
+publica sale de Amplify, que compila en Linux con satteri.
+
+**Para el compilador de Astro no hay salida sin descargar algo:** su versión en
+WebAssembly (`@astrojs/compiler-binding-wasm32-wasi`) no viene instalada. Si el
+bloqueo se vuelve permanente, lo más limpio es compilar en un contenedor Linux
+con Docker Desktop, como hace Amplify.
 
 ### Lo que el build no comprueba: la CSP
 

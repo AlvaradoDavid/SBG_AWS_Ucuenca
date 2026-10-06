@@ -1,0 +1,158 @@
+---
+/**
+ * El texto del cartel de un próximo evento, con la composición de su afiche:
+ * quién organiza, el nombre, el lema, fecha y lugar, y cómo inscribirse. Lo usan
+ * la portada (bajo el hero) y la página del evento, siempre sobre `bg-afiche`.
+ *
+ * Todo es texto real y no parte de una imagen. Ningún texto va en color de marca
+ * (regla 1): el morado y el magenta del afiche quedan en los íconos y los píxeles.
+ */
+import { diaDeEvento, horaDeEvento } from '../lib/fechas';
+import { enlaceGoogleCalendar, estaVigente, rutaDeProximo, type Proximo } from '../lib/proximos';
+
+interface Props {
+  evento: Proximo;
+  /** h1 en la página del evento, h2 en la portada. */
+  nivel: 'h1' | 'h2';
+  idTitulo: string;
+  /** En la portada, el cartel enlaza a la página con todos los detalles. */
+  conDetalles?: boolean;
+}
+
+const { evento, nivel: Titulo, idTitulo, conDetalles = false } = Astro.props;
+const { cartel, lema, inicio, fin, lugar, acceso, entradas, registro } = evento.data;
+
+const vigente = estaVigente(evento);
+const ruta = rutaDeProximo(evento);
+const googleCalendar = enlaceGoogleCalendar(evento, new URL(ruta, Astro.site).href);
+
+const enlaceSobreOscuro =
+  'font-bold text-white underline decoration-white/40 decoration-2 underline-offset-4 transition hover:decoration-marca-purple';
+---
+
+<!-- Como en el afiche: el logo de AWS y, al lado, el del grupo. En pantallas muy
+     angostas el del grupo baja entero a la línea siguiente. -->
+<div class="flex flex-wrap items-center gap-x-4 gap-y-3 sm:gap-x-6">
+  <img src="/marca/aws-blanco.svg" alt="AWS" width="47" height="30" class="h-6 w-auto sm:h-7" />
+  <p class="flex items-center gap-2 text-[13px] leading-snug text-tinta-200 sm:gap-2.5 sm:text-sm">
+    <img src="/marca/program-icon-purple.svg" alt="" width="28" height="28" class="h-6 w-6 shrink-0 sm:h-7 sm:w-7" />
+    <span>Student Builder Group<br />de la Universidad de Cuenca</span>
+  </p>
+</div>
+
+<div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2">
+  <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-tinta-100 ring-1 ring-white/15">
+    <span aria-hidden="true" class="h-2 w-2 shrink-0 bg-marca-magenta"></span>
+    {vigente ? 'Próximo evento' : 'Ya se realizó'}
+  </p>
+  <p class="text-sm font-bold text-white first-letter:uppercase">
+    {vigente ? 'Somos los anfitriones' : diaDeEvento(inicio, { conAnio: true })}
+  </p>
+</div>
+
+<Titulo id={idTitulo} class="mt-4 font-display font-bold text-white">
+  {cartel.antetitulo && (
+    <span class="block text-sm uppercase tracking-[0.45em] text-tinta-200 sm:text-base">
+      {cartel.antetitulo}
+    </span>
+  )}
+  {' '}
+  {cartel.lineas.map((linea) => (
+    <>
+      <span class="mt-2 block text-[clamp(2rem,10vw,3.75rem)] leading-[0.95] tracking-tight lg:text-[clamp(3rem,4.5vw,4.25rem)]">
+        {linea}
+      </span>
+      {' '}
+    </>
+  ))}
+  {cartel.cierre && (
+    <span class="mt-2 flex items-center gap-3 font-sans text-[clamp(2rem,8.5vw,3.25rem)] font-normal leading-none tracking-wide lg:text-[clamp(2.6rem,3.9vw,3.75rem)]">
+      {cartel.cierre}
+      <!-- El píxel escalonado del afiche, junto al nombre. -->
+      <svg aria-hidden="true" viewBox="0 0 2 2" class="h-[0.42em] w-[0.42em] text-marca-magenta" fill="currentColor">
+        <rect x="1" width="1" height="1" /><rect y="1" width="2" height="1" />
+      </svg>
+    </span>
+  )}
+</Titulo>
+
+<ul class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-tinta-200 sm:text-lg">
+  {lema.map((frase, i) => (
+    <li class="flex items-center gap-3">
+      {i > 0 && <span aria-hidden="true" class="h-1.5 w-1.5 bg-marca-purple"></span>}
+      {frase}
+    </li>
+  ))}
+</ul>
+
+<span aria-hidden="true" class="mt-7 block h-px w-14 bg-white/25"></span>
+
+<ul class="mt-7 grid gap-6 sm:grid-cols-2 sm:gap-0">
+  <li class="flex gap-3.5 sm:pr-6">
+    <svg aria-hidden="true" class="mt-0.5 h-7 w-7 shrink-0 text-marca-purple" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+    </svg>
+    <p class="leading-snug">
+      <span class="sr-only">Fecha: </span>
+      <span class="block font-bold text-white first-letter:uppercase">{diaDeEvento(inicio)}</span>
+      <span class="mt-1 block text-tinta-300">{horaDeEvento(inicio)} a {horaDeEvento(fin)}</span>
+    </p>
+  </li>
+  <li class="flex gap-3.5 sm:border-l sm:border-white/15 sm:pl-6">
+    <svg aria-hidden="true" class="mt-0.5 h-7 w-7 shrink-0 text-marca-purple" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+    </svg>
+    <p class="leading-snug">
+      <span class="sr-only">Lugar: </span>
+      {lugar.map((renglon, i) => (
+        <span class:list={['block', i === 0 ? 'font-bold text-white' : 'mt-1 text-tinta-300']}>
+          {renglon}
+        </span>
+      ))}
+    </p>
+  </li>
+</ul>
+
+{vigente && (
+  <>
+    <p class="mt-8 text-sm font-bold text-white">{acceso}.</p>
+    <div class="mt-4 flex flex-wrap gap-3">
+      <a
+        href={entradas.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="rounded-lg bg-white px-6 py-3 text-sm font-bold text-tinta-900 transition hover:bg-morado-50 hover:shadow-[0_0_28px_-4px_var(--color-marca-purple)]"
+      >
+        Reserva tu entrada
+      </a>
+      <a
+        href={registro.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="rounded-lg border border-white/30 bg-white/5 px-6 py-3 text-sm font-bold text-white transition hover:border-white/60 hover:bg-white/10"
+      >
+        Regístrate en {registro.sitio}
+      </a>
+    </div>
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 text-sm">
+      <!-- Los dos enlaces van juntos: si no caben, bajan los dos, no queda un punto suelto. -->
+      <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-tinta-300">
+        <span>Agrégalo a tu calendario:</span>
+        <span class="inline-flex items-center gap-2">
+          <a href={googleCalendar} target="_blank" rel="noopener noreferrer" class={enlaceSobreOscuro}>Google</a>
+          <span aria-hidden="true">·</span>
+          <a href={`/${evento.id}.ics`} class={enlaceSobreOscuro}>Apple u Outlook</a>
+        </span>
+      </p>
+      {conDetalles && (
+        <a
+          href={ruta}
+          class="inline-flex items-center gap-2 font-bold text-white underline decoration-marca-purple decoration-2 underline-offset-4 transition hover:decoration-white"
+        >
+          Ver todos los detalles <span aria-hidden="true">→</span>
+        </a>
+      )}
+    </div>
+  </>
+)}

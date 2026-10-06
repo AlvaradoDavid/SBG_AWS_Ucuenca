@@ -873,6 +873,9 @@ oscuro; la sonrisa sigue en naranja.
   prefirió sacar «Quiénes somos» de la barra mientras dure el evento.
 - **Reemplazar el hero del club.** Se propuso, y el club prefirió conservarlo y
   poner el evento debajo.
+- **Un segundo paso en Meetup.** Hubo botones de registro en Meetup hasta el
+  2026-10-06; el club los quitó para que TicketIn fuera el único enlace de
+  inscripción, y el campo `registro` salió del esquema.
 - **Incrustar TicketIn, Meetup o un mapa de Google.** La CSP los bloquearía
   ([D-25](#d-25)). Van como enlaces que abren otra pestaña, como las redes del pie.
 - **Servir el `.ics` como descarga a secas.** `customHttp.yml` le pone

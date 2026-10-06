@@ -1,7 +1,7 @@
 ---
 /**
  * El texto del cartel de un próximo evento, con la composición de su afiche:
- * quién organiza, el nombre, el lema, fecha y lugar, y cómo inscribirse. Lo usan
+ * quién organiza, el nombre, el lema, fecha y lugar, y dónde reservar. Lo usan
  * la portada (bajo el hero) y la página del evento, siempre sobre `bg-afiche`.
  *
  * Todo es texto real y no parte de una imagen. Ningún texto va en color de marca
@@ -20,7 +20,7 @@ interface Props {
 }
 
 const { evento, nivel: Titulo, idTitulo, conDetalles = false } = Astro.props;
-const { cartel, lema, inicio, fin, lugar, acceso, entradas, registro } = evento.data;
+const { cartel, lema, inicio, fin, lugar, acceso, entradas } = evento.data;
 
 const vigente = estaVigente(evento);
 const ruta = rutaDeProximo(evento);
@@ -125,14 +125,6 @@ const enlaceSobreOscuro =
         class="rounded-lg bg-white px-6 py-3 text-sm font-bold text-tinta-900 transition hover:bg-morado-50 hover:shadow-[0_0_28px_-4px_var(--color-marca-purple)]"
       >
         Reserva tu entrada
-      </a>
-      <a
-        href={registro.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="rounded-lg border border-white/30 bg-white/5 px-6 py-3 text-sm font-bold text-white transition hover:border-white/60 hover:bg-white/10"
-      >
-        Regístrate en {registro.sitio}
       </a>
     </div>
     <div class="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 text-sm">

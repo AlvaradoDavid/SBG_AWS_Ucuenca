@@ -35,13 +35,12 @@ function instanteCompacto(instante: Date): string {
 
 /** Lo que el calendario muestra al abrir el evento. `pagina` es la URL absoluta. */
 function notaDeCalendario(evento: Proximo, pagina: string): string {
-  const { resumen, acceso, entradas, registro } = evento.data;
+  const { resumen, acceso, entradas } = evento.data;
   return [
     resumen,
     '',
     `${acceso}.`,
     `Entrada (${entradas.sitio}): ${entradas.url}`,
-    `Registro (${registro.sitio}): ${registro.url}`,
     `Más información: ${pagina}`,
   ].join('\n');
 }

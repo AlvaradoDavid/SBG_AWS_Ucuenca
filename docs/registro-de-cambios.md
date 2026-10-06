@@ -2,6 +2,26 @@
 
 ---
 
+## Solo TicketIn para inscribirse al Student Community Day
+
+2026-10-06. El club pidió quitar el enlace a Meetup del evento para darle toda la
+importancia a TicketIn.
+
+- **El cartel** (portada y página del evento) se queda con un solo botón,
+  «Reserva tu entrada», hacia TicketIn.
+- **«Cómo participar»,** en `/student-community-day/`, pasa de tres tarjetas a
+  dos: «Antes del día», con la entrada en TicketIn, y «El día», con cómo llegar.
+- **El calendario** (Google y `.ics`) ya no trae la línea «Registro (Meetup)».
+- **El campo `registro` sale del esquema de `proximos`** y del `.mdx`, porque ya
+  nada lo usa.
+
+**Verificado:** build de 263 páginas, las mismas que antes, sin ningún enlace a
+meetup.com en `dist/`; `pnpm enlaces` da ✓ con 393 destinos. A 1280 px el cartel
+de la portada lleva un solo botón y «Cómo participar» reparte sus dos tarjetas a
+lo ancho.
+
+---
+
 ## El Student Community Day en la barra de navegación
 
 2026-10-06. El club pidió un acceso a la página del evento en la barra superior,

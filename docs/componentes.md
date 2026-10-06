@@ -348,8 +348,8 @@ El texto del cartel, compartido por la portada y la página del evento.
 
 De arriba abajo: el logo de AWS y el del grupo, la píldora «Próximo evento» con
 «Somos los anfitriones», el nombre partido como en el afiche (`cartel` en el
-frontmatter), el lema, fecha y lugar con sus íconos, el acceso, los botones de
-entrada y registro, y los enlaces de calendario. El título es un único `h1` o
+frontmatter), el lema, fecha y lugar con sus íconos, el acceso, el botón de
+entrada y los enlaces de calendario. El título es un único `h1` o
 `h2`: los renglones son `span` con un espacio entre ellos, así que un lector de
 pantalla lee «Primer Student Community Day Ecuador».
 
@@ -428,7 +428,7 @@ enlaces.
 
 La página tiene, en orden: el cartel a todo el ancho, con la foto hasta el borde
 derecho en escritorio; «El evento», con el cuerpo del `.mdx` y «Qué incluye»;
-«Cómo participar», con entrada, registro y cómo llegar; las comunidades
+«Cómo participar», con la entrada y cómo llegar; las comunidades
 participantes; «Agenda y ponentes», que por ahora dice «Muy pronto» y lleva a
 Instagram y LinkedIn; y al final, los patrocinadores. Su `og:image` es el afiche
 completo. Después del evento se quedan el cartel, «El evento», las comunidades y

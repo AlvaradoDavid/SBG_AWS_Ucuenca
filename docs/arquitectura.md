@@ -73,9 +73,9 @@ con el nombre del archivo: `student-community-day.mdx` → `/student-community-d
 | `resumen` | string (máx. 220) | Meta descripción y texto del calendario |
 | `inicio`, `fin` | date | **Con hora y zona:** `2026-11-14T09:00:00-05:00`. Se formatean en la hora de Ecuador, no en UTC |
 | `lugar` | string[] | Un renglón por línea del cartel |
-| `mapa` | url | Google Maps. El del Student Community Day usa el código plus de Meetup |
+| `mapa` | url | Google Maps. El del Student Community Day usa el código plus del campus |
 | `acceso` | string | «Entrada gratuita, con cupos limitados» |
-| `entradas`, `registro` | `{ url, sitio }` | TicketIn y Meetup |
+| `entradas` | `{ url, sitio }` | TicketIn: el único enlace de inscripción |
 | `incluye` | string[] | «Qué incluye», en la página |
 | `imagen`, `afiche` | image | La foto del cartel y el afiche completo (`og:image`) |
 | `participantes` | `{ siglas, universidad, ciudad, anfitrion }[]` | |

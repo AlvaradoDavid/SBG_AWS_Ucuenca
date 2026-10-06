@@ -131,8 +131,8 @@ const proximos = defineCollection({
       mapa: z.string().url(),
       /** Lo que cuesta entrar, en una frase: «Entrada gratuita, con cupos limitados». */
       acceso: z.string(),
+      /** El único enlace para inscribirse: la entrada en TicketIn. */
       entradas: z.object({ url: z.string().url(), sitio: z.string() }),
-      registro: z.object({ url: z.string().url(), sitio: z.string() }),
       /** Qué trae la jornada, en frases cortas. */
       incluye: z.array(z.string()).min(1),
       /** La foto del cartel. Va con alt vacío: todo lo que dice está en el texto. */

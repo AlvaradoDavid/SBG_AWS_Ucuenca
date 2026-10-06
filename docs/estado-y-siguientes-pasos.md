@@ -53,8 +53,8 @@ fuera lo más visible del sitio. Construido el 2026-10-05 y **publicado el
 2026-10-06** ([D-31](decisiones.md#d-31)):
 
 - **Un cartel en la portada,** justo debajo del hero y antes de los pilares, con
-  la composición del afiche, los botones de entrada (TicketIn) y registro
-  (Meetup), el calendario y los patrocinadores.
+  la composición del afiche, el botón de entrada (TicketIn), el calendario y
+  los patrocinadores.
 - **Una página propia,** `/student-community-day/`, para Instagram, los QR y
   WhatsApp: el evento, cómo participar, las 8 comunidades participantes, la
   agenda («Muy pronto») y los patrocinadores al final. Al compartirla sale el
@@ -75,8 +75,9 @@ sin tocar componentes.
 - **Dónde va:** debajo del hero del club, no en su lugar. Se le propuso
   reemplazar el hero hasta el 14 y prefirió conservarlo.
 - **«Community» en blanco,** no en el morado del afiche (regla 1).
-- **Los dos pasos son obligatorios:** la entrada gratuita en TicketIn y el
-  registro en Meetup. Así lo dicen el sitio y las dos plataformas.
+- **Solo TicketIn:** la entrada gratuita se reserva ahí, y es el único enlace de
+  inscripción del sitio. Hasta el 2026-10-06 había también un registro en
+  Meetup; el club lo quitó para darle todo el peso a TicketIn.
 - **Los patrocinadores salen en los dos lugares:** debajo del cartel de la
   portada, solo los logos (el club pidió quitar el título «Patrocinan»), y al
   final de la página, con «Con el apoyo de».
@@ -103,7 +104,7 @@ sin tocar componentes.
   que tocar nada más.
 - **El logo de Ambross** mide 200 × 200 px: justo el doble de su tarjeta. Si hay
   uno más grande, se ve más nítido.
-- **«Más información» en TicketIn y Meetup** apunta hoy a la portada. Conviene
+- **«Más información» en TicketIn** apunta hoy a la portada. Conviene
   cambiarlo a `/student-community-day/`, que ya está publicada.
 
 **Después del 14:**

@@ -105,8 +105,12 @@ const proximos = defineCollection({
     z.object({
       /** Nombre oficial: el de <title> y el de la vista previa al compartir. */
       titulo: z.string(),
-      /** El de la barra de navegación, que no cabe con el título entero: «Student Community Day». */
-      nombreCorto: z.string(),
+      /**
+       * El de la barra de navegación, que no cabe con el título entero: «Student
+       * Community Day». Con sus 21 letras sobran unos 40 px a 768 px; el tope evita que uno
+       * más largo parta la barra en dos renglones sin que el build avise.
+       */
+      nombreCorto: z.string().max(25),
       /** El nombre como lo compone el afiche, en el orden en que se lee. */
       cartel: z.object({
         /** Sobre el nombre, espaciado: «Primer». */

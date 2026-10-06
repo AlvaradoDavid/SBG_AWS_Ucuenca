@@ -11,19 +11,28 @@ entre «Inicio» y «Servicios AWS».
   de «Inicio», en la lista de escritorio y en el menú móvil. Se retira con el
   cartel de la portada, en el primer build después del evento
   ([D-31](decisiones.md#d-31)).
-- **Campo nuevo `nombreCorto` en el esquema de `proximos`:** el título entero,
-  «AWS Student Community Day Ecuador», no cabe en la barra. Para este evento es
-  «Student Community Day».
-- **La lista horizontal empieza en 1024 px (`lg`) en vez de 768 (`md`).** Con el
-  enlace nuevo necesita unos 830 px; entre 768 y 830 los enlaces se partían en
-  dos renglones. Las tabletas en vertical usan ahora el menú hamburguesa.
+- **«Quiénes somos» sale de la barra mientras dure el evento** y vuelve sola
+  en el primer build posterior. Con cinco enlaces la barra necesita unos 830 px
+  y entre 768 y 830 se partía en dos renglones; con cuatro, a 768 px sobran unos
+  40. La sección sigue enlazada desde «Conocer al grupo», en el hero, y desde el
+  pie.
+- **Campo nuevo `nombreCorto` en el esquema de `proximos`,** con un tope de 25
+  caracteres: el título entero, «AWS Student Community Day Ecuador», no cabe en
+  la barra, y uno corto pero de más de 25 la volvería a partir. Para este evento
+  es «Student Community Day».
+- **Se probó y se descartó** mostrar la barra horizontal desde 1024 px en vez de
+  768, que dejaba las tabletas con el menú hamburguesa. Llegó a hacerse commit
+  (`8cf8227`), pero no se publicó así.
 
 **Verificado:**
 
-- A 375, 768 y 1024 px: sin desbordes; en 1024 los cinco enlaces van en una
-  línea con 185 px de holgura. En `/student-community-day/` el enlace sale
-  marcado con `aria-current="page"` en las dos listas; en el menú móvil mide
-  44 px de alto, como los demás.
+- A 375, 768 y 1024 px: sin desbordes. A 768 px los cuatro enlaces van en una
+  línea también en `/student-community-day/`, donde el enlace del evento sale
+  en negrita, marcado con `aria-current="page"` en las dos listas. En el menú
+  móvil mide 44 px de alto, como los demás.
+- **La vuelta a la normalidad:** con el `fin` del evento puesto en el pasado, la
+  barra volvió a «Inicio», «Servicios AWS», «Eventos» y «Quiénes somos», en
+  escritorio y en el menú móvil. Después se restauró la fecha real.
 - `pnpm build`: 263 páginas, las mismas que antes; el enlace está en la portada,
   `/servicios/`, `/eventos/` y la 404.
 

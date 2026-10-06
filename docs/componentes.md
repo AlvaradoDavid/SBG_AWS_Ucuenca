@@ -41,11 +41,12 @@ Para que un bloque nuevo entre con animación basta con marcarlo:
 
 Barra fija superior.
 
-- Desde 1024 px (`lg`), lista de enlaces horizontal
-- Por debajo, en móvil y tableta, **menú hamburguesa** con botón de 44×44 px
+- Desde 768 px (`md`), lista de enlaces horizontal
+- En móvil, **menú hamburguesa** con botón de 44×44 px
 - Mientras hay un evento de `proximos` vigente, su página va entre «Inicio» y
-  «Servicios AWS», con el `nombreCorto` del evento. Sale y se retira con el
-  cartel de la portada ([D-31](decisiones.md#d-31))
+  «Servicios AWS», con el `nombreCorto` del evento, y **«Quiénes somos» sale de
+  la barra** para dejarle sitio. Las dos cosas se deshacen solas en el primer
+  build después del evento, como el cartel de la portada ([D-31](decisiones.md#d-31))
 - Marca la página actual con `aria-current="page"`, negrita y subrayado morado
 - Una `linea-marca` de 2 px reemplaza al borde gris inferior: es lo que lleva el
   morado a todas las páginas
@@ -57,9 +58,13 @@ que `/eventos/flisol-2026/` también marque «Eventos». El prefijo lleva la bar
 final (`/eventos/`), como todos los enlaces internos. «Quiénes somos»
 (`/#nosotros`) es una sección de la portada y no se marca nunca.
 
-La lista horizontal empezaba en 768 px (`md`). Con «Student Community Day» los
-enlaces necesitan unos 830 px para caber en una línea, y entre 768 y 830 se
-partían en dos renglones, así que pasó a `lg`: en 1024 px sobran 185.
+**Por qué sale «Quiénes somos» durante el evento.** Con cinco enlaces la barra
+necesita unos 830 px para ir en una línea, y entre 768 y 830 se partía en dos
+renglones. Con cuatro, a 768 px sobran unos 40, contando la negrita del enlace
+activo. La sección no queda escondida: la enlazan «Conocer al grupo», en el hero,
+y el pie de todas las páginas. Por eso `nombreCorto` tiene un tope de 25
+caracteres en el esquema: uno más largo volvería a partir la barra sin que el
+build avise.
 
 ---
 

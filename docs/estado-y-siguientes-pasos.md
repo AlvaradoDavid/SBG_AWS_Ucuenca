@@ -62,7 +62,9 @@ fuera lo más visible del sitio. Construido el 2026-10-05 y **publicado el
 - **Un archivo de calendario,** `/student-community-day.ics`, y un enlace a
   Google Calendar.
 - **Un enlace en la barra de navegación,** entre «Inicio» y «Servicios AWS», en
-  todas las páginas. Lo pidió el club el 2026-10-06.
+  todas las páginas. Para que la barra siga cabiendo en una línea en tableta,
+  **«Quiénes somos» sale de ella mientras dure el evento** y vuelve sola después
+  (ver más abajo).
 
 Todo vive en `src/content/proximos/student-community-day.mdx`: para cambiar un
 enlace, el horario, los participantes o los patrocinadores se edita ese archivo,
@@ -82,6 +84,10 @@ sin tocar componentes.
 - **Participantes:** los 8 Student Builder Groups de
   <https://www.awsugecuador.com/comunidades/>. Los User Groups de esa página no
   cuentan.
+- **La barra de navegación:** el evento va entre «Inicio» y «Servicios AWS», y
+  «Quiénes somos» se quita **solo mientras dure el evento**. Se le propuso
+  mostrar la barra horizontal desde 1024 px, dejando las tabletas con el menú
+  hamburguesa, y prefirió esto. No es un retiro definitivo.
 
 **Pendiente del club:**
 
@@ -102,9 +108,11 @@ sin tocar componentes.
 
 **Después del 14:**
 
-1. El cartel de la portada y el enlace de la barra se retiran solos en el
-   primer build después de las 14h00 del 14: el push de las fotos, o un *Redeploy* desde la consola de
-   Amplify si no hay nada que publicar.
+1. El cartel de la portada y el enlace de la barra se retiran solos, y
+   «Quiénes somos» vuelve a la barra, en el primer build después de las 14h00
+   del 14: el push de las fotos, o un *Redeploy* desde la consola de Amplify si
+   no hay nada que publicar. No hay que tocar código; conviene abrir el sitio
+   después y comprobar que la barra tiene sus cuatro enlaces de siempre.
 2. Las fotos van como las de cualquier evento: en
    `Eventos/2026-11-14 AWS Student Community Day/`, sueltas, y `pnpm fotos`. La
    carpeta ya tiene la fecha en el nombre y el arte está aparte, en `arte/`, para

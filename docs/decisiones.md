@@ -854,8 +854,8 @@ previa del enlace saldría vacía. La ruta sale del nombre del archivo
 
 **Cómo se retira.** El cartel, y el enlace a la página en la barra de
 navegación, salen mientras el `fin` del evento sea posterior al momento del
-build. Como el sitio es estático, sigue publicado hasta el primer
-build después del evento: el push de las fotos, o un *Redeploy* desde la consola
+build; mientras tanto, «Quiénes somos» le cede su lugar en la barra. Como el
+sitio es estático, todo sigue así hasta el primer build después del evento: el push de las fotos, o un *Redeploy* desde la consola
 de Amplify. La página no desaparece: sigue en su URL, ya sin la inscripción.
 
 **El fondo es el azul marino del afiche, no el morado del hero.** El token
@@ -868,6 +868,9 @@ oscuro; la sonrisa sigue en naranja.
 
 **Lo que se descartó.**
 
+- **Mostrar la barra horizontal desde 1024 px** para que cupieran los cinco
+  enlaces. Las tabletas en vertical se quedaban con el menú hamburguesa; el club
+  prefirió sacar «Quiénes somos» de la barra mientras dure el evento.
 - **Reemplazar el hero del club.** Se propuso, y el club prefirió conservarlo y
   poner el evento debajo.
 - **Incrustar TicketIn, Meetup o un mapa de Google.** La CSP los bloquearía

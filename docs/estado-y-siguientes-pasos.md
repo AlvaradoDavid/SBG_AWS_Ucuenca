@@ -66,6 +66,21 @@ Todo vive en `src/content/proximos/student-community-day.mdx`: para cambiar un
 enlace, el horario, los participantes o los patrocinadores se edita ese archivo,
 sin tocar componentes.
 
+**Lo que decidió el club** (2026-10-05 y 06), para no volver a preguntarlo:
+
+- **Dónde va:** debajo del hero del club, no en su lugar. Se le propuso
+  reemplazar el hero hasta el 14 y prefirió conservarlo.
+- **«Community» en blanco,** no en el morado del afiche (regla 1).
+- **Los dos pasos son obligatorios:** la entrada gratuita en TicketIn y el
+  registro en Meetup. Así lo dicen el sitio y las dos plataformas.
+- **Los patrocinadores salen en los dos lugares:** debajo del cartel de la
+  portada, solo los logos (el club pidió quitar el título «Patrocinan»), y al
+  final de la página, con «Con el apoyo de».
+- **Contacto:** el Instagram y el LinkedIn del club, sin correo.
+- **Participantes:** los 8 Student Builder Groups de
+  <https://www.awsugecuador.com/comunidades/>. Los User Groups de esa página no
+  cuentan.
+
 **Pendiente del club:**
 
 - **Agenda y ponentes.** Cuando lleguen, la sección «Agenda y ponentes» de la
@@ -340,6 +355,26 @@ magnitud.
 
 ### 6. Ideas que quedaron sobre la mesa
 
+**Para el Student Community Day.** El 2026-10-05 se le propusieron al club
+varias ideas para darle más visibilidad, y eligió solo el cartel en la portada y
+la página propia. Las demás siguen disponibles si las pide:
+
+- **Barra de anuncio en todas las páginas,** sobre la navegación: quien llega
+  desde Google a una de las 251 fichas no pasa por la portada.
+- **Cuenta regresiva** («Faltan N días»), solo en días y con la fecha escrita en
+  el HTML. Es la única idea con JavaScript: menos de medio KB.
+- **El afiche como `og:image` de la portada** mientras dure la campaña. Hoy la
+  portada comparte la foto del stand.
+- **Datos estructurados de evento** (schema.org `Event`), para que Google pueda
+  mostrarlo con fecha y lugar. Es un `<script type="application/ld+json">`, que
+  la CSP no bloquea porque no se ejecuta.
+- **Un enlace destacado en la navegación** y un **bloque «Próximo evento»** arriba
+  de `/eventos/`.
+- **El evento como próximo hito de la trayectoria,** con un tramo punteado hacia
+  el futuro.
+
+**Del resto del sitio:**
+
 - **Buscador de todo el sitio.** `pnpm build` genera el índice de Pagefind en
   `dist/pagefind/`, pero **ninguna página lo carga**: la única búsqueda que existe
   hoy es el filtro del catálogo. Falta decidir dónde va el buscador y medir su
@@ -486,7 +521,7 @@ pnpm enlaces
 ```
 
 Vigila tres cosas en la salida: que no aparezca ningún aviso `[DiagramaAWS]`,
-que el número de páginas siga cuadrando (hoy: 258 indexadas por Pagefind, de las
+que el número de páginas siga cuadrando (hoy: 259 indexadas por Pagefind, de las
 cuales 251 son fichas de servicio) y que `pnpm enlaces` termine con ✓. Este
 último detecta enlaces internos sin barra final, destinos que no existen —por
 ejemplo un `slug` mal escrito en `alternativas`— y anclas rotas.
@@ -551,6 +586,14 @@ y nada más. Antes de hacer push de algo así, hay que declararlo en la CSP
 Para probarlo sin publicar: servir `dist/` con un servidor estático propio que
 añada las cabeceras de `customHttp.yml`, recorrer las páginas afectadas y buscar
 errores `Refused to…` en la consola del navegador.
+
+Así se probó el Student Community Day el 2026-10-05. El servidor fue un script
+de Node de unas 60 líneas que lee las reglas de `customHttp.yml`, y le daba a los
+`.ics` un tipo binario por defecto para comprobar que la regla los corregía. La
+consola y las capturas salieron de Edge sin ventana (`--headless=new`, por CDP,
+con `prefers-reduced-motion: reduce` para que los reveals salgan en su estado
+final). El panel del navegador de Claude no dibuja mientras está oculto, y sus
+capturas se quedan en blanco o a medias.
 
 ### Después de cada push
 

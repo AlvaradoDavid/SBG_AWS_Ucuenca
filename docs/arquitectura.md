@@ -84,6 +84,13 @@ con el nombre del archivo: `student-community-day.mdx` → `/student-community-d
 El cuerpo del `.mdx` es la sección «El evento» de la página. Las imágenes van
 con el helper `image()`: un logo o un afiche que falta rompe el build.
 
+**Los logos de los patrocinadores** llegaron en `logos/`, en la raíz del
+proyecto, que no se versiona: el sitio usa sus copias de
+`src/assets/patrocinadores/`. Al de Deuna, un PNG transparente de 1427 × 750 px,
+se le quitó el margen vacío (`sharp().trim()`, quedó en 831 × 221) para que su
+tarjeta mida lo mismo que las demás. Los de TicketIn (449 × 445) y Ambross TI
+(200 × 200) se copiaron tal cual.
+
 **El arte no pasa por `pnpm fotos`.** Los originales están en
 `Eventos/2026-11-14 AWS Student Community Day/arte/`, una subcarpeta que el
 script no lee: así, las fotos del día se numeran desde la 1. Mientras llega la
@@ -227,7 +234,8 @@ El sitio se aloja en **AWS Amplify Hosting**, conectado a la rama
 a esa rama dispara un build en Amplify y publica `dist/`. El porqué de Amplify
 frente al plan original con S3 + CloudFront está en [D-23](decisiones.md#d-23).
 
-Build estático a `dist/` (262 páginas, 389 fotos WebP, índice de Pagefind). No
+Build estático a `dist/` (263 páginas, 254 WebP de fotos de eventos —127 fotos
+en dos tamaños— e índice de Pagefind). No
 hay servidor ni funciones de renderizado: todo el HTML se genera en `pnpm build`.
 
 ```

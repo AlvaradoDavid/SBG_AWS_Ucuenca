@@ -626,11 +626,14 @@ nueva, es más directo esperar a que esa URL deje de dar 404, y el
 
 **Si el cambio no se ve en el sitio** (scripts, `docs/`, el manifiesto), lo que
 se comprueba es que producción sea idéntica al `dist/` local. Hay que normalizar
-dos cosas: los `\r`, porque en Windows los `.mdx` tienen CRLF y Amplify compila
-con LF, y el id que `DiagramaAWS` sortea en cada build:
+tres cosas: los `\r`, porque en Windows los `.mdx` tienen CRLF y Amplify compila
+con LF; el id que `DiagramaAWS` sortea en cada build, y la URL del sitio, que
+aparece tal cual y también codificada (`https%3A%2F%2F…`) dentro del enlace de
+Google Calendar del Student Community Day. Sin esa última, la portada y
+`/student-community-day/` parecen distintas aunque no lo sean:
 
 ```bash
 U=https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com
-norm() { sed "s#$U#http://localhost:4321#g" | tr -d '\r' | sed -E 's/(pie|punta)-[a-z0-9]+/\1-ID/g'; }
+norm() { sed -e "s#$U#http://localhost:4321#g" -e "s#https%3A%2F%2Faws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com#http%3A%2F%2Flocalhost%3A4321#g" | tr -d '\r' | sed -E 's/(pie|punta)-[a-z0-9]+/\1-ID/g'; }
 cmp <(curl -s "$U/eventos/" | norm) <(norm < dist/eventos/index.html) && echo idénticas
 ```

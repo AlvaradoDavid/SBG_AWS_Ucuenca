@@ -34,7 +34,16 @@ entre «Inicio» y «Servicios AWS».
   barra volvió a «Inicio», «Servicios AWS», «Eventos» y «Quiénes somos», en
   escritorio y en el menú móvil. Después se restauró la fecha real.
 - `pnpm build`: 263 páginas, las mismas que antes; el enlace está en la portada,
-  `/servicios/`, `/eventos/` y la 404.
+  `/servicios/`, `/eventos/` y la 404. `pnpm enlaces` da ✓ con 393 destinos.
+
+**Publicado el 2026-10-06 en `b2a2fce`,** junto con `8cf8227`, el intento con la
+barra desde 1024 px que `b2a2fce` deshace. Amplify tardó 150 segundos. Comprobado
+con `curl`: la portada mantiene la CSP y HSTS, `/no-existe/` da 404 sin
+redirección, y la portada, `/student-community-day/`, `/servicios/` y
+`/eventos/` son idénticas al build local, con la barra de cuatro enlaces y la
+lista horizontal desde `md`. La normalización de «Después de cada push» se
+amplió aquí: la URL del sitio también va codificada en el enlace de Google
+Calendar.
 
 ---
 

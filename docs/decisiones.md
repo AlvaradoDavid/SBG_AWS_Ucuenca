@@ -852,8 +852,9 @@ genera Astro es una página con `meta refresh`, sin `og:image`, así que la vist
 previa del enlace saldría vacía. La ruta sale del nombre del archivo
 (`[proximo].astro`), como el `.ics` (`[proximo].ics.ts`).
 
-**Cómo se retira.** El cartel sale mientras el `fin` del evento sea posterior al
-momento del build. Como el sitio es estático, sigue publicado hasta el primer
+**Cómo se retira.** El cartel, y el enlace a la página en la barra de
+navegación, salen mientras el `fin` del evento sea posterior al momento del
+build. Como el sitio es estático, sigue publicado hasta el primer
 build después del evento: el push de las fotos, o un *Redeploy* desde la consola
 de Amplify. La página no desaparece: sigue en su URL, ya sin la inscripción.
 

@@ -41,8 +41,11 @@ Para que un bloque nuevo entre con animación basta con marcarlo:
 
 Barra fija superior.
 
-- En escritorio, lista de enlaces horizontal
-- En móvil, **menú hamburguesa** con botón de 44×44 px
+- Desde 1024 px (`lg`), lista de enlaces horizontal
+- Por debajo, en móvil y tableta, **menú hamburguesa** con botón de 44×44 px
+- Mientras hay un evento de `proximos` vigente, su página va entre «Inicio» y
+  «Servicios AWS», con el `nombreCorto` del evento. Sale y se retira con el
+  cartel de la portada ([D-31](decisiones.md#d-31))
 - Marca la página actual con `aria-current="page"`, negrita y subrayado morado
 - Una `linea-marca` de 2 px reemplaza al borde gris inferior: es lo que lleva el
   morado a todas las páginas
@@ -53,6 +56,10 @@ La detección de página activa es exacta en `/` y por prefijo en el resto, para
 que `/eventos/flisol-2026/` también marque «Eventos». El prefijo lleva la barra
 final (`/eventos/`), como todos los enlaces internos. «Quiénes somos»
 (`/#nosotros`) es una sección de la portada y no se marca nunca.
+
+La lista horizontal empezaba en 768 px (`md`). Con «Student Community Day» los
+enlaces necesitan unos 830 px para caber en una línea, y entre 768 y 830 se
+partían en dos renglones, así que pasó a `lg`: en 1024 px sobran 185.
 
 ---
 

@@ -1,8 +1,13 @@
 ---
 import { club } from '../lib/categorias';
+import { proximoEvento, rutaDeProximo } from '../lib/proximos';
+
+// El evento que organizamos va junto a Inicio mientras está vigente, como el cartel de la portada (D-31).
+const evento = await proximoEvento();
 
 const enlaces = [
   { href: '/', texto: 'Inicio' },
+  ...(evento ? [{ href: rutaDeProximo(evento), texto: evento.data.nombreCorto }] : []),
   { href: '/servicios/', texto: 'Servicios AWS' },
   { href: '/eventos/', texto: 'Eventos' },
   { href: '/#nosotros', texto: 'Quiénes somos' },
@@ -33,7 +38,7 @@ const esActivo = (href: string) =>
       </span>
     </a>
 
-    <ul class="hidden items-center gap-8 text-sm font-medium text-tinta-600 md:flex">
+    <ul class="hidden items-center gap-8 text-sm font-medium text-tinta-600 lg:flex">
       {enlaces.map((enlace) => (
         <li>
           <a
@@ -56,7 +61,7 @@ const esActivo = (href: string) =>
       aria-expanded="false"
       aria-controls="menu-movil"
       aria-label="Abrir menú de navegación"
-      class="-mr-2 flex h-11 w-11 items-center justify-center rounded-lg text-tinta-700 transition hover:bg-tinta-100 md:hidden"
+      class="-mr-2 flex h-11 w-11 items-center justify-center rounded-lg text-tinta-700 transition hover:bg-tinta-100 lg:hidden"
     >
       <svg
         id="icono-abrir"
@@ -83,7 +88,7 @@ const esActivo = (href: string) =>
     </button>
   </nav>
 
-  <div id="menu-movil" class="hidden border-t border-tinta-200 bg-white md:hidden">
+  <div id="menu-movil" class="hidden border-t border-tinta-200 bg-white lg:hidden">
     <ul class="mx-auto max-w-6xl px-6 py-2 text-sm">
       {enlaces.map((enlace) => (
         <li>

@@ -105,6 +105,8 @@ const proximos = defineCollection({
     z.object({
       /** Nombre oficial: el de <title> y el de la vista previa al compartir. */
       titulo: z.string(),
+      /** El de la barra de navegación, que no cabe con el título entero: «Student Community Day». */
+      nombreCorto: z.string(),
       /** El nombre como lo compone el afiche, en el orden en que se lee. */
       cartel: z.object({
         /** Sobre el nombre, espaciado: «Primer». */

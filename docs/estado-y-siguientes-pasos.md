@@ -61,6 +61,8 @@ fuera lo más visible del sitio. Construido el 2026-10-05 y **publicado el
   afiche.
 - **Un archivo de calendario,** `/student-community-day.ics`, y un enlace a
   Google Calendar.
+- **Un enlace en la barra de navegación,** entre «Inicio» y «Servicios AWS», en
+  todas las páginas. Lo pidió el club el 2026-10-06.
 
 Todo vive en `src/content/proximos/student-community-day.mdx`: para cambiar un
 enlace, el horario, los participantes o los patrocinadores se edita ese archivo,
@@ -100,8 +102,8 @@ sin tocar componentes.
 
 **Después del 14:**
 
-1. El cartel de la portada se retira solo en el primer build después de las
-   14h00 del 14: el push de las fotos, o un *Redeploy* desde la consola de
+1. El cartel de la portada y el enlace de la barra se retiran solos en el
+   primer build después de las 14h00 del 14: el push de las fotos, o un *Redeploy* desde la consola de
    Amplify si no hay nada que publicar.
 2. Las fotos van como las de cualquier evento: en
    `Eventos/2026-11-14 AWS Student Community Day/`, sueltas, y `pnpm fotos`. La

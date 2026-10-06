@@ -2,6 +2,33 @@
 
 ---
 
+## El Student Community Day en la barra de navegación
+
+2026-10-06. El club pidió un acceso a la página del evento en la barra superior,
+entre «Inicio» y «Servicios AWS».
+
+- **`Nav.astro` lee el evento vigente de `proximos`** y pone su página después
+  de «Inicio», en la lista de escritorio y en el menú móvil. Se retira con el
+  cartel de la portada, en el primer build después del evento
+  ([D-31](decisiones.md#d-31)).
+- **Campo nuevo `nombreCorto` en el esquema de `proximos`:** el título entero,
+  «AWS Student Community Day Ecuador», no cabe en la barra. Para este evento es
+  «Student Community Day».
+- **La lista horizontal empieza en 1024 px (`lg`) en vez de 768 (`md`).** Con el
+  enlace nuevo necesita unos 830 px; entre 768 y 830 los enlaces se partían en
+  dos renglones. Las tabletas en vertical usan ahora el menú hamburguesa.
+
+**Verificado:**
+
+- A 375, 768 y 1024 px: sin desbordes; en 1024 los cinco enlaces van en una
+  línea con 185 px de holgura. En `/student-community-day/` el enlace sale
+  marcado con `aria-current="page"` en las dos listas; en el menú móvil mide
+  44 px de alto, como los demás.
+- `pnpm build`: 263 páginas, las mismas que antes; el enlace está en la portada,
+  `/servicios/`, `/eventos/` y la 404.
+
+---
+
 ## AWS Student Community Day: cartel en la portada y página propia
 
 Del 2026-10-05 al 06. El club es el anfitrión del primer AWS Student Community

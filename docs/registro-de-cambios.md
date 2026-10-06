@@ -20,6 +20,23 @@ meetup.com en `dist/`; `pnpm enlaces` da ✓ con 393 destinos. A 1280 px el cart
 de la portada lleva un solo botón y «Cómo participar» reparte sus dos tarjetas a
 lo ancho.
 
+### El cartel de la portada, de borde a borde
+
+El mismo día, el club pidió que el cartel de la portada dejara de ser una
+tarjeta flotante y llegara a los bordes, como en la página del evento.
+
+- **`CartelEvento` trae ahora la franja entera:** el fondo azul marino, el píxel
+  magenta de la esquina y la foto hasta el borde derecho, que antes armaba la
+  página por su cuenta. La portada y la página usan el mismo componente y se ven
+  iguales; la portada añade «Ver todos los detalles» y, debajo, los logos.
+- **Se fue el `px-4` del móvil:** de borde a borde, el texto tiene 24 px de
+  margen, menos que los 36 de la tarjeta, y «Community Day» cabe en una línea
+  desde 320 px.
+
+**Verificado:** la página del evento sale idéntica a la anterior salvo un `div`
+más dentro de su `header`. La portada a 320, 375, 768 y 1440 px: la franja va de
+borde a borde, sin desplazamiento horizontal.
+
 ---
 
 ## El Student Community Day en la barra de navegación

@@ -8,7 +8,6 @@
 import Layout from '../layouts/Layout.astro';
 import CartelEvento from '../components/CartelEvento.astro';
 import Patrocinadores from '../components/Patrocinadores.astro';
-import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 import { club } from '../lib/categorias';
 import { diaDeEvento, horaDeEvento } from '../lib/fechas';
@@ -23,7 +22,7 @@ const { evento } = Astro.props as { evento: Proximo };
 const { Content } = await render(evento);
 const {
   titulo, resumen, inicio, fin, lugar, mapa, acceso, entradas,
-  incluye, imagen, afiche, participantes, patrocinadores,
+  incluye, afiche, participantes, patrocinadores,
 } = evento.data;
 
 const vigente = estaVigente(evento);
@@ -44,24 +43,8 @@ const botonSecundario = `${boton} border border-tinta-300 bg-white text-tinta-90
 >
   <div data-pagefind-body>
     <!-- Cartel: la composición del afiche, con la foto hasta el borde derecho. -->
-    <header class="relative isolate overflow-hidden bg-afiche">
-      <span aria-hidden="true" class="absolute left-0 top-0 z-10 h-10 w-10 bg-marca-magenta sm:h-12 sm:w-12"></span>
-      <div class="mx-auto max-w-6xl px-6 lg:grid lg:grid-cols-2">
-        <div class="relative z-10 pb-12 pt-16 sm:pb-14 sm:pt-20 lg:py-20 lg:pr-6">
-          <CartelEvento evento={evento} nivel="h1" idTitulo="titulo-evento" />
-        </div>
-      </div>
-      <div class="relative h-72 sm:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[46%]">
-        <Image
-          src={imagen}
-          alt=""
-          widths={[480, 720]}
-          sizes="(min-width: 1024px) 46vw, 100vw"
-          loading="eager"
-          fetchpriority="high"
-          class="absolute inset-0 h-full w-full object-cover object-[50%_45%] [mask-image:linear-gradient(to_bottom,transparent,#000_30%)] lg:[mask-image:linear-gradient(to_right,transparent,#000_22%)]"
-        />
-      </div>
+    <header>
+      <CartelEvento evento={evento} nivel="h1" idTitulo="titulo-evento" />
     </header>
 
     <!-- El evento -->

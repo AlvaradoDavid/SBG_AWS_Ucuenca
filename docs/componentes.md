@@ -318,22 +318,25 @@ pilares mientras no haya terminado ([D-31](decisiones.md#d-31)).
 colección `proximos` cuyo `fin` es posterior al build y que empieza antes. Si no
 hay ninguno, la portada queda como antes.
 
-Es una tarjeta `bg-afiche` con la composición del afiche: el texto de
-`CartelEvento` a la izquierda y la foto a la derecha, que se funde con el fondo
-con una máscara CSS (desde arriba en móvil, desde la izquierda en escritorio).
-La foto lleva `alt=""`: todo lo que dice el afiche está en el texto. Debajo de la
-tarjeta, sobre blanco, los logos de los patrocinadores, sin título: el club lo
-pidió así. La lista lleva `aria-label="Patrocinadores"`, para que un lector de
-pantalla no lea tres logos sueltos. Sin JavaScript.
+Es el `CartelEvento` a todo el ancho, el mismo que encabeza la página del
+evento, y debajo, sobre blanco, los logos de los patrocinadores, sin título: el
+club lo pidió así. La lista lleva `aria-label="Patrocinadores"`, para que un
+lector de pantalla no lea tres logos sueltos. Sin JavaScript.
 
-En móvil la sección usa `px-4` en vez de `px-6`, y el texto `px-5`: con los 24 px
-habituales, «Community Day» no cabía en una línea a 375 px.
+Hasta el 2026-10-06 el cartel era una tarjeta redondeada con margen a los lados;
+el club prefirió la franja de borde a borde de la página del evento.
 
 ---
 
 ## `CartelEvento.astro`
 
-El texto del cartel, compartido por la portada y la página del evento.
+El cartel del evento, compartido por la portada y la página del evento, que así
+se ven iguales: una franja `bg-afiche` de borde a borde, con el texto a la
+izquierda y la foto a la derecha, que llega hasta el borde de la pantalla en
+escritorio y se funde con el fondo con una máscara CSS (desde arriba en móvil,
+desde la izquierda en escritorio). La foto lleva `alt=""`: todo lo que dice el
+afiche está en el texto. Con `nivel="h1"` es lo primero que se ve, así que la foto
+se carga con prioridad; en la portada, con `loading="lazy"`.
 
 ```astro
 <CartelEvento evento={evento} nivel="h2" idTitulo="proximo-evento" conDetalles />
@@ -353,7 +356,7 @@ entrada y los enlaces de calendario. El título es un único `h1` o
 `h2`: los renglones son `span` con un espacio entre ellos, así que un lector de
 pantalla lee «Primer Student Community Day Ecuador».
 
-Va siempre sobre `bg-afiche`. Ningún texto va en color de marca: el morado y el
+Ningún texto va en color de marca: el morado y el
 magenta están en los íconos y en los píxeles (el de la esquina, el escalonado
 junto a «Ecuador» y los separadores del lema). Después del evento, la píldora
 dice «Ya se realizó» con la fecha, y los botones y el calendario desaparecen.

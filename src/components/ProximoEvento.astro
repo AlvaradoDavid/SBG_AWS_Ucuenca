@@ -41,9 +41,10 @@ const { imagen, patrocinadores } = evento.data;
     </div>
   </div>
 
+  <!-- Los logos van solos, sin título: el club lo pidió así. La lista lleva su
+       nombre para los lectores de pantalla. -->
   {patrocinadores.length > 0 && (
-    <div class="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-5">
-      <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Patrocinan</p>
+    <div class="mt-6">
       <Patrocinadores patrocinadores={patrocinadores} compacto />
     </div>
   )}

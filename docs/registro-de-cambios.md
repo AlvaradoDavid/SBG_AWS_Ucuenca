@@ -14,7 +14,8 @@ propusieron eligió dos: el cartel en la portada y la página propia. Ver
   lo pidió el club, en vez de reemplazar el hero como se había propuesto. Copia
   la composición del afiche —texto a la izquierda, catedral con el mosaico a la
   derecha— sobre su mismo azul marino, con botones a TicketIn y Meetup, el
-  calendario y «Ver todos los detalles». Debajo, «Patrocinan».
+  calendario y «Ver todos los detalles». Debajo, los logos de los
+  patrocinadores, sin título: el club pidió quitar el «Patrocinan» que llevaban.
 - **Página `/student-community-day/`,** con el cartel a todo el ancho, «El
   evento», «Cómo participar», las 8 comunidades participantes, «Agenda y
   ponentes: muy pronto» con Instagram y LinkedIn como contacto, y al final los

@@ -24,7 +24,10 @@ const logoSobreBlanco = compacto ? 'h-8' : 'h-14';
 const altoGenerado = compacto ? 112 : 192;
 ---
 
-<ul class:list={['flex flex-wrap items-center justify-center', compacto ? 'gap-3' : 'gap-4 sm:gap-6']}>
+<ul
+  aria-label="Patrocinadores"
+  class:list={['flex flex-wrap items-center justify-center', compacto ? 'gap-3' : 'gap-4 sm:gap-6']}
+>
   {patrocinadores.map(({ nombre, logo, sobreBlanco }) => (
     <li
       class:list={[

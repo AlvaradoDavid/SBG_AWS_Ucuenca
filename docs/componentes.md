@@ -310,7 +310,9 @@ Es una tarjeta `bg-afiche` con la composición del afiche: el texto de
 `CartelEvento` a la izquierda y la foto a la derecha, que se funde con el fondo
 con una máscara CSS (desde arriba en móvil, desde la izquierda en escritorio).
 La foto lleva `alt=""`: todo lo que dice el afiche está en el texto. Debajo de la
-tarjeta, sobre blanco, la franja «Patrocinan». Sin JavaScript.
+tarjeta, sobre blanco, los logos de los patrocinadores, sin título: el club lo
+pidió así. La lista lleva `aria-label="Patrocinadores"`, para que un lector de
+pantalla no lea tres logos sueltos. Sin JavaScript.
 
 En móvil la sección usa `px-4` en vez de `px-6`, y el texto `px-5`: con los 24 px
 habituales, «Community Day» no cabía en una línea a 375 px.

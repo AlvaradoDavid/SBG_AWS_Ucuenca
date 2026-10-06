@@ -49,6 +49,25 @@ propusieron eligió dos: el cartel en la portada y la página propia. Ver
   `pnpm enlaces` da ✓ con 393 destinos, dos más que antes: la página y el `.ics`.
 - JavaScript sin cambios: 4.6 KB en la portada y 1.0 KB en la página del evento.
 
+**Publicado el 2026-10-06 en `2b4d4b5` y `5121fd6`**, el segundo con los logos
+ya sin «Patrocinan». `/student-community-day/` respondió 200 unos 165 segundos
+después del push. Comprobado con `curl`:
+
+- La portada lleva el cartel, sin «Patrocinan», y su `Last-Modified` cambió.
+  Mantiene la CSP y HSTS.
+- La página tiene su título, dos enlaces a TicketIn y dos a Meetup, y un
+  `og:image` absoluto, en el dominio de Amplify, que responde 200 como
+  `image/jpeg`.
+- `/student-community-day.ics` sale como `text/calendar; charset=utf-8`: la
+  regla de `customHttp.yml` funciona en Amplify. Lleva las 14h00 y las 19h00 UTC,
+  y la URL de producción.
+- `/student-community-day` (sin barra) responde 301 hacia la versión con barra, y
+  una URL inexistente da 404. La foto del cartel, en `/_astro/`, lleva la caché de
+  un año.
+- La portada y la página son idénticas al build local, salvo por el dominio.
+  Esto incluye el texto del `.mdx`: para este contenido, `unified` y satteri dan
+  el mismo HTML.
+
 **El build local, con el compilador de JavaScript.** En esta máquina, Smart App
 Control bloquea los binarios nativos de satteri, el compilador de Markdown que
 Astro 7 trae por defecto, y el 2026-10-06 también el del compilador de Astro

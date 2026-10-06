@@ -49,7 +49,8 @@ porque aparecen en material de estudio antiguo y en arquitecturas heredadas.
 
 El primer AWS Student Community Day del Ecuador: sábado 14 de noviembre de 2026,
 de 09h00 a 14h00, en el Campus Balzay. **El club es el anfitrión** y pidió que
-fuera lo más visible del sitio. Construido el 2026-10-05 ([D-31](decisiones.md#d-31)):
+fuera lo más visible del sitio. Construido el 2026-10-05 y **publicado el
+2026-10-06** ([D-31](decisiones.md#d-31)):
 
 - **Un cartel en la portada,** justo debajo del hero y antes de los pilares, con
   la composición del afiche, los botones de entrada (TicketIn) y registro
@@ -79,8 +80,8 @@ sin tocar componentes.
   que tocar nada más.
 - **El logo de Ambross** mide 200 × 200 px: justo el doble de su tarjeta. Si hay
   uno más grande, se ve más nítido.
-- **«Más información» en TicketIn y Meetup** apunta hoy a la portada. Después del
-  push conviene cambiarlo a `/student-community-day/`.
+- **«Más información» en TicketIn y Meetup** apunta hoy a la portada. Conviene
+  cambiarlo a `/student-community-day/`, que ya está publicada.
 
 **Después del 14:**
 
@@ -171,6 +172,13 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   Yachana Day, «Los 4 Fantásticos», el stand y FLISol, y el sitio queda con 127.
   Las portadas son las mismas imágenes con otro número. Ver el punto 2 y
   [D-30](decisiones.md#d-30).
+
+**Publicado el 2026-10-06** y comprobado en producción:
+
+- ✅ **AWS Student Community Day** (`2b4d4b5` y `5121fd6`): el cartel bajo el
+  hero, la página `/student-community-day/` y su `.ics`, que Amplify sirve como
+  `text/calendar`. Ver [lo urgente](#lo-urgente-el-aws-student-community-day-14-de-noviembre)
+  y [D-31](decisiones.md#d-31).
 
 **Pendiente:**
 

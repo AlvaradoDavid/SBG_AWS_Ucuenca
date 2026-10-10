@@ -42,6 +42,8 @@ El sitio queda en `http://localhost:4321`.
 | `pnpm preview` | Sirve el build de producción en local |
 | `pnpm fotos` | Convierte las fotos originales de `Eventos/` a WebP en `src/assets/eventos/` |
 | `pnpm enlaces` | Revisa los enlaces internos de `dist/`: barra final, destino existente y anclas |
+| `pnpm servir` | Sirve `dist/` con las cabeceras de producción (CSP incluida) en `localhost:4322` |
+| `pnpm capturar` | Captura una página entera a un ancho dado, con Edge por CDP, y avisa si desborda |
 
 ## Antes de hacer push
 
@@ -49,6 +51,8 @@ El sitio queda en `http://localhost:4321`.
 
 1. Corre `pnpm build` y revisa que termine sin errores ni avisos `[DiagramaAWS]`.
 2. Corre `pnpm enlaces` y revisa que termine con ✓.
+   Si el cambio añade algo de otro origen, pruébalo con `pnpm servir` y mira la consola: la CSP
+   lo bloquearía en producción sin que el build se queje.
 3. No renombres la rama: su nombre forma la URL pública.
 
 ## Estructura

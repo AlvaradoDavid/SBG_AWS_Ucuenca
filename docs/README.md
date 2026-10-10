@@ -35,6 +35,8 @@ El sitio queda en `http://localhost:4321`.
 | `pnpm preview` | Sirve el build de producción |
 | `pnpm fotos` | Convierte las fotos de `Eventos/` a WebP en `src/assets/eventos/` |
 | `pnpm enlaces` | Revisa los enlaces internos de `dist/`: barra final, destino existente y anclas |
+| `pnpm servir` | Sirve `dist/` con las cabeceras de producción (CSP incluida) en `localhost:4322` |
+| `pnpm capturar` | Captura una página entera a un ancho dado, con Edge por CDP, y avisa si desborda |
 
 ## Las tres reglas que no se rompen
 

@@ -34,6 +34,32 @@ consola no muestra ningún bloqueo de la CSP. Capturas a 390 y 1440 px, por CDP 
 abierta y desplazada. Los siete enlaces de WhatsApp, el de `tel:`, el de
 Instagram y el de correo llevan el número, la cuenta y los textos correctos.
 
+**Publicado el 2026-10-10 en `410ebb9` + `b4a5ee6`** (con `0bce970`, la nota de
+la publicación anterior, que había quedado en local). Amplify tardó unos 110
+segundos. Comprobado con `curl`: `/student-community-day/patrocinio/` responde
+200 con la CSP y HSTS, `/no-existe/` da 404 sin redirección, el `.ics` sigue
+saliendo como `text/calendar` y los tres íconos nuevos responden 200. La portada,
+`/student-community-day/`, `/student-community-day/patrocinio/`, `/eventos/` y
+`/servicios/` son idénticas al build local. En producción, la página lleva los
+siete enlaces de WhatsApp al +593 98 423 0758, el `tel:`, el chat de Instagram y
+el correo, y su `og:image` es el afiche.
+
+### Dos scripts para verificar en esta máquina
+
+Al cerrar la sesión se versionaron las herramientas con las que se verificó la
+página, para no tener que reescribirlas:
+
+- **`pnpm servir`** (`scripts/servir-dist.mjs`) sirve `dist/` con las cabeceras
+  de `customHttp.yml`. Reemplaza al script que se usó el 2026-10-05 y no se
+  guardó.
+- **`pnpm capturar`** (`scripts/capturar.mjs`) saca capturas de página entera
+  por CDP, emulando el ancho, y avisa si algo desborda. Edge sin ventana no
+  respeta anchos menores de unos 500 px con `--window-size`.
+
+Ninguno cambia lo que se publica. Probados contra el build local: `.ics` como
+`text/calendar`, 404 propia y la página de patrocinio a 390 px con la
+comparativa abierta, sin desbordar.
+
 ---
 
 ## Solo TicketIn para inscribirse al Student Community Day

@@ -65,52 +65,14 @@ fuera lo más visible del sitio. Construido el 2026-10-05 y **publicado el
   todas las páginas. Para que la barra siga cabiendo en una línea en tableta,
   **«Quiénes somos» sale de ella mientras dure el evento** y vuelve sola después
   (ver más abajo).
+- **Una página para patrocinadores,** `/student-community-day/patrocinio/`,
+  publicada el 2026-10-10 ([D-32](decisiones.md#d-32)): el brochure de patrocinio
+  convertido en página, con un botón de WhatsApp por nivel. Ver
+  [la página para patrocinadores](#la-página-para-patrocinadores).
 
 Todo vive en `src/content/proximos/student-community-day.mdx`: para cambiar un
 enlace, el horario, los participantes o los patrocinadores se edita ese archivo,
 sin tocar componentes.
-
-### La página para patrocinadores
-
-Construida el 2026-10-10 ([D-32](decisiones.md#d-32)), **sin publicar todavía**:
-`/student-community-day/patrocinio/` convierte el brochure de patrocinio del club
-en una página para empresas, de usted. Se llega a ella desde una línea discreta
-bajo los logos de los patrocinadores («¿Su empresa quiere estar aquí?»), en la
-portada y en la página del evento, y desde el enlace que el club les manda a las
-empresas.
-
-Cada nivel (Supporter $100, Bronce $300, Plata $500 y Oro $1000) tiene su botón,
-que abre WhatsApp con el nivel ya escrito en el mensaje. Al final están los cuatro
-canales: WhatsApp, teléfono, Instagram y correo. Los patrocinadores actuales salen
-arriba, como prueba de que otras empresas ya confían en el evento.
-
-**Para mantenerla,** todo está en el campo `patrocinio` del mismo `.mdx`:
-
-- **Un patrocinador nuevo:** su logo en `src/assets/patrocinadores/` y una línea
-  en `patrocinadores`. Sale en la portada, en la página del evento y en «Ya nos
-  acompañan».
-- **Un nivel agotado:** `agotado: true` en su línea de `niveles`. Su tarjeta dice
-  «Agotado» y pierde el botón. El de Oro trae el *naming* del evento, así que en
-  la práctica tiene un solo cupo.
-- **Un beneficio que cambia:** su fila en `beneficios`. Las tarjetas se arman a
-  partir de ahí.
-- **Otro número de WhatsApp:** en `contacto.whatsapp`, con `+593` y sin espacios.
-  Si tiene una cifra de más o de menos, el build falla.
-
-**Pendiente:**
-
-- **El PDF del brochure.** No se publicó: lleva el teléfono con un dígito de más
-  («+593 998 423 0758»; el correcto es +593 98 423 0758). Con un PDF corregido, se
-  puede ofrecer para descargar al final de la página, para que quien la encuentra
-  se lo reenvíe a quien decide.
-- **Los AWS User Groups de Quito y Security Ecuador,** que el brochure presenta
-  como organizadores. El club pidió dejarlo pendiente.
-- **Logos según el nivel.** El brochure vende «logo en web» en todos los niveles.
-  Si el club quiere que los de Oro salgan más grandes y primero, hace falta un
-  campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los tres
-  actuales.
-- **Una fecha límite para patrocinar.** El merchandising y los badges necesitan
-  tiempo de imprenta. Si el club fija una fecha, puede ir en la página.
 
 **Lo que decidió el club** (2026-10-05 y 06), para no volver a preguntarlo:
 
@@ -165,6 +127,69 @@ arriba, como prueba de que otras empresas ya confían en el evento.
    organizar.
 4. La página `/student-community-day/` sigue en línea, ya sin inscripción. Si se
    quiere, puede enlazar a la galería del evento.
+
+### La página para patrocinadores
+
+Construida y **publicada el 2026-10-10** ([D-32](decisiones.md#d-32)):
+`/student-community-day/patrocinio/` convierte el brochure de patrocinio del club
+en una página para empresas, de usted. Se llega a ella desde una línea discreta
+bajo los logos de los patrocinadores («¿Su empresa quiere estar aquí?»), en la
+portada y en la página del evento, y desde el enlace que el club les manda a las
+empresas.
+
+Cada nivel (Supporter $100, Bronce $300, Plata $500 y Oro $1000) tiene su botón,
+que abre WhatsApp con el nivel ya escrito en el mensaje. Al final están los cuatro
+canales: WhatsApp, teléfono, Instagram y correo. Los patrocinadores actuales salen
+arriba, como prueba de que otras empresas ya confían en el evento.
+
+**Para mantenerla,** todo está en el campo `patrocinio` del mismo `.mdx`:
+
+- **Un patrocinador nuevo:** su logo en `src/assets/patrocinadores/` y una línea
+  en `patrocinadores`. Sale en la portada, en la página del evento y en «Ya nos
+  acompañan».
+- **Un nivel agotado:** `agotado: true` en su línea de `niveles`. Su tarjeta dice
+  «Agotado» y pierde el botón. El de Oro trae el *naming* del evento, así que en
+  la práctica tiene un solo cupo.
+- **Un beneficio que cambia:** su fila en `beneficios`. Las tarjetas se arman a
+  partir de ahí.
+- **Otro número de WhatsApp:** en `contacto.whatsapp`, con `+593` y sin espacios.
+  Si tiene una cifra de más o de menos, el build falla.
+
+**Lo que decidió el club** (2026-10-10):
+
+- **El WhatsApp es +593 98 423 0758.** El del brochure tenía un dígito de más.
+- **El correo `awsclub.ucuenca@gmail.com` sí va,** como último canal. Para los
+  asistentes sigue sin correo.
+- **La línea discreta bajo los logos de la portada** sí va, aunque ahí el club
+  había pedido quitar el título «Patrocinan».
+- **«Cupos limitados» en todos los niveles,** no solo en Plata y Oro como en el
+  brochure.
+- **Los patrocinadores actuales, como prueba** de que otras empresas ya confían en
+  el evento: van justo debajo de la cabecera.
+- **Sin mencionar a los User Groups** de Quito y Security Ecuador, por ahora.
+
+**Después del 14,** la línea bajo los logos se va con el cartel. La página sigue
+en línea sin los niveles ni el botón fijo, y su contacto pregunta por la próxima
+edición: el brochure promete prioridad de renovación con la tarifa 2027.
+
+**Pendiente:**
+
+- **Difundir el enlace.** La página solo convierte si las empresas llegan a ella:
+  el enlace en la bio y en las historias de Instagram, en los mensajes directos a
+  empresas y en LinkedIn. Al pegarlo en WhatsApp o LinkedIn sale el afiche como
+  vista previa.
+- **El PDF del brochure.** No se publicó: lleva el teléfono con un dígito de más
+  («+593 998 423 0758»; el correcto es +593 98 423 0758). Con un PDF corregido, se
+  puede ofrecer para descargar al final de la página, para que quien la encuentra
+  se lo reenvíe a quien decide.
+- **Los AWS User Groups de Quito y Security Ecuador,** que el brochure presenta
+  como organizadores. El club pidió dejarlo pendiente.
+- **Logos según el nivel.** El brochure vende «logo en web» en todos los niveles.
+  Si el club quiere que los de Oro salgan más grandes y primero, hace falta un
+  campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los tres
+  actuales.
+- **Una fecha límite para patrocinar.** El merchandising y los badges necesitan
+  tiempo de imprenta. Si el club fija una fecha, puede ir en la página.
 
 ---
 
@@ -247,6 +272,13 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   hero, la página `/student-community-day/` y su `.ics`, que Amplify sirve como
   `text/calendar`. Ver [lo urgente](#lo-urgente-el-aws-student-community-day-14-de-noviembre)
   y [D-31](decisiones.md#d-31).
+
+**Publicado el 2026-10-10** y comprobado en producción:
+
+- ✅ **Página para patrocinadores** (`410ebb9`, documentada en `b4a5ee6`):
+  `/student-community-day/patrocinio/` y la línea «¿Su empresa quiere estar
+  aquí?» bajo los logos. Ver [la página para patrocinadores](#la-página-para-patrocinadores)
+  y [D-32](decisiones.md#d-32).
 
 **Pendiente:**
 
@@ -564,6 +596,8 @@ pnpm dev      # servidor de desarrollo en localhost:4321
 pnpm build    # compila a dist/ y genera el índice de Pagefind
 pnpm fotos    # convierte Eventos/ a WebP en src/assets/eventos/
 pnpm enlaces  # revisa los enlaces internos de dist/ (después de pnpm build)
+pnpm servir   # sirve dist/ con las cabeceras de producción en localhost:4322
+pnpm capturar # captura una página entera a un ancho dado (ver «la CSP», más abajo)
 ```
 
 ### Cómo comprobar que no se rompió nada
@@ -641,17 +675,33 @@ build pasa y el navegador lo **bloquea en producción**, con un error en la cons
 y nada más. Antes de hacer push de algo así, hay que declararlo en la CSP
 ([D-25](decisiones.md#d-25)).
 
-Para probarlo sin publicar: servir `dist/` con un servidor estático propio que
-añada las cabeceras de `customHttp.yml`, recorrer las páginas afectadas y buscar
-errores `Refused to…` en la consola del navegador.
+Para probarlo sin publicar, desde el 2026-10-10 hay dos scripts:
 
-Así se probó el Student Community Day el 2026-10-05. El servidor fue un script
-de Node de unas 60 líneas que lee las reglas de `customHttp.yml`, y le daba a los
-`.ics` un tipo binario por defecto para comprobar que la regla los corregía. La
-consola y las capturas salieron de Edge sin ventana (`--headless=new`, por CDP,
-con `prefers-reduced-motion: reduce` para que los reveals salgan en su estado
-final). El panel del navegador de Claude no dibuja mientras está oculto, y sus
-capturas se quedan en blanco o a medias.
+```bash
+pnpm servir
+pnpm capturar http://localhost:4322/student-community-day/patrocinio/ patrocinio.png 390
+```
+
+- **`pnpm servir`** (`scripts/servir-dist.mjs`) sirve `dist/` en el puerto 4322
+  con las cabeceras de `customHttp.yml`, como Amplify: la CSP, la 404 propia con
+  código 404 y el `text/calendar` de los `.ics`, que sin la regla salen como
+  binarios. Con él se abre la página en el navegador y se buscan errores
+  `Refused to…` en la consola. No necesita el compilador de Markdown, así que
+  funciona aunque Smart App Control lo bloquee.
+- **`pnpm capturar`** (`scripts/capturar.mjs`) saca una captura de la página
+  entera con Edge sin ventana, por CDP, emulando el ancho pedido (celular por
+  debajo de 768 px) y con `prefers-reduced-motion`, para que los reveals salgan
+  en su estado final. Imprime el ancho real: si sale mayor que el pedido, algo
+  desborda, y lista qué. Un cuarto argumento opcional es JavaScript que corre
+  antes de la captura, por ejemplo para abrir un `<details>`. Termina con código 1
+  si la página desborda.
+
+**Por qué no basta con lo de siempre.** El panel del navegador de Claude no dibuja
+mientras está oculto, y sus capturas se quedan en blanco o a medias. Y
+`msedge --headless=new --window-size=390,…` no respeta anchos menores de unos
+500 px: la página se arma más ancha y la captura sale cortada, como si
+desbordara. El 2026-10-05 se usó un servidor parecido que no se guardó; estos dos
+se versionaron para no tener que reescribirlos.
 
 ### Después de cada push
 

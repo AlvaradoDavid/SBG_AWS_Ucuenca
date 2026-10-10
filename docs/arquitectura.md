@@ -38,6 +38,8 @@ Eventos/                    Material original pesado. NO entra al repo.
 Branding/                   Kit de marca oficial de AWS.
 scripts/procesar-fotos.mjs  Convierte Eventos/ → src/assets/eventos/
 scripts/comprobar-enlaces.mjs  Revisa los enlaces internos de dist/ (pnpm enlaces)
+scripts/servir-dist.mjs     Sirve dist/ con las cabeceras de customHttp.yml (pnpm servir)
+scripts/capturar.mjs        Captura una página entera por CDP, a un ancho dado (pnpm capturar)
 ```
 
 ## Colecciones de contenido

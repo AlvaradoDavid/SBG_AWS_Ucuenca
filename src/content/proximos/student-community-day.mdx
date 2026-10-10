@@ -42,6 +42,63 @@ patrocinadores:
   - { nombre: 'Deuna', logo: '../../assets/patrocinadores/deuna.png', sobreBlanco: true }
   - { nombre: 'TicketIn', logo: '../../assets/patrocinadores/ticketin.png' }
   - { nombre: 'Ambross TI', logo: '../../assets/patrocinadores/ambross-ti.jpg' }
+
+# La página para empresas, /student-community-day/patrocinio/ (D-32). Sale del
+# brochure de patrocinio del 2026-10-05; va de «usted», como el brochure.
+patrocinio:
+  titular: 'Su marca, frente a la próxima generación de talento cloud del Ecuador'
+  presentacion: 'Una jornada técnica sobre cloud computing e inteligencia artificial, organizada por estudiantes y respaldada por las comunidades AWS del país: la vía más directa hacia el talento que construirá las próximas soluciones cloud del Ecuador.'
+  # La misma foto de grupo que trae el brochure; las otras dos del brochure son de stock.
+  foto: '../../assets/eventos/2026-01-08-introduccion-a-aws-yachana-day-ucuenca/foto-17.webp'
+  fotoAlt: 'Estudiantes junto al stand del club en el Yachana Day de la Universidad de Cuenca'
+  cifras:
+    - { valor: '1.ª', etiqueta: 'Edición en el Ecuador' }
+    - { valor: '2000+', etiqueta: 'Miembros de las comunidades AWS del país' }
+  publico:
+    - 'Profesionales TI'
+    - 'Ingenieros de software'
+    - 'Arquitectos de soluciones'
+    - 'Líderes cloud'
+    - 'Estudiantes de ingeniería'
+  razones:
+    - titulo: 'Posicionamiento'
+      texto: 'Asocie su empresa con la innovación, la tecnología de punta y el liderazgo en cloud computing.'
+    - titulo: 'Reclutamiento tech'
+      texto: 'Conecte sin intermediarios con desarrolladores, ingenieros y arquitectos cloud listos para impulsar sus proyectos.'
+    - titulo: 'Networking estratégico'
+      texto: 'Cree vínculos con empresas líderes, startups y la academia en los espacios de interacción del evento.'
+  # El número del brochure tenía un dígito de más; este es el que confirmó el club el 2026-10-10.
+  contacto:
+    whatsapp: '+593984230758'
+    correo: 'awsclub.ucuenca@gmail.com'
+  aviso: 'Cupos limitados'
+  niveles:
+    - { nombre: 'Supporter', precio: 100 }
+    - { nombre: 'Bronce', precio: 300 }
+    - { nombre: 'Plata', precio: 500 }
+    - { nombre: 'Oro', precio: 1000 }
+  # Un valor por nivel, en el orden de arriba: Supporter, Bronce, Plata, Oro.
+  beneficios:
+    - grupo: 'Presencia digital'
+      filas:
+        - { beneficio: 'Logo en la web y en las piezas generales', valores: [true, true, true, true] }
+        - { beneficio: 'Mención en la apertura y el cierre', valores: [true, true, true, true] }
+        - { beneficio: 'Publicaciones compartidas', valores: ['1', false, false, false] }
+        - { beneficio: 'Publicaciones dedicadas', valores: [false, '1', '2', '3 + mención destacada'] }
+    - grupo: 'Presencia en el evento'
+      filas:
+        - { beneficio: 'Difusión de vacantes o programas trainee', valores: [false, true, true, true] }
+        - { beneficio: 'Logo en las presentaciones', valores: [false, true, true, true] }
+        - { beneficio: 'Material promocional o QR de registro', valores: [false, false, true, true] }
+        - { beneficio: 'Espacio de stand', valores: [false, 'Estándar', 'Preferencial', 'Preferencial'] }
+    - grupo: 'Experiencia premium y VIP'
+      filas:
+        - { beneficio: 'Charla técnica o lightning talk', valores: [false, false, true, true] }
+        - { beneficio: 'Logo en merchandising o badges', valores: [false, false, true, true] }
+        - { beneficio: 'Prioridad de renovación con la tarifa 2027', valores: [false, false, true, true] }
+        - { beneficio: 'Workshop corto o demo', valores: [false, false, false, true] }
+        - { beneficio: 'Naming principal del evento', valores: [false, false, false, true] }
+        - { beneficio: 'Branding en el coffee break y el networking', valores: [false, false, false, true] }
 ---
 
 Un Student Community Day es una conferencia de tecnología de un día, organizada y

@@ -158,6 +158,79 @@ const proximos = defineCollection({
           sobreBlanco: z.boolean().optional().default(false),
         })
       ),
+      /**
+       * La página para empresas, /<evento>/patrocinio/ (D-32). Sin este campo no
+       * se genera, ni sale la invitación bajo los logos de los patrocinadores.
+       */
+      patrocinio: z
+        .object({
+          titular: z.string(),
+          /** Bajo el titular: qué es el evento, contado a una empresa. */
+          presentacion: z.string(),
+          /** La foto de la cabecera: gente real del club, no de banco de imágenes. */
+          foto: image(),
+          fotoAlt: z.string(),
+          /** Las cifras que no salen de otros campos: «2000+ miembros». */
+          cifras: z.array(z.object({ valor: z.string(), etiqueta: z.string() })),
+          /** Ante quiénes estará la marca. */
+          publico: z.array(z.string()).min(1),
+          /** Por qué patrocinar: tres tarjetas, cada una con su ícono. */
+          razones: z.array(z.object({ titulo: z.string(), texto: z.string() })).length(3),
+          contacto: z.object({
+            /**
+             * Celular del Ecuador en formato internacional y sin espacios. Se valida
+             * porque con un dígito de más el botón de WhatsApp no abre ningún chat.
+             */
+            whatsapp: z.string().regex(/^\+5939\d{8}$/, 'Celular del Ecuador: +5939 y ocho cifras, sin espacios'),
+            correo: z.string().email(),
+          }),
+          /** Se repite en la tarjeta de cada nivel: «Cupos limitados». */
+          aviso: z.string().optional(),
+          niveles: z
+            .array(
+              z.object({
+                nombre: z.string(),
+                /** En dólares. */
+                precio: z.number().int().positive(),
+                /** La tarjeta dice «Agotado» y pierde su botón. */
+                agotado: z.boolean().optional().default(false),
+              })
+            )
+            .min(1),
+          /**
+           * La comparativa del brochure. `valores` va en el orden de `niveles`: true
+           * si el nivel lo incluye y un texto si importa cuánto («2», «Preferencial»).
+           * Las tarjetas de los niveles se arman a partir de aquí.
+           */
+          beneficios: z
+            .array(
+              z.object({
+                grupo: z.string(),
+                filas: z
+                  .array(
+                    z.object({
+                      beneficio: z.string(),
+                      valores: z.array(z.union([z.boolean(), z.string()])),
+                    })
+                  )
+                  .min(1),
+              })
+            )
+            .min(1),
+        })
+        .superRefine((patrocinio, ctx) => {
+          for (const { filas } of patrocinio.beneficios) {
+            for (const { beneficio, valores } of filas) {
+              if (valores.length !== patrocinio.niveles.length) {
+                ctx.addIssue({
+                  code: 'custom',
+                  message: `«${beneficio}» tiene ${valores.length} valores y hay ${patrocinio.niveles.length} niveles`,
+                });
+              }
+            }
+          }
+        })
+        .optional(),
     }),
 });
 

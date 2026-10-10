@@ -1,0 +1,28 @@
+---
+/**
+ * Una línea bajo los logos de los patrocinadores que lleva a la página de
+ * patrocinio (D-32). Va donde una empresa ve a otras que ya apoyan el evento:
+ * en la portada, bajo el cartel, y al final de la página del evento. Sale solo
+ * mientras el evento tiene `patrocinio` y no ha terminado.
+ */
+import { buscaPatrocinio, rutaDePatrocinio } from '../lib/patrocinio';
+import type { Proximo } from '../lib/proximos';
+
+interface Props {
+  evento: Proximo;
+}
+
+const { evento } = Astro.props;
+---
+
+{buscaPatrocinio(evento) && (
+  <p class="text-center text-sm leading-relaxed text-tinta-600">
+    ¿Su empresa quiere estar aquí?{' '}
+    <a
+      href={rutaDePatrocinio(evento)}
+      class="inline-flex items-center gap-1 font-bold text-tinta-900 underline decoration-marca-purple decoration-2 underline-offset-4 transition hover:decoration-tinta-900"
+    >
+      Conozca los niveles de patrocinio <span aria-hidden="true">→</span>
+    </a>
+  </p>
+)}

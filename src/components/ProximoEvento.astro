@@ -2,12 +2,10 @@
 /**
  * El próximo evento que organiza el club, en la portada: va justo debajo del hero
  * y antes de los pilares mientras no haya terminado (D-31). Es el mismo cartel a
- * todo el ancho que encabeza la página del evento y, debajo, los patrocinadores
- * con la invitación a patrocinar (D-32). Sin JavaScript.
+ * todo el ancho que encabeza la página del evento, con los patrocinadores y el
+ * botón para patrocinar bajo el de la entrada (D-32). Sin JavaScript.
  */
 import CartelEvento from './CartelEvento.astro';
-import InvitacionPatrocinio from './InvitacionPatrocinio.astro';
-import Patrocinadores from './Patrocinadores.astro';
 import type { Proximo } from '../lib/proximos';
 
 interface Props {
@@ -15,21 +13,8 @@ interface Props {
 }
 
 const { evento } = Astro.props;
-const { patrocinadores } = evento.data;
 ---
 
 <section aria-labelledby="proximo-evento">
   <CartelEvento evento={evento} nivel="h2" idTitulo="proximo-evento" conDetalles />
-
-  <!-- Los logos van solos, sin título: el club lo pidió así. La lista lleva su
-       nombre para los lectores de pantalla. -->
-  {patrocinadores.length > 0 && (
-    <div class="mx-auto max-w-6xl px-6 pt-8">
-      <Patrocinadores patrocinadores={patrocinadores} compacto />
-      <!-- Para las empresas: una línea discreta, sin competir con la entrada. -->
-      <div class="mt-4">
-        <InvitacionPatrocinio evento={evento} />
-      </div>
-    </div>
-  )}
 </section>

@@ -9,29 +9,30 @@ import type { ImageMetadata } from 'astro';
 
 interface Props {
   patrocinadores: { nombre: string; logo: ImageMetadata; sobreBlanco: boolean }[];
-  /** Más bajos, para la franja bajo el cartel de la portada. */
-  compacto?: boolean;
+  /** Chicos y sobre el fondo oscuro, bajo el botón de entrada del cartel. */
+  enCartel?: boolean;
 }
 
-const { patrocinadores, compacto = false } = Astro.props;
+const { patrocinadores, enCartel = false } = Astro.props;
 
-// Todas las tarjetas miden lo mismo de alto: 56 px compactas y 96 px en la página.
-// En las blancas, el relleno se descuenta del logo.
-const tarjeta = compacto ? 'h-14' : 'h-24';
-const relleno = compacto ? 'px-4 py-3' : 'px-6 py-5';
-const logoSobreBlanco = compacto ? 'h-8' : 'h-14';
+// Todas las tarjetas miden lo mismo de alto: 44 px en el cartel, como sus botones,
+// y 96 px en la página. En las blancas, el relleno se descuenta del logo.
+const tarjeta = enCartel ? 'h-11' : 'h-24';
+const relleno = enCartel ? 'px-3 py-2' : 'px-6 py-5';
+const logoSobreBlanco = enCartel ? 'h-7' : 'h-14';
 // Se genera al doble del alto de pantalla, sin pasar del original.
-const altoGenerado = compacto ? 112 : 192;
+const altoGenerado = enCartel ? 88 : 192;
 ---
 
 <ul
   aria-label="Patrocinadores"
-  class:list={['flex flex-wrap items-center justify-center', compacto ? 'gap-3' : 'gap-4 sm:gap-6']}
+  class:list={['flex flex-wrap items-center', enCartel ? 'gap-2' : 'justify-center gap-4 sm:gap-6']}
 >
   {patrocinadores.map(({ nombre, logo, sobreBlanco }) => (
     <li
       class:list={[
-        'flex items-center overflow-hidden rounded-xl ring-1 ring-tinta-200',
+        'flex items-center overflow-hidden ring-1',
+        enCartel ? 'rounded-lg ring-white/15' : 'rounded-xl ring-tinta-200',
         tarjeta,
         sobreBlanco && ['bg-white', relleno],
       ]}

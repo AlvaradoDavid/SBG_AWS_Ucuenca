@@ -10,7 +10,9 @@
  * (regla 1): el morado y el magenta del afiche quedan en los íconos y los píxeles.
  */
 import { Image } from 'astro:assets';
+import Patrocinadores from './Patrocinadores.astro';
 import { diaDeEvento, horaDeEvento } from '../lib/fechas';
+import { buscaPatrocinio, rutaDePatrocinio } from '../lib/patrocinio';
 import { enlaceGoogleCalendar, estaVigente, rutaDeProximo, type Proximo } from '../lib/proximos';
 
 interface Props {
@@ -23,13 +25,14 @@ interface Props {
 }
 
 const { evento, nivel: Titulo, idTitulo, conDetalles = false } = Astro.props;
-const { cartel, lema, inicio, fin, lugar, acceso, entradas, imagen } = evento.data;
+const { cartel, lema, inicio, fin, lugar, acceso, entradas, imagen, patrocinadores } = evento.data;
 
 // En la página del evento la foto es lo primero que se ve; en la portada, no.
 const enCabecera = Titulo === 'h1';
 const vigente = estaVigente(evento);
 const ruta = rutaDeProximo(evento);
 const googleCalendar = enlaceGoogleCalendar(evento, new URL(ruta, Astro.site).href);
+const invitaAPatrocinar = buscaPatrocinio(evento);
 
 const enlaceSobreOscuro =
   'font-bold text-white underline decoration-white/40 decoration-2 underline-offset-4 transition hover:decoration-marca-purple';
@@ -138,6 +141,21 @@ const enlaceSobreOscuro =
               Reserva tu entrada
             </a>
           </div>
+          <!-- Los patrocinadores, chicos, y al lado el botón para sumarse: secundario,
+               para no competir con la entrada, que es para los estudiantes (D-32). -->
+          {(patrocinadores.length > 0 || invitaAPatrocinar) && (
+            <div class="mt-4 flex flex-wrap items-center gap-3">
+              {patrocinadores.length > 0 && <Patrocinadores patrocinadores={patrocinadores} enCartel />}
+              {invitaAPatrocinar && (
+                <a
+                  href={rutaDePatrocinio(evento)}
+                  class="inline-flex h-11 items-center rounded-lg border border-white/30 bg-white/5 px-4 text-sm font-bold text-white transition hover:border-white/60 hover:bg-white/10"
+                >
+                  Ser patrocinador
+                </a>
+              )}
+            </div>
+          )}
           <div class="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 text-sm">
             <!-- Los dos enlaces van juntos: si no caben, bajan los dos, no queda un punto suelto. -->
             <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-tinta-300">

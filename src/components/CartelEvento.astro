@@ -141,21 +141,6 @@ const enlaceSobreOscuro =
               Reserva tu entrada
             </a>
           </div>
-          <!-- Los patrocinadores, chicos, y al lado el botón para sumarse: secundario,
-               para no competir con la entrada, que es para los estudiantes (D-32). -->
-          {(patrocinadores.length > 0 || invitaAPatrocinar) && (
-            <div class="mt-4 flex flex-wrap items-center gap-3">
-              {patrocinadores.length > 0 && <Patrocinadores patrocinadores={patrocinadores} enCartel />}
-              {invitaAPatrocinar && (
-                <a
-                  href={rutaDePatrocinio(evento)}
-                  class="inline-flex h-11 items-center rounded-lg border border-white/30 bg-white/5 px-4 text-sm font-bold text-white transition hover:border-white/60 hover:bg-white/10"
-                >
-                  Ser patrocinador
-                </a>
-              )}
-            </div>
-          )}
           <div class="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 text-sm">
             <!-- Los dos enlaces van juntos: si no caben, bajan los dos, no queda un punto suelto. -->
             <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-tinta-300">
@@ -175,6 +160,21 @@ const enlaceSobreOscuro =
               </a>
             )}
           </div>
+          <!-- Al final, los patrocinadores en chico y, al lado, el botón para sumarse:
+               secundario, para no competir con la entrada, que es para los estudiantes (D-32). -->
+          {(patrocinadores.length > 0 || invitaAPatrocinar) && (
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              {patrocinadores.length > 0 && <Patrocinadores patrocinadores={patrocinadores} enCartel />}
+              {invitaAPatrocinar && (
+                <a
+                  href={rutaDePatrocinio(evento)}
+                  class="inline-flex h-11 items-center rounded-lg border border-white/30 bg-white/5 px-4 text-sm font-bold text-white transition hover:border-white/60 hover:bg-white/10"
+                >
+                  Ser patrocinador
+                </a>
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

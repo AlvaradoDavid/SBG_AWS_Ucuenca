@@ -322,8 +322,8 @@ Es el `CartelEvento` a todo el ancho, el mismo que encabeza la página del
 evento, con los patrocinadores y el botón para patrocinar dentro. Sin JavaScript.
 
 Hasta el 2026-10-10 los logos iban debajo del cartel, sobre blanco, con
-`InvitacionPatrocinio` debajo. El club los pidió dentro del cartel, bajo el botón
-de entrada, y la franja de abajo se quitó para no repetirlos uno tras otro.
+`InvitacionPatrocinio` debajo. El club los pidió dentro del cartel, al final, y la
+franja de abajo se quitó para no repetirlos uno tras otro.
 
 Hasta el 2026-10-06 el cartel era una tarjeta redondeada con margen a los lados;
 el club prefirió la franja de borde a borde de la página del evento.
@@ -354,8 +354,8 @@ se carga con prioridad; en la portada, con `loading="lazy"`.
 De arriba abajo: el logo de AWS y el del grupo, la píldora «Próximo evento» con
 «Somos los anfitriones», el nombre partido como en el afiche (`cartel` en el
 frontmatter), el lema, fecha y lugar con sus íconos, el acceso, el botón de
-entrada, los patrocinadores con «Ser patrocinador» y los enlaces de calendario.
-El título es un único `h1` o
+entrada, los enlaces de calendario con «Ver todos los detalles» y, al final, los
+patrocinadores con «Ser patrocinador». El título es un único `h1` o
 `h2`: los renglones son `span` con un espacio entre ellos, así que un lector de
 pantalla lee «Primer Student Community Day Ecuador».
 
@@ -364,7 +364,8 @@ magenta están en los íconos y en los píxeles (el de la esquina, el escalonado
 junto a «Ecuador» y los separadores del lema). Después del evento, la píldora
 dice «Ya se realizó» con la fecha, y los botones y el calendario desaparecen.
 
-**Patrocinadores.** Bajo «Reserva tu entrada» van los logos en chico
+**Patrocinadores.** Al final del texto, bajo «Ver todos los detalles» en la
+portada y bajo el calendario en la página del evento, van los logos en chico
 (`Patrocinadores` con `enCartel`, sin título, como pidió el club) y, al lado,
 «Ser patrocinador», un botón secundario —el borde blanco translúcido de «Conocer
 al grupo» en el hero— hacia la página de patrocinio ([D-32](decisiones.md#d-32)).
@@ -391,7 +392,7 @@ natural.
 | Prop | Tipo | Notas |
 | --- | --- | --- |
 | `patrocinadores` | `{ nombre, logo, sobreBlanco }[]` | Del frontmatter de `proximos` |
-| `enCartel` | boolean? | Tarjetas de 44 px, alineadas a la izquierda y con borde para fondo oscuro, bajo el botón de entrada de `CartelEvento`; sin él, 96 px y centradas |
+| `enCartel` | boolean? | Tarjetas de 44 px, alineadas a la izquierda y con borde para fondo oscuro, al final de `CartelEvento`; sin él, 96 px y centradas |
 
 La lista lleva `aria-label="Patrocinadores"`, para que un lector de pantalla no
 lea tres logos sueltos.

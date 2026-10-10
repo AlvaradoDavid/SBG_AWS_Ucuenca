@@ -915,8 +915,10 @@ ya apoyan el evento. No va en la barra, que ya cedió «Quiénes somos» al even
 
 Al principio tampoco iba en el cartel, para no quitarle fuerza al botón de
 entrada: en la portada, los logos y una línea discreta iban debajo del cartel.
-El 2026-10-10 el club pidió los logos en chico dentro del cartel, bajo «Reserva tu
-entrada», y al lado un botón para patrocinar. El botón es secundario —borde
+El 2026-10-10 el club pidió los logos en chico dentro del cartel y al lado un
+botón para patrocinar. Van al final, bajo «Ver todos los detalles»: primero
+estuvieron justo bajo «Reserva tu entrada», y el club prefirió bajarlos, con lo
+que la entrada y el calendario quedan juntos. El botón es secundario —borde
 translúcido sobre el fondo oscuro, frente al blanco macizo de la entrada— y va en
 infinitivo, «Ser patrocinador», que no obliga a elegir entre el tú del cartel y
 el usted de la página de patrocinio. La franja de abajo se quitó para no repetir

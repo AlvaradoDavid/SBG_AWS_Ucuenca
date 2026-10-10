@@ -4,14 +4,15 @@
 
 ## Patrocinadores y «Ser patrocinador» dentro del cartel
 
-2026-10-10. El club pidió los logos de los patrocinadores en chico bajo «Reserva
-tu entrada», en el cartel del Student Community Day, y al lado un botón hacia la
-página de patrocinio ([D-32](decisiones.md#d-32)).
+2026-10-10. El club pidió los logos de los patrocinadores en chico dentro del
+cartel del Student Community Day, y al lado un botón hacia la página de
+patrocinio ([D-32](decisiones.md#d-32)).
 
-- **En el cartel** (`CartelEvento.astro`), entre el botón de entrada y el
-  calendario: los tres logos en tarjetas de 44 px y el botón secundario «Ser
-  patrocinador», del mismo alto. Sale en la portada y en la cabecera de
-  `/student-community-day/`. En celular el botón baja bajo los logos.
+- **Al final del cartel** (`CartelEvento.astro`), bajo «Ver todos los detalles»
+  en la portada y bajo el calendario en la página del evento: los tres logos en
+  tarjetas de 44 px y el botón secundario «Ser patrocinador», del mismo alto.
+  En celular el botón baja bajo los logos. Primero fueron justo bajo «Reserva tu
+  entrada»; el club prefirió bajarlos.
 - **`Patrocinadores.astro`:** la prop `compacto` pasa a ser `enCartel`: tarjetas
   de 44 px, alineadas a la izquierda y con un borde que se ve sobre el fondo
   oscuro.

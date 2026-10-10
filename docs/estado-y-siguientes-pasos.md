@@ -83,7 +83,7 @@ sin tocar componentes.
   inscripción del sitio. Hasta el 2026-10-06 había también un registro en
   Meetup; el club lo quitó para darle todo el peso a TicketIn.
 - **Los patrocinadores salen en los dos lugares:** en el cartel, en chico y
-  bajo «Reserva tu entrada», solo los logos (el club pidió quitar el título
+  bajo «Ver todos los detalles», solo los logos (el club pidió quitar el título
   «Patrocinan»), y al final de la página, con «Con el apoyo de». Hasta el
   2026-10-10 los de la portada iban debajo del cartel.
 - **Contacto:** el Instagram y el LinkedIn del club, sin correo.
@@ -165,7 +165,8 @@ arriba, como prueba de que otras empresas ya confían en el evento.
 - **La línea discreta bajo los logos de la portada** sí va, aunque ahí el club
   había pedido quitar el título «Patrocinan». Esa misma tarde la reemplazó un
   botón «Ser patrocinador» dentro del cartel, al lado de los logos en chico, bajo
-  «Reserva tu entrada», también a pedido del club.
+  «Ver todos los detalles», también a pedido del club. (Primero fueron justo bajo
+  «Reserva tu entrada»; el club prefirió bajarlos al final del cartel.)
 - **«Cupos limitados» en todos los niveles,** no solo en Plata y Oro como en el
   brochure.
 - **Los patrocinadores actuales, como prueba** de que otras empresas ya confían en

@@ -319,10 +319,11 @@ colección `proximos` cuyo `fin` es posterior al build y que empieza antes. Si n
 hay ninguno, la portada queda como antes.
 
 Es el `CartelEvento` a todo el ancho, el mismo que encabeza la página del
-evento, y debajo, sobre blanco, los logos de los patrocinadores, sin título: el
-club lo pidió así. La lista lleva `aria-label="Patrocinadores"`, para que un
-lector de pantalla no lea tres logos sueltos. Bajo los logos va
-`InvitacionPatrocinio`. Sin JavaScript.
+evento, con los patrocinadores y el botón para patrocinar dentro. Sin JavaScript.
+
+Hasta el 2026-10-10 los logos iban debajo del cartel, sobre blanco, con
+`InvitacionPatrocinio` debajo. El club los pidió dentro del cartel, bajo el botón
+de entrada, y la franja de abajo se quitó para no repetirlos uno tras otro.
 
 Hasta el 2026-10-06 el cartel era una tarjeta redondeada con margen a los lados;
 el club prefirió la franja de borde a borde de la página del evento.
@@ -353,7 +354,8 @@ se carga con prioridad; en la portada, con `loading="lazy"`.
 De arriba abajo: el logo de AWS y el del grupo, la píldora «Próximo evento» con
 «Somos los anfitriones», el nombre partido como en el afiche (`cartel` en el
 frontmatter), el lema, fecha y lugar con sus íconos, el acceso, el botón de
-entrada y los enlaces de calendario. El título es un único `h1` o
+entrada, los patrocinadores con «Ser patrocinador» y los enlaces de calendario.
+El título es un único `h1` o
 `h2`: los renglones son `span` con un espacio entre ellos, así que un lector de
 pantalla lee «Primer Student Community Day Ecuador».
 
@@ -361,6 +363,15 @@ Ningún texto va en color de marca: el morado y el
 magenta están en los íconos y en los píxeles (el de la esquina, el escalonado
 junto a «Ecuador» y los separadores del lema). Después del evento, la píldora
 dice «Ya se realizó» con la fecha, y los botones y el calendario desaparecen.
+
+**Patrocinadores.** Bajo «Reserva tu entrada» van los logos en chico
+(`Patrocinadores` con `enCartel`, sin título, como pidió el club) y, al lado,
+«Ser patrocinador», un botón secundario —el borde blanco translúcido de «Conocer
+al grupo» en el hero— hacia la página de patrocinio ([D-32](decisiones.md#d-32)).
+Logos y botón miden 44 px de alto, como el de entrada. En un celular no caben en
+una línea y el botón baja bajo los logos; achicarlo lo dejaría por debajo del
+objetivo táctil de 44 px. El botón sale solo con `buscaPatrocinio()`, y el bloque
+entero, como el de entrada, solo mientras el evento está vigente.
 
 **Calendario.** «Google» abre Google Calendar con el evento ya lleno (un enlace,
 sin API). «Apple u Outlook» descarga `/<evento>.ics`, que genera
@@ -374,13 +385,16 @@ Los logos de los patrocinadores, todos a la misma altura y cada uno con su ancho
 natural.
 
 ```astro
-<Patrocinadores patrocinadores={evento.data.patrocinadores} compacto />
+<Patrocinadores patrocinadores={evento.data.patrocinadores} enCartel />
 ```
 
 | Prop | Tipo | Notas |
 | --- | --- | --- |
 | `patrocinadores` | `{ nombre, logo, sobreBlanco }[]` | Del frontmatter de `proximos` |
-| `compacto` | boolean? | Tarjetas de 56 px para la franja de la portada; sin él, 96 px |
+| `enCartel` | boolean? | Tarjetas de 44 px, alineadas a la izquierda y con borde para fondo oscuro, bajo el botón de entrada de `CartelEvento`; sin él, 96 px y centradas |
+
+La lista lleva `aria-label="Patrocinadores"`, para que un lector de pantalla no
+lea tres logos sueltos.
 
 Un logo que trae su propio fondo (TicketIn en amarillo, Ambross en azul) ocupa la
 tarjeta entera. Uno transparente (`sobreBlanco: true`, el de Deuna) va sobre
@@ -399,8 +413,9 @@ patrocinio →», hacia la página de patrocinio ([D-32](decisiones.md#d-32)).
 ```
 
 Va bajo los logos de los patrocinadores, donde una empresa ve a otras que ya
-apoyan el evento: en la portada (dentro de `ProximoEvento`) y al final de la
-página del evento. Es texto pequeño en `tinta-600`, para que no le quite peso al
+apoyan el evento: al final de la página del evento. Hasta el 2026-10-10 iba
+también en la portada; ahí la reemplazó el botón «Ser patrocinador» del cartel.
+Es texto pequeño en `tinta-600`, para que no le quite peso al
 botón de entrada, que es para los estudiantes. No pinta nada si el evento no
 tiene `patrocinio` o ya terminó (`buscaPatrocinio()` en `src/lib/patrocinio.ts`).
 

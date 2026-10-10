@@ -82,9 +82,10 @@ sin tocar componentes.
 - **Solo TicketIn:** la entrada gratuita se reserva ahí, y es el único enlace de
   inscripción del sitio. Hasta el 2026-10-06 había también un registro en
   Meetup; el club lo quitó para darle todo el peso a TicketIn.
-- **Los patrocinadores salen en los dos lugares:** debajo del cartel de la
-  portada, solo los logos (el club pidió quitar el título «Patrocinan»), y al
-  final de la página, con «Con el apoyo de».
+- **Los patrocinadores salen en los dos lugares:** en el cartel, en chico y
+  bajo «Reserva tu entrada», solo los logos (el club pidió quitar el título
+  «Patrocinan»), y al final de la página, con «Con el apoyo de». Hasta el
+  2026-10-10 los de la portada iban debajo del cartel.
 - **Contacto:** el Instagram y el LinkedIn del club, sin correo.
 - **Participantes:** los 8 Student Builder Groups de
   <https://www.awsugecuador.com/comunidades/>. Los User Groups de esa página no
@@ -132,10 +133,11 @@ sin tocar componentes.
 
 Construida y **publicada el 2026-10-10** ([D-32](decisiones.md#d-32)):
 `/student-community-day/patrocinio/` convierte el brochure de patrocinio del club
-en una página para empresas, de usted. Se llega a ella desde una línea discreta
-bajo los logos de los patrocinadores («¿Su empresa quiere estar aquí?»), en la
-portada y en la página del evento, y desde el enlace que el club les manda a las
-empresas.
+en una página para empresas, de usted. Se llega a ella desde el botón «Ser
+patrocinador» del cartel, junto a los logos de los patrocinadores (en la portada
+y en la cabecera de la página del evento); desde la línea «¿Su empresa quiere
+estar aquí?» al final de la página del evento, y desde el enlace que el club les
+manda a las empresas.
 
 Cada nivel (Supporter $100, Bronce $300, Plata $500 y Oro $1000) tiene su botón,
 que abre WhatsApp con el nivel ya escrito en el mensaje. Al final están los cuatro
@@ -161,14 +163,17 @@ arriba, como prueba de que otras empresas ya confían en el evento.
 - **El correo `awsclub.ucuenca@gmail.com` sí va,** como último canal. Para los
   asistentes sigue sin correo.
 - **La línea discreta bajo los logos de la portada** sí va, aunque ahí el club
-  había pedido quitar el título «Patrocinan».
+  había pedido quitar el título «Patrocinan». Esa misma tarde la reemplazó un
+  botón «Ser patrocinador» dentro del cartel, al lado de los logos en chico, bajo
+  «Reserva tu entrada», también a pedido del club.
 - **«Cupos limitados» en todos los niveles,** no solo en Plata y Oro como en el
   brochure.
 - **Los patrocinadores actuales, como prueba** de que otras empresas ya confían en
   el evento: van justo debajo de la cabecera.
 - **Sin mencionar a los User Groups** de Quito y Security Ecuador, por ahora.
 
-**Después del 14,** la línea bajo los logos se va con el cartel. La página sigue
+**Después del 14,** el botón «Ser patrocinador» y la línea bajo los logos se van
+con la entrada. La página sigue
 en línea sin los niveles ni el botón fijo, y su contacto pregunta por la próxima
 edición: el brochure promete prioridad de renovación con la tarifa 2027.
 

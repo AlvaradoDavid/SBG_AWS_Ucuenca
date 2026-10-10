@@ -891,9 +891,9 @@ oscuro; la sonrisa sigue en naranja.
 **Decisión.** Para conseguir más patrocinadores del Student Community Day, el
 sitio tiene una página para empresas, `/student-community-day/patrocinio/`, con
 el brochure de patrocinio del club (2026-10-05) en forma de página. Se llega a
-ella desde una línea discreta bajo los logos de los patrocinadores, en la portada
-y en la página del evento, y desde el enlace que el club manda directamente a las
-empresas. Todo termina en un chat de WhatsApp con el mensaje ya escrito:
+ella desde el botón «Ser patrocinador» del cartel del evento, junto a los logos de
+los patrocinadores; desde una línea bajo los logos al final de la página del
+evento, y desde el enlace que el club manda directamente a las empresas. Todo termina en un chat de WhatsApp con el mensaje ya escrito:
 
 > Hola, les escribo desde la página de patrocinio del AWS Student Community Day
 > Ecuador. Me interesa el nivel Plata ($500). Mi empresa es:
@@ -909,9 +909,18 @@ patrocinio les habla a empresas, de usted como el brochure, y su botón es Whats
 Juntas, cada una le quitaba fuerza a la otra. Aparte, además, tiene su propia URL
 para mandarla por WhatsApp o LinkedIn, y su propia descripción al compartirla.
 
-**Por qué la línea va bajo los logos.** Es donde una empresa ve que otras ya
-apoyan el evento. No va en el cartel ni en la barra: el botón del cartel es para
-inscribirse, y la barra ya cedió «Quiénes somos» al evento ([D-31](#d-31)).
+**Por qué la invitación va junto a los logos.** Es donde una empresa ve que otras
+ya apoyan el evento. No va en la barra, que ya cedió «Quiénes somos» al evento
+([D-31](#d-31)).
+
+Al principio tampoco iba en el cartel, para no quitarle fuerza al botón de
+entrada: en la portada, los logos y una línea discreta iban debajo del cartel.
+El 2026-10-10 el club pidió los logos en chico dentro del cartel, bajo «Reserva tu
+entrada», y al lado un botón para patrocinar. El botón es secundario —borde
+translúcido sobre el fondo oscuro, frente al blanco macizo de la entrada— y va en
+infinitivo, «Ser patrocinador», que no obliga a elegir entre el tú del cartel y
+el usted de la página de patrocinio. La franja de abajo se quitó para no repetir
+los logos.
 
 **El orden de la página sigue el embudo:** primero la promesa y un botón para
 quien ya llega decidido; después, las empresas que ya patrocinan, como prueba;

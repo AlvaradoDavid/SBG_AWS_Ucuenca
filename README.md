@@ -89,7 +89,8 @@ Todo el detalle está en [`docs/`](docs/README.md). Si retomas el proyecto, empi
 
 - **Un evento:** procesa sus fotos con `pnpm fotos` y crea un `.mdx` en `src/content/eventos/`.
 - **Un evento que organizamos y aún no ocurre:** crea un `.mdx` en `src/content/proximos/`. Sale en
-  la portada hasta que termina y tiene su página en la raíz. Ver
+  la portada hasta que termina y tiene su página en la raíz; con el campo `patrocinio`, también una
+  página para empresas. Ver
   [el Student Community Day](docs/estado-y-siguientes-pasos.md#lo-urgente-el-aws-student-community-day-14-de-noviembre).
 - **Una ficha de servicio**, o ampliar una breve a completa: sigue la
   [guía paso a paso](docs/estado-y-siguientes-pasos.md#cómo-añadir-una-ficha-de-servicio-nueva).

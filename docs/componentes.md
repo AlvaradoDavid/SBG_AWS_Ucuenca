@@ -321,7 +321,8 @@ hay ninguno, la portada queda como antes.
 Es el `CartelEvento` a todo el ancho, el mismo que encabeza la página del
 evento, y debajo, sobre blanco, los logos de los patrocinadores, sin título: el
 club lo pidió así. La lista lleva `aria-label="Patrocinadores"`, para que un
-lector de pantalla no lea tres logos sueltos. Sin JavaScript.
+lector de pantalla no lea tres logos sueltos. Bajo los logos va
+`InvitacionPatrocinio`. Sin JavaScript.
 
 Hasta el 2026-10-06 el cartel era una tarjeta redondeada con margen a los lados;
 el club prefirió la franja de borde a borde de la página del evento.
@@ -388,6 +389,23 @@ generan al doble de su alto en pantalla, sin pasar del original.
 
 ---
 
+## `InvitacionPatrocinio.astro`
+
+Una línea centrada, «¿Su empresa quiere estar aquí? Conozca los niveles de
+patrocinio →», hacia la página de patrocinio ([D-32](decisiones.md#d-32)).
+
+```astro
+<InvitacionPatrocinio evento={evento} />
+```
+
+Va bajo los logos de los patrocinadores, donde una empresa ve a otras que ya
+apoyan el evento: en la portada (dentro de `ProximoEvento`) y al final de la
+página del evento. Es texto pequeño en `tinta-600`, para que no le quite peso al
+botón de entrada, que es para los estudiantes. No pinta nada si el evento no
+tiene `patrocinio` o ya terminó (`buscaPatrocinio()` en `src/lib/patrocinio.ts`).
+
+---
+
 ## `ImagenPlaceholder.astro`
 
 Marco punteado para huecos de imagen pendientes.
@@ -433,9 +451,43 @@ La página tiene, en orden: el cartel a todo el ancho, con la foto hasta el bord
 derecho en escritorio; «El evento», con el cuerpo del `.mdx` y «Qué incluye»;
 «Cómo participar», con la entrada y cómo llegar; las comunidades
 participantes; «Agenda y ponentes», que por ahora dice «Muy pronto» y lleva a
-Instagram y LinkedIn; y al final, los patrocinadores. Su `og:image` es el afiche
-completo. Después del evento se quedan el cartel, «El evento», las comunidades y
-los patrocinadores.
+Instagram y LinkedIn; y al final, los patrocinadores con `InvitacionPatrocinio`.
+Su `og:image` es el afiche completo. Después del evento se quedan el cartel,
+«El evento», las comunidades y los patrocinadores.
+
+### `pages/[proximo]/patrocinio.astro`
+
+La página para empresas de cada próximo evento con `patrocinio`:
+`/student-community-day/patrocinio/` ([D-32](decisiones.md#d-32)). Va de «usted»,
+como el brochure, y no tiene formularios ni JavaScript propio: todo el contacto
+son enlaces.
+
+En orden: la cabecera en el azul del cartel, con el titular, fecha y lugar,
+«Escribir por WhatsApp», «Ver niveles y precios» y las cifras, más la foto del
+club a la derecha; «Ya nos acompañan», con los logos de los patrocinadores; «Por
+qué patrocinar», con el público y las tres razones con íconos del kit; los
+niveles; y el contacto, otra vez en el azul del cartel.
+
+- **Cada nivel tiene su botón,** «Me interesa», que abre WhatsApp con el nivel y
+  su precio en el mensaje. Lo que muestra cada tarjeta lo arma
+  `novedadesDeNivel()` a partir de la comparativa: así las tarjetas y la tabla no
+  pueden contradecirse. El último nivel va en el azul del cartel.
+- **La comparativa** está plegada en un `<details>`. En el celular la tabla se
+  desplaza de lado dentro de una región con `tabindex="0"`, con la columna de
+  beneficios y los títulos de grupo fijos (`sticky`). La región lleva `relative`:
+  sin él, los «Incluido» de `sr-only`, que son absolutos, se salían de ella y
+  ensanchaban la página a 544 px en un celular de 390.
+- **El contacto** son cuatro tarjetas: WhatsApp (la destacada), teléfono
+  (`tel:`), Instagram (`ig.me/m/…`, que abre el chat privado y no el perfil) y
+  correo (`mailto:` con asunto y cuerpo). El correo se parte después de la @,
+  con un `<wbr>`, y no a mitad de palabra.
+- **En el celular, un botón de WhatsApp fijo abajo** hasta llegar al contacto,
+  sin JavaScript: una caja `sticky bottom-0` de alto cero con la barra colgando
+  hacia arriba. Al llegar a su lugar, justo antes del contacto, se va con la
+  página y no tapa el pie.
+
+Después del evento desaparecen los niveles y el botón fijo, y el contacto
+pregunta por la próxima edición.
 
 El `.ics` sigue el RFC 5545: líneas terminadas en CRLF y partidas a 75 bytes
 (bytes, no letras: «Más» ocupa 4), con comas y saltos de línea escapados. Las

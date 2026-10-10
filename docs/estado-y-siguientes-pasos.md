@@ -12,7 +12,7 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Diseño y sistema de tokens | Completo y documentado. El morado ocupa superficies: hero, pie y fondos aurora ([D-28](decisiones.md#d-28)) |
 | Navegación (escritorio y móvil) | Completa |
 | Portada | Completa: hero en morado profundo con collage, cifras y partículas; cartel del Student Community Day; pilares, trayectoria, galería |
-| Próximo evento | **AWS Student Community Day Ecuador, 14 de noviembre de 2026**: cartel bajo el hero y página en `/student-community-day/`. Faltan agenda, ponentes y el arte original: ver más abajo |
+| Próximo evento | **AWS Student Community Day Ecuador, 14 de noviembre de 2026**: cartel bajo el hero, página en `/student-community-day/` y página para patrocinadores en `/student-community-day/patrocinio/`. Faltan agenda, ponentes y el arte original: ver más abajo |
 | Galería de eventos | Completa, con visor accesible |
 | Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
 | Contenido de eventos | Completo: los 7 con texto; 5 con cifra de asistentes |
@@ -69,6 +69,48 @@ fuera lo más visible del sitio. Construido el 2026-10-05 y **publicado el
 Todo vive en `src/content/proximos/student-community-day.mdx`: para cambiar un
 enlace, el horario, los participantes o los patrocinadores se edita ese archivo,
 sin tocar componentes.
+
+### La página para patrocinadores
+
+Construida el 2026-10-10 ([D-32](decisiones.md#d-32)), **sin publicar todavía**:
+`/student-community-day/patrocinio/` convierte el brochure de patrocinio del club
+en una página para empresas, de usted. Se llega a ella desde una línea discreta
+bajo los logos de los patrocinadores («¿Su empresa quiere estar aquí?»), en la
+portada y en la página del evento, y desde el enlace que el club les manda a las
+empresas.
+
+Cada nivel (Supporter $100, Bronce $300, Plata $500 y Oro $1000) tiene su botón,
+que abre WhatsApp con el nivel ya escrito en el mensaje. Al final están los cuatro
+canales: WhatsApp, teléfono, Instagram y correo. Los patrocinadores actuales salen
+arriba, como prueba de que otras empresas ya confían en el evento.
+
+**Para mantenerla,** todo está en el campo `patrocinio` del mismo `.mdx`:
+
+- **Un patrocinador nuevo:** su logo en `src/assets/patrocinadores/` y una línea
+  en `patrocinadores`. Sale en la portada, en la página del evento y en «Ya nos
+  acompañan».
+- **Un nivel agotado:** `agotado: true` en su línea de `niveles`. Su tarjeta dice
+  «Agotado» y pierde el botón. El de Oro trae el *naming* del evento, así que en
+  la práctica tiene un solo cupo.
+- **Un beneficio que cambia:** su fila en `beneficios`. Las tarjetas se arman a
+  partir de ahí.
+- **Otro número de WhatsApp:** en `contacto.whatsapp`, con `+593` y sin espacios.
+  Si tiene una cifra de más o de menos, el build falla.
+
+**Pendiente:**
+
+- **El PDF del brochure.** No se publicó: lleva el teléfono con un dígito de más
+  («+593 998 423 0758»; el correcto es +593 98 423 0758). Con un PDF corregido, se
+  puede ofrecer para descargar al final de la página, para que quien la encuentra
+  se lo reenvíe a quien decide.
+- **Los AWS User Groups de Quito y Security Ecuador,** que el brochure presenta
+  como organizadores. El club pidió dejarlo pendiente.
+- **Logos según el nivel.** El brochure vende «logo en web» en todos los niveles.
+  Si el club quiere que los de Oro salgan más grandes y primero, hace falta un
+  campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los tres
+  actuales.
+- **Una fecha límite para patrocinar.** El merchandising y los badges necesitan
+  tiempo de imprenta. Si el club fija una fecha, puede ir en la página.
 
 **Lo que decidió el club** (2026-10-05 y 06), para no volver a preguntarlo:
 
@@ -532,7 +574,7 @@ pnpm enlaces
 ```
 
 Vigila tres cosas en la salida: que no aparezca ningún aviso `[DiagramaAWS]`,
-que el número de páginas siga cuadrando (hoy: 259 indexadas por Pagefind, de las
+que el número de páginas siga cuadrando (hoy: 264 en el build y 260 indexadas por Pagefind, de las
 cuales 251 son fichas de servicio) y que `pnpm enlaces` termine con ✓. Este
 último detecta enlaces internos sin barra final, destinos que no existen —por
 ejemplo un `slug` mal escrito en `alternativas`— y anclas rotas.
@@ -553,6 +595,11 @@ aunque Astro lo presenta como `Cannot find native binding`. Son dos:
 | --- | --- | --- |
 | `satteri_napi.win32-x64-msvc.node` | Compilador de Markdown y MDX por defecto de Astro 7 | Siempre, desde el 2026-10-05 |
 | `astro.win32-x64-msvc.node` | Compilador de los `.astro` | A ratos: el 2026-10-06, con la red a ~50 KB/s |
+| `pagefind_extended.exe` | Índice de búsqueda de Pagefind | El 2026-10-10. Falla sin mensaje, con salida 1; el registro de Windows sí lo anota |
+
+Sin Pagefind, `dist/pagefind/` no se genera en esta máquina. No afecta a la
+verificación: ninguna página carga ese índice todavía, y Amplify lo genera al
+compilar en Linux.
 
 Smart App Control decide consultando la reputación de cada archivo en la nube,
 así que con la red lenta bloquea más. No se desactiva: es configuración de

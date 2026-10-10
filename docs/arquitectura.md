@@ -64,6 +64,8 @@ el esquema, **el build falla** — es intencional: evita publicar fichas a media
 Los eventos que el club organiza y todavía no ocurren ([D-31](decisiones.md#d-31)).
 Cada uno tiene su cartel en la portada mientras no termina, y su página en la raíz
 con el nombre del archivo: `student-community-day.mdx` → `/student-community-day/`.
+Si tiene `patrocinio`, también una página para empresas:
+`/student-community-day/patrocinio/`.
 
 | Campo | Tipo | Notas |
 | --- | --- | --- |
@@ -80,9 +82,20 @@ con el nombre del archivo: `student-community-day.mdx` → `/student-community-d
 | `imagen`, `afiche` | image | La foto del cartel y el afiche completo (`og:image`) |
 | `participantes` | `{ siglas, universidad, ciudad, anfitrion }[]` | |
 | `patrocinadores` | `{ nombre, logo, sobreBlanco }[]` | `logo` es una imagen de `src/assets/patrocinadores/` |
+| `patrocinio` | objeto? | La página para empresas, `/<evento>/patrocinio/` ([D-32](decisiones.md#d-32)). Sin él no se genera |
 
 El cuerpo del `.mdx` es la sección «El evento» de la página. Las imágenes van
 con el helper `image()`: un logo o un afiche que falta rompe el build.
+
+**El campo `patrocinio`** trae lo que dice el brochure de patrocinio: el titular,
+la presentación, la foto de la cabecera, las cifras que no salen de otros campos,
+el público, las tres razones, el contacto (`whatsapp` y `correo`), el `aviso` de
+las tarjetas («Cupos limitados»), los `niveles` con su precio en dólares y la
+comparativa en `beneficios`. Cada fila de la comparativa lleva un valor por nivel,
+en el orden de `niveles`: `true` si lo incluye, `false` si no y un texto si
+importa cuánto («2», «Preferencial»). El esquema rechaza una fila con más o menos
+valores que niveles, y un `whatsapp` que no sea un celular del Ecuador
+(`+5939` y ocho cifras). Un nivel con `agotado: true` pierde su botón.
 
 **Los logos de los patrocinadores** llegaron en `logos/`, en la raíz del
 proyecto, que no se versiona: el sitio usa sus copias de
@@ -234,7 +247,7 @@ El sitio se aloja en **AWS Amplify Hosting**, conectado a la rama
 a esa rama dispara un build en Amplify y publica `dist/`. El porqué de Amplify
 frente al plan original con S3 + CloudFront está en [D-23](decisiones.md#d-23).
 
-Build estático a `dist/` (263 páginas, 254 WebP de fotos de eventos —127 fotos
+Build estático a `dist/` (264 páginas, 254 WebP de fotos de eventos —127 fotos
 en dos tamaños— e índice de Pagefind). No
 hay servidor ni funciones de renderizado: todo el HTML se genera en `pnpm build`.
 

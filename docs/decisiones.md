@@ -881,3 +881,64 @@ oscuro; la sonrisa sigue en naranja.
 - **Servir el `.ics` como descarga a secas.** `customHttp.yml` le pone
   `Content-Type: text/calendar` para que el iPhone ofrezca agregarlo al
   calendario.
+
+---
+
+<a id="d-32"></a>
+
+## D-32 · Los patrocinadores llegan por una página propia y terminan en un chat de WhatsApp
+
+**Decisión.** Para conseguir más patrocinadores del Student Community Day, el
+sitio tiene una página para empresas, `/student-community-day/patrocinio/`, con
+el brochure de patrocinio del club (2026-10-05) en forma de página. Se llega a
+ella desde una línea discreta bajo los logos de los patrocinadores, en la portada
+y en la página del evento, y desde el enlace que el club manda directamente a las
+empresas. Todo termina en un chat de WhatsApp con el mensaje ya escrito:
+
+> Hola, les escribo desde la página de patrocinio del AWS Student Community Day
+> Ecuador. Me interesa el nivel Plata ($500). Mi empresa es:
+
+La empresa solo escribe su nombre, y el club sabe sin preguntar que el contacto
+viene de la web y qué nivel le interesa. El sitio no tiene analítica (la CSP no
+admite orígenes externos, [D-25](#d-25)), así que ese mensaje es también la forma
+de medir de dónde llega cada contacto.
+
+**Por qué una página aparte y no una sección en la del evento.** La página del
+evento les habla a estudiantes, de tú, y su botón es la entrada en TicketIn. La de
+patrocinio les habla a empresas, de usted como el brochure, y su botón es WhatsApp.
+Juntas, cada una le quitaba fuerza a la otra. Aparte, además, tiene su propia URL
+para mandarla por WhatsApp o LinkedIn, y su propia descripción al compartirla.
+
+**Por qué la línea va bajo los logos.** Es donde una empresa ve que otras ya
+apoyan el evento. No va en el cartel ni en la barra: el botón del cartel es para
+inscribirse, y la barra ya cedió «Quiénes somos» al evento ([D-31](#d-31)).
+
+**El orden de la página sigue el embudo:** primero la promesa y un botón para
+quien ya llega decidido; después, las empresas que ya patrocinan, como prueba;
+luego, a quién llega la marca y por qué; los niveles, cada uno con su propio
+botón; y al final, el contacto completo. En el celular, un botón de WhatsApp queda
+fijo abajo hasta llegar al contacto.
+
+**Los canales, por orden de preferencia:** WhatsApp, llamada, Instagram (con
+`ig.me`, que abre el chat privado y no el perfil) y correo. Para los asistentes,
+el club había pedido el 2026-10-05 no poner correo; para las empresas pidió
+incluirlo, porque muchas formalizan por correo.
+
+**Los datos viven en `student-community-day.mdx`,** como el resto del evento. Las
+tarjetas de los niveles se arman a partir de la comparativa, así que cambiar un
+beneficio es tocar una sola fila. El esquema valida el número de WhatsApp: el del
+brochure («+593 998 423 0758») tenía un dígito de más, y con él el botón no habría
+abierto ningún chat. El club confirmó el correcto el 2026-10-10.
+
+**Lo que se descartó.**
+
+- **Un formulario.** Es un paso más que WhatsApp, y la CSP solo deja enviar
+  formularios al propio dominio (`form-action 'self'`), que no tiene servidor.
+- **Las fotos del brochure.** Dos son de banco de imágenes. La cabecera usa la
+  foto de grupo del Yachana Day, que también está en el brochure y es del club.
+- **Destacar un nivel con «el más elegido» o cupos inventados.** Todos los niveles
+  dicen «Cupos limitados», como pidió el club. Si un nivel se agota,
+  `agotado: true` lo marca y le quita el botón.
+- **Publicar el PDF del brochure.** Lleva el teléfono con el dígito de más.
+- **Nombrar a los AWS User Groups de Quito y Security Ecuador,** que el brochure
+  presenta como organizadores. Queda pendiente, a pedido del club.

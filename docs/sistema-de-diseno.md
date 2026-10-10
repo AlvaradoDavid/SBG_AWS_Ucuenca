@@ -50,11 +50,11 @@ otra luminosidad. Es para fondos y bordes. No hay `morado-500`: ese es
 ### El fondo del afiche
 
 Un solo token fuera de la paleta del kit, y solo para el cartel del próximo
-evento ([D-31](decisiones.md#d-31)):
+evento ([D-31](decisiones.md#d-31)) y su página de patrocinio ([D-32](decisiones.md#d-32)):
 
 | Token | Hex | Uso | Texto encima |
 | --- | --- | --- | --- |
-| `afiche` | `#0b1828` | Fondo del cartel del Student Community Day, en la portada y en su página | blanco 17.9:1 · `tinta-200` 13:1 · `tinta-300` 9.35:1 · `tinta-400` 4.93:1 |
+| `afiche` | `#0b1828` | Fondo del cartel del Student Community Day, en la portada y en su página. En la de patrocinio: la cabecera, la tarjeta del último nivel y el contacto | blanco 17.9:1 · `tinta-200` 13:1 · `tinta-300` 9.35:1 · `tinta-400` 4.93:1 |
 
 Es el azul marino del afiche oficial, medido sobre el arte. Separa el cartel del
 hero morado que tiene encima, y la catedral recortada del afiche, que trae ese

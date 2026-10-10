@@ -2,6 +2,40 @@
 
 ---
 
+## Página para patrocinadores del Student Community Day
+
+2026-10-10. El club quiere sumar patrocinadores y pidió llevar su brochure de
+patrocinio al sitio, con un camino corto hasta su WhatsApp o su Instagram
+([D-32](decisiones.md#d-32)).
+
+- **Página nueva, `/student-community-day/patrocinio/`,** de usted: la promesa y
+  las cifras, los patrocinadores actuales, a quién llega la marca y por qué, los
+  cuatro niveles con su precio y la comparativa completa, y el contacto.
+- **Un botón por nivel** que abre WhatsApp con el nivel y su precio ya escritos.
+  En el celular, un botón de WhatsApp queda fijo abajo hasta el contacto. El
+  contacto ofrece WhatsApp, llamada, el chat privado de Instagram y correo.
+- **«¿Su empresa quiere estar aquí?»,** una línea bajo los logos de los
+  patrocinadores en la portada y en la página del evento
+  (`InvitacionPatrocinio.astro`).
+- **Campo `patrocinio` en el esquema de `proximos`,** con los datos del brochure.
+  El esquema valida el número de WhatsApp y que la comparativa tenga un valor por
+  nivel. Las tarjetas de los niveles salen de la comparativa.
+- **Tres íconos del kit** copiados a `public/marca/`: `icono-speaker-purple.svg`,
+  `icono-ladder-blue.svg` e `icono-teams-amber.svg`.
+- **Lo que no se tomó del brochure:** su teléfono, que tiene un dígito de más (el
+  correcto lo confirmó el club), las dos fotos de banco de imágenes y la mención
+  a los User Groups de Quito y Security Ecuador, que queda pendiente.
+
+**Verificado:** build de 264 páginas, una más que antes; `pnpm enlaces` da ✓ con
+394 destinos. El JavaScript de la portada sigue en 4.6 KB, y la página nueva solo
+lleva el 1.0 KB de los reveals. Servida con las cabeceras de `customHttp.yml`, la
+consola no muestra ningún bloqueo de la CSP. Capturas a 390 y 1440 px, por CDP con
+`prefers-reduced-motion`: sin desplazamiento horizontal, con la comparativa
+abierta y desplazada. Los siete enlaces de WhatsApp, el de `tel:`, el de
+Instagram y el de correo llevan el número, la cuenta y los textos correctos.
+
+---
+
 ## Solo TicketIn para inscribirse al Student Community Day
 
 2026-10-06. El club pidió quitar el enlace a Meetup del evento para darle toda la

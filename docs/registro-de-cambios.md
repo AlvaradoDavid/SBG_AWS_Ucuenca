@@ -24,6 +24,14 @@ patrocinio ([D-32](decisiones.md#d-32)).
 destinos. Sin JavaScript nuevo. Capturas a 390 y 1440 px de la portada y de la
 página del evento, sin desplazamiento horizontal.
 
+**Publicado el 2026-10-10 en `8c2a34f` + `0c55f65`** (con sus notas, `2c683c4` y
+`66aff07`). Amplify tardó unos 120 segundos. Comprobado con `curl`: la portada
+responde 200 con la CSP y HSTS, `/no-existe/` da 404 sin redirección, el `.ics`
+sigue como `text/calendar`, y los tres logos nuevos de 44 px responden 200. En la
+portada el orden es entrada, calendario, «Ver todos los detalles» y «Ser
+patrocinador». La portada, `/student-community-day/` y
+`/student-community-day/patrocinio/` son idénticas al build local.
+
 ---
 
 ## Página para patrocinadores del Student Community Day

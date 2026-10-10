@@ -285,6 +285,9 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   `/student-community-day/patrocinio/` y la línea «¿Su empresa quiere estar
   aquí?» bajo los logos. Ver [la página para patrocinadores](#la-página-para-patrocinadores)
   y [D-32](decisiones.md#d-32).
+- ✅ **Patrocinadores dentro del cartel** (`8c2a34f` + `0c55f65`): los logos en
+  chico y «Ser patrocinador» al final del cartel, bajo «Ver todos los detalles»;
+  sin la franja de logos bajo el cartel de la portada.
 
 **Pendiente:**
 

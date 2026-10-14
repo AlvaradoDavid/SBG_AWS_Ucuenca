@@ -25,6 +25,14 @@ nuevo. Capturas a 390 y 1280 px de la portada y a 1280 de la página de
 patrocinio, sin desplazamiento horizontal. En celular, «Ser patrocinador» sigue
 bajando bajo los logos, como antes.
 
+**Publicado el 2026-10-14 en `80d6775`** (con su nota, `de4b67e`, y `7fda044`,
+que había quedado sin empujar). Amplify tardó unos 135 segundos. Comprobado con
+`curl`: la portada responde 200 con la CSP y HSTS, `/no-existe/` da 404 sin
+redirección, el `.ics` sigue como `text/calendar`, y los dos tamaños del logo de
+Aitheros (44 y 96 px en pantalla) responden 200 como `image/webp` e
+`immutable`. La portada, `/student-community-day/` y
+`/student-community-day/patrocinio/` son idénticas al build local.
+
 ---
 
 ## Patrocinadores y «Ser patrocinador» dentro del cartel

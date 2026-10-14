@@ -289,6 +289,11 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   chico y «Ser patrocinador» al final del cartel, bajo «Ver todos los detalles»;
   sin la franja de logos bajo el cartel de la portada.
 
+**Publicado el 2026-10-14** y comprobado en producción:
+
+- ✅ **Aitheros, cuarto patrocinador** (`80d6775`, documentado en `de4b67e`): su
+  logo en el cartel, en la página del evento y en la de patrocinio.
+
 **Pendiente:**
 
 - **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como

@@ -192,8 +192,8 @@ edición: el brochure promete prioridad de renovación con la tarifa 2027.
   como organizadores. El club pidió dejarlo pendiente.
 - **Logos según el nivel.** El brochure vende «logo en web» en todos los niveles.
   Si el club quiere que los de Oro salgan más grandes y primero, hace falta un
-  campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los tres
-  actuales.
+  campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los cuatro
+  actuales (Deuna, TicketIn, Ambross TI y Aitheros, que se sumó el 2026-10-14).
 - **Una fecha límite para patrocinar.** El merchandising y los badges necesitan
   tiempo de imprenta. Si el club fija una fecha, puede ir en la página.
 

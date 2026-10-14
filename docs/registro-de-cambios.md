@@ -2,6 +2,31 @@
 
 ---
 
+## Aitheros, cuarto patrocinador del Student Community Day
+
+2026-10-14. Llegó el logo de Aitheros (Cloud · DevOps · DevSecOps Academy) en
+una carpeta `sponsor aithros/` en la raíz del proyecto.
+
+- **El logo:** `src/assets/patrocinadores/aitheros.png`, la versión a color
+  recortada a 584 × 480 con 100 px de margen blanco parejo. Ocupa la tarjeta
+  entera, sin `sobreBlanco`, porque el blanco es parte de la imagen.
+- **Una línea en `patrocinadores`** de `student-community-day.mdx`, al final.
+  Con eso sale en el cartel de la portada, en el cartel y en «Con el apoyo de»
+  de `/student-community-day/`, y en «Ya nos acompañan» de la página de
+  patrocinio, cuya frase pasa a «Deuna, TicketIn, Ambross TI y Aitheros ya
+  apoyan…».
+- **Los originales** quedaron en `logos/`, que no se versiona:
+  `aitheros.png` y `aitheros-fondo-oscuro.png`. La carpeta traía dos PNG
+  idénticos píxel a píxel; quedó uno.
+
+**Verificado:** `pnpm build` completo en esta máquina, con Pagefind, de 264
+páginas, las mismas; `pnpm enlaces` da ✓ con 394 destinos. Sin JavaScript
+nuevo. Capturas a 390 y 1280 px de la portada y a 1280 de la página de
+patrocinio, sin desplazamiento horizontal. En celular, «Ser patrocinador» sigue
+bajando bajo los logos, como antes.
+
+---
+
 ## Patrocinadores y «Ser patrocinador» dentro del cartel
 
 2026-10-10. El club pidió los logos de los patrocinadores en chico dentro del

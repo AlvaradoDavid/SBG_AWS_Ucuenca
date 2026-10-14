@@ -104,7 +104,12 @@ proyecto, que no se versiona: el sitio usa sus copias de
 `src/assets/patrocinadores/`. Al de Deuna, un PNG transparente de 1427 × 750 px,
 se le quitó el margen vacío (`sharp().trim()`, quedó en 831 × 221) para que su
 tarjeta mida lo mismo que las demás. Los de TicketIn (449 × 445) y Ambross TI
-(200 × 200) se copiaron tal cual.
+(200 × 200) se copiaron tal cual. El de Aitheros llegó el 2026-10-14 en dos
+versiones de 2000 × 2000 px, y sus originales quedaron en `logos/` como
+`aitheros.png` (a color, sobre blanco) y `aitheros-fondo-oscuro.png`. El sitio
+usa la de color: se le recortó el blanco sobrante dejando 100 px de margen
+parejo y se bajó a 584 × 480. Su fondo blanco es parte de la imagen, así que va
+sin `sobreBlanco` y ocupa la tarjeta entera.
 
 **El arte no pasa por `pnpm fotos`.** Los originales están en
 `Eventos/2026-11-14 AWS Student Community Day/arte/`, una subcarpeta que el

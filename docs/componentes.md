@@ -395,10 +395,10 @@ natural.
 | `enCartel` | boolean? | Tarjetas de 44 px, alineadas a la izquierda y con borde para fondo oscuro, al final de `CartelEvento`; sin él, 96 px y centradas |
 
 La lista lleva `aria-label="Patrocinadores"`, para que un lector de pantalla no
-lea tres logos sueltos.
+lea los logos sueltos.
 
-Un logo que trae su propio fondo (TicketIn en amarillo, Ambross en azul) ocupa la
-tarjeta entera. Uno transparente (`sobreBlanco: true`, el de Deuna) va sobre
+Un logo que trae su propio fondo (TicketIn en amarillo, Ambross en azul, Aitheros
+en blanco) ocupa la tarjeta entera. Uno transparente (`sobreBlanco: true`, el de Deuna) va sobre
 blanco, con relleno. El `alt` es el nombre del patrocinador. Las imágenes se
 generan al doble de su alto en pantalla, sin pasar del original.
 

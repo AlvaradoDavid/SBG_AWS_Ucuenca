@@ -296,10 +296,11 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
 - ✅ **Aitheros, cuarto patrocinador** (`80d6775`, documentado en `de4b67e`): su
   logo en el cartel, en la página del evento y en la de patrocinio.
 
-**Listo en local el 2026-10-15, sin publicar:**
+**Publicado el 2026-10-15** y comprobado en producción:
 
-- **AWS, patrocinador principal** (`0c4d3a8`): el logo a color del kit, primero
-  en el cartel, en la página del evento y en la de patrocinio.
+- ✅ **AWS, patrocinador principal** (`0c4d3a8`, documentado en `f58d016`): el
+  logo a color del kit, primero en el cartel, en la página del evento y en la de
+  patrocinio.
 
 **Pendiente:**
 

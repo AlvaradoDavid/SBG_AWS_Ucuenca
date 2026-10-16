@@ -28,6 +28,14 @@ a 1280 de la página del evento y la de patrocinio, sin desplazamiento
 horizontal. En celular, Aitheros baja a la segunda fila de logos y «Ser
 patrocinador» a la tercera.
 
+**Publicado el 2026-10-15 en `0c4d3a8`** (con su nota, `f58d016`, y `af56c78`,
+que había quedado sin empujar). Amplify tardó unos 115 segundos. Comprobado con
+`curl`: la portada responde 200 con la CSP y HSTS, `/no-existe/` da 404 sin
+redirección, el `.ics` sigue como `text/calendar`, y los dos tamaños del logo de
+AWS responden 200 como `image/svg+xml` e `immutable`. Los cinco logos salen en
+orden, con AWS primero, en la portada, `/student-community-day/` y
+`/student-community-day/patrocinio/`, que son idénticas al build local.
+
 ---
 
 ## Aitheros, cuarto patrocinador del Student Community Day

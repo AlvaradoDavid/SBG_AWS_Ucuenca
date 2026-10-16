@@ -109,7 +109,10 @@ versiones de 2000 × 2000 px, y sus originales quedaron en `logos/` como
 `aitheros.png` (a color, sobre blanco) y `aitheros-fondo-oscuro.png`. El sitio
 usa la de color: se le recortó el blanco sobrante dejando 100 px de margen
 parejo y se bajó a 584 × 480. Su fondo blanco es parte de la imagen, así que va
-sin `sobreBlanco` y ocupa la tarjeta entera.
+sin `sobreBlanco` y ocupa la tarjeta entera. El de AWS, que va primero porque
+es el patrocinador principal, no llegó en `logos/`: es una copia del SVG del kit
+del programa (`Branding/Logos & Icons/aws.svg`), a color y transparente, con
+`sobreBlanco`. Astro sirve los SVG tal cual, sin convertirlos.
 
 **El arte no pasa por `pnpm fotos`.** Los originales están en
 `Eventos/2026-11-14 AWS Student Community Day/arte/`, una subcarpeta que el

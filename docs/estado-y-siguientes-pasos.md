@@ -193,7 +193,9 @@ edición: el brochure promete prioridad de renovación con la tarifa 2027.
 - **Logos según el nivel.** El brochure vende «logo en web» en todos los niveles.
   Si el club quiere que los de Oro salgan más grandes y primero, hace falta un
   campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los cuatro
-  actuales (Deuna, TicketIn, Ambross TI y Aitheros, que se sumó el 2026-10-14).
+  patrocinadores locales (Deuna, TicketIn, Ambross TI y Aitheros, que se sumó el
+  2026-10-14). AWS, el principal desde el 2026-10-15, va primero, pero con
+  tarjeta del mismo tamaño que las demás.
 - **Una fecha límite para patrocinar.** El merchandising y los badges necesitan
   tiempo de imprenta. Si el club fija una fecha, puede ir en la página.
 
@@ -293,6 +295,11 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
 
 - ✅ **Aitheros, cuarto patrocinador** (`80d6775`, documentado en `de4b67e`): su
   logo en el cartel, en la página del evento y en la de patrocinio.
+
+**Listo en local el 2026-10-15, sin publicar:**
+
+- **AWS, patrocinador principal** (`0c4d3a8`): el logo a color del kit, primero
+  en el cartel, en la página del evento y en la de patrocinio.
 
 **Pendiente:**
 

@@ -2,6 +2,34 @@
 
 ---
 
+## AWS, patrocinador principal del Student Community Day
+
+2026-10-15. El club pidió sumar a AWS a los patrocinadores: es quien más
+patrocina el evento.
+
+- **El logo:** `src/assets/patrocinadores/aws.svg`, una copia de
+  `Branding/Logos & Icons/aws.svg`, el del kit del programa: letras oscuras
+  (`#252F3E`) y la sonrisa naranja, sobre transparente. No necesitó recorte: el
+  dibujo llena su `viewBox`. Es SVG, así que Astro lo sirve tal cual (5 KB), sin
+  pasarlo a WebP. Va con `sobreBlanco`, como Deuna.
+- **Primero en `patrocinadores`** de `student-community-day.mdx`, con un
+  comentario que dice por qué. Sale en el cartel de la portada, en el cartel y en
+  «Patrocinadores» de `/student-community-day/`, y en «Ya nos acompañan» de la
+  página de patrocinio, cuya frase pasa a «AWS, Deuna, TicketIn, Ambross TI y
+  Aitheros ya apoyan…».
+- **El cartel muestra el logo de AWS dos veces:** arriba, en blanco, como parte
+  de la firma del grupo, y abajo, a color, entre los patrocinadores. Es lo que
+  pidió el club.
+
+**Verificado:** build completo en esta máquina con `astro.config.verificacion.mjs`
+y Pagefind, de 264 páginas, las mismas; `pnpm enlaces` da ✓ con 394 destinos.
+Sin JavaScript nuevo. Capturas con `pnpm servir` a 390 y 1280 px de la portada y
+a 1280 de la página del evento y la de patrocinio, sin desplazamiento
+horizontal. En celular, Aitheros baja a la segunda fila de logos y «Ser
+patrocinador» a la tercera.
+
+---
+
 ## Aitheros, cuarto patrocinador del Student Community Day
 
 2026-10-14. Llegó el logo de Aitheros (Cloud · DevOps · DevSecOps Academy) en

@@ -2,6 +2,46 @@
 
 ---
 
+## Dominio propio: `www.aws-sbg-ucuenca.com`
+
+2026-10-20. El club registró `aws-sbg-ucuenca.com` en Route 53 y lo conectó en
+*Hosting → Custom domains* de Amplify, con la configuración por defecto: `www`
+sirve el sitio y la raíz redirige a esa dirección. Después definió `SITE_URL` en
+la consola y redesplegó. El porqué está en [D-33](decisiones.md#d-33).
+
+- **DNS:** la zona alojada tiene un alias en la raíz y un CNAME en `www` hacia
+  la CDN de Amplify, los dos creados por Amplify. Las cuatro NS son de
+  `awsdns`.
+- **Documentación:** la URL nueva está en el `README.md`, `CLAUDE.md`,
+  `docs/README.md` y la arquitectura. D-18 y D-23 quedan cerradas, y la receta
+  «Después de cada push» separa la URL que se pide de la que aparece en el HTML.
+- **Fichas del catálogo:** la de Route 53 dejó de decir que el sitio no tiene
+  dominio, y la de Amplify cuenta cómo se conectó y qué hace `SITE_URL`.
+
+**Verificado desde fuera de la red de la Universidad**, que bloquea el dominio
+(ver más abajo):
+
+- **Con check-host.net:** `www` responde 200, una URL inexistente da 404 y la
+  raíz da 302.
+- **Con el lector r.jina.ai:** la portada carga en `www`, y `og:image` ya no
+  apunta a `amplifyapp.com`.
+- **Con Mozilla Observatory:** B+ en `www`, con 11 de 12 pruebas. En la URL de
+  Amplify, la CSP y HSTS siguen iguales.
+
+**Lo que salió al verificar:**
+
+- **`SITE_URL` quedó en la raíz** (`https://aws-sbg-ucuenca.com`), así que
+  `og:image` pasa por la redirección de 302 antes de llegar a la imagen. Hay que
+  cambiarla a `https://www.aws-sbg-ucuenca.com`.
+- **La red de la Universidad bloquea el dominio.** Su firewall (Fortinet) usa la
+  clasificación de FortiGuard, que lo puso en «Newly Observed Domain», e
+  intercepta el HTTPS con un certificado propio, así que desde esta máquina
+  `curl` y WebFetch fallan contra el dominio. La URL de Amplify sí pasa.
+
+Cómo resolver las dos cosas: [estado §1](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
+
+---
+
 ## AWS, patrocinador principal del Student Community Day
 
 2026-10-15. El club pidió sumar a AWS a los patrocinadores: es quien más

@@ -98,9 +98,14 @@ aparece en tu cuenta.
 ## Así lo usa este sitio
 
 Este sitio está en Amplify Hosting. No era el plan original —se iba a montar S3 y CloudFront a
-mano—, pero sin dominio propio la URL de Amplify lleva el nombre del club delante:
-`aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com`. El primer tramo es el nombre de la rama de Git,
-así que esa rama no se renombra nunca.
+mano—, pero mientras no hubo dominio propio la URL de Amplify ya llevaba el nombre del club
+delante: `aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com`. El primer tramo es el nombre de la rama
+de Git, así que esa rama no se renombra nunca.
+
+Desde octubre de 2026 el sitio tiene además su dominio, `www.aws-sbg-ucuenca.com`, registrado en
+[Amazon Route 53](/servicios/redes-y-entrega-de-contenido/route-53/). Conectarlo fue elegirlo en
+la consola de Amplify: creó solo los registros DNS y el certificado, y redirige la raíz a `www`.
+La URL de Amplify sigue respondiendo.
 
 Cuatro piezas hacen el trabajo, y tres viven en el repositorio:
 
@@ -109,11 +114,12 @@ Cuatro piezas hacen el trabajo, y tres viven en el repositorio:
   build no las baje de nuevo.
 - **`astro.config.mjs`** arma la URL pública con `AWS_BRANCH` y `AWS_APP_ID`, dos variables que
   Amplify inyecta en cada build. Así las vistas previas de los enlaces apuntan a la dirección
-  correcta sin escribirla a mano.
+  correcta sin escribirla a mano. Con dominio propio, una variable `SITE_URL` definida en la
+  consola tiene prioridad.
 - **`customHttp.yml`** le dice al navegador que guarde un año lo que está en `/_astro/`, cuyos
   nombres cambian con cada versión, y añade las cabeceras de seguridad.
-- **La regla de la 404** es la única que vive en la consola: `/<*>` → `/404.html` con estado
-  `404-200`.
+- **La regla de la 404** vive en la consola, como el dominio y `SITE_URL`: `/<*>` → `/404.html`
+  con estado `404-200`.
 
 Esa última costó un tropiezo. Con el estado `404` a secas, Amplify **redirige**: una URL
 inexistente respondía 302, cambiaba la dirección del navegador y terminaba en un 200. Se veía

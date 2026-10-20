@@ -248,8 +248,10 @@ las 09h00 saldrían como las 14h00.
 
 ## Despliegue
 
-> **Estado: en línea desde el 2026-09-29** en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>.
-> Del despliegue solo queda pendiente el subdominio de la Universidad: ver
+> **Estado: en línea desde el 2026-09-29** en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>
+> y, desde el 2026-10-20, en su dominio propio, <https://www.aws-sbg-ucuenca.com/>
+> ([D-33](decisiones.md#d-33)). Lo que queda (el bloqueo en la red de la
+> Universidad, entre otras cosas) está en
 > [estado-y-siguientes-pasos.md](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
 
 El sitio se aloja en **AWS Amplify Hosting**, conectado a la rama
@@ -265,20 +267,30 @@ hay servidor ni funciones de renderizado: todo el HTML se genera en `pnpm build`
 push a aws-sbg-ucuenca → Amplify: pnpm install + pnpm build → CDN de Amplify → visitante
 ```
 
-### La URL pública
+### Las URL públicas
 
 ```
-https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/
+https://www.aws-sbg-ucuenca.com/                      ← la principal
+https://aws-sbg-ucuenca.com/                          → redirige a www
+https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/ ← la de Amplify, sigue respondiendo
 ```
 
-El primer tramo es el **nombre de la rama**, y por eso la rama se llama como el
-club: renombrarla cambia la URL pública. El segundo tramo (`d2jrpw2uglkitl`) lo
-generó AWS al crear la app y no se puede elegir.
+**El dominio propio** está registrado en Route 53, en la misma cuenta, y se
+conectó en *Hosting → Custom domains* de Amplify ([D-33](decisiones.md#d-33)).
+Amplify creó solo los registros de la zona alojada (un alias en la raíz y un
+CNAME en `www` hacia su CDN) y el certificado. La redirección de la raíz a `www`
+también es suya, y vive en *Rewrites and redirects*.
 
-`astro.config.mjs` arma esa URL sola a partir de `AWS_BRANCH` y `AWS_APP_ID`, dos
-variables que Amplify inyecta en cada build. Si se define `SITE_URL` en la
-consola, gana ella: es el mecanismo para cuando llegue un dominio propio. En
-local, sin ninguna de las tres, queda `http://localhost:4321`.
+**La URL de Amplify** sigue sirviendo el mismo contenido. Su primer tramo es el
+**nombre de la rama**, y por eso la rama se llama como el club: renombrarla
+cambia esa URL y rompe los enlaces que ya se compartieron con ella. El segundo
+tramo (`d2jrpw2uglkitl`) lo generó AWS al crear la app y no se puede elegir.
+
+`astro.config.mjs` decide qué URL va en `og:image`, el sitemap y los demás
+enlaces absolutos. Si `SITE_URL` está definida en la consola, gana ella: hoy es
+`https://www.aws-sbg-ucuenca.com`. Si no, la arma a partir de `AWS_BRANCH` y
+`AWS_APP_ID`, dos variables que Amplify inyecta en cada build. En local, sin
+ninguna de las tres, queda `http://localhost:4321`.
 
 ### Qué vive en el repositorio y qué en la consola
 
@@ -289,7 +301,8 @@ local, sin ninguna de las tres, queda `http://localhost:4321`.
 | `packageManager` en `package.json` | Repositorio | Fija pnpm 11.20.0; el build nunca usa «latest» |
 | `src/pages/404.astro` | Repositorio | Genera `dist/404.html` |
 | Regla `/<*>` → `/404.html`, estado **`404-200`** | **Consola** | Sirve la 404 propia sin cambiar la URL y con código 404. No se puede declarar en el repo |
-| `SITE_URL` | **Consola** | Solo si hay dominio propio |
+| `SITE_URL` = `https://www.aws-sbg-ucuenca.com` | **Consola** | La URL de `og:image`, el sitemap y los enlaces absolutos. Cambiarla exige redesplegar |
+| Dominio `aws-sbg-ucuenca.com` y redirección de la raíz a `www` | **Consola** y Route 53 | El dominio propio ([D-33](decisiones.md#d-33)) |
 
 ### Las dos piezas que fallan en silencio
 
@@ -299,7 +312,7 @@ local, sin ninguna de las tres, queda `http://localhost:4321`.
    302 hacia `/404.html`, la barra de direcciones cambia y la respuesta final es
    un 200, así que para un buscador la página «existe». Visualmente parece que
    funciona, y por eso pasa desapercibido.
-2. **Renombrar la rama.** Cambia la URL pública y rompe cualquier enlace ya
+2. **Renombrar la rama.** Cambia la URL de Amplify y rompe cualquier enlace ya
    compartido. La rama `aws-sbg-ucuenca` no se renombra.
 
 ### Rutas limpias

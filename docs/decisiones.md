@@ -361,9 +361,10 @@ primer mes. Es intencional: son las que hay que vigilar.
 
 ## D-18 · El despliegue no espera al dominio
 
-> **Vigente en su principio, no en sus detalles.** Con Amplify ([D-23](#d-23))
-> se publica primero contra `amplifyapp.com`; lo de ACM en `us-east-1` y la
-> distribución de CloudFront ya no aplica.
+> **Cumplida.** Con Amplify ([D-23](#d-23)) se publicó primero contra
+> `amplifyapp.com`, y el dominio propio llegó el 2026-10-20
+> ([D-33](#d-33)) sin rehacer nada. Lo de ACM en `us-east-1` y la distribución
+> de CloudFront ya no aplica: Amplify emite y gestiona el certificado.
 
 **Decisión.** El sitio se publica primero contra el dominio que da CloudFront
 (`d1a2b3c4.cloudfront.net`). El dominio propio se añade después.
@@ -530,9 +531,10 @@ catálogo con cómo lo usa el propio sitio.
 - La regla de la 404 vive en la consola, no en el repositorio, y su estado es
   `404-200`: con `404` Amplify redirige en vez de reescribir.
 
-**Lo que queda abierto.** Un subdominio de la Universidad de Cuenca daría un
-nombre de verdad sin costo. Se pedirá más adelante, y conectarlo no rehace nada:
-se añade como dominio en Amplify y se define `SITE_URL`.
+**Lo que quedaba abierto, y cómo se cerró.** Se esperaba un subdominio de la
+Universidad de Cuenca, que daría un nombre de verdad sin costo. Al final el club
+compró `aws-sbg-ucuenca.com` en Route 53 ([D-33](#d-33)) y conectarlo no rehízo
+nada: se añadió como dominio en Amplify y se definió `SITE_URL`.
 
 ---
 
@@ -953,3 +955,53 @@ abierto ningún chat. El club confirmó el correcto el 2026-10-10.
 - **Publicar el PDF del brochure.** Lleva el teléfono con el dígito de más.
 - **Nombrar a los AWS User Groups de Quito y Security Ecuador,** que el brochure
   presenta como organizadores. Queda pendiente, a pedido del club.
+
+---
+
+<a id="d-33"></a>
+
+## D-33 · Dominio propio en Route 53: `aws-sbg-ucuenca.com`, con `www` como dirección principal
+
+**Decisión.** El club registró `aws-sbg-ucuenca.com` en Route 53 el 2026-10-20 y
+lo conectó a Amplify con la configuración por defecto: `www.aws-sbg-ucuenca.com`
+sirve el sitio y la raíz redirige a esa dirección. `SITE_URL`, en la consola, es
+`https://www.aws-sbg-ucuenca.com`, sin barra final.
+
+**Por qué Route 53 y no Cloudflare.** Cloudflare costaba la mitad: $10.46 al año
+frente a $16, y sin la zona alojada de $0.50 al mes que habrá que pagar cuando se
+acaben los créditos. En modo «solo DNS» habría servido igual. El club eligió
+Route 53 el 2026-10-11 por tres razones: Amplify crea solo los registros y el
+certificado, todo queda en la cuenta del club y es parte del aprendizaje de AWS.
+Los créditos no pagan el registro ([D-18](#d-18)).
+
+**Por qué `www` y no la raíz.** Es lo que Amplify configura al añadir un dominio
+de Route 53: las dos direcciones, con la raíz redirigiendo a `www`. Para que la
+raíz fuera la principal habría que invertir esa regla a mano en *Rewrites and
+redirects*, por encima de la regla de la 404. Al visitante le da igual: las dos
+llevan al sitio.
+
+**El nombre y la marca.** La sección 11 de las
+[AWS Trademark Guidelines](https://aws.amazon.com/trademark-guidelines/) restringe
+el uso de las marcas de AWS en dominios. Si AWS o el programa pidieran cambiarlo,
+no se rehace nada: la URL de Amplify sigue funcionando y basta con otro dominio y
+otro `SITE_URL`.
+
+**Consecuencias.**
+
+- La URL de Amplify sigue respondiendo con el mismo contenido. Los enlaces ya
+  compartidos no se rompen, y la rama sigue sin renombrarse.
+- La CSP no cambió: `'self'` es el origen desde el que se sirve la página, sea
+  cual sea.
+- **La red de la Universidad bloquea el dominio** desde el primer día. Su firewall
+  (Fortinet) usa la clasificación de FortiGuard, que lo puso en «Newly Observed
+  Domain», una categoría de riesgo para dominios que acaban de empezar a
+  funcionar. El firewall además intercepta el HTTPS con un certificado propio,
+  así que desde esa red `curl` falla. Fuera de ella, el sitio responde con
+  normalidad. Mientras dure el bloqueo, lo que se comparta o se imprima para el
+  campus, incluidos los QR del Student Community Day, lleva la URL de Amplify,
+  que sí pasa. Cómo levantar el bloqueo:
+  [estado §1](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
+
+**Lo que se descartó.** Seguir esperando el subdominio de la Universidad. Nunca
+llegó, y `aws.ucuenca.edu.ec` habría chocado con la misma sección de las pautas
+de marca.

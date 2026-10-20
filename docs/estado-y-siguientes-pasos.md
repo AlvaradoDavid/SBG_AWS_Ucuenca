@@ -18,7 +18,7 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Contenido de eventos | Completo: los 7 con texto; 5 con cifra de asistentes |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
 | Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 5 |
-| Infraestructura AWS | ✅ **En línea en Amplify:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, con 404 real, cabeceras de seguridad y alarmas de costo. Solo queda el subdominio: ver el punto 1 |
+| Infraestructura AWS | ✅ **En línea en Amplify, con dominio propio:** <https://www.aws-sbg-ucuenca.com/> desde el 2026-10-20, con 404 real, cabeceras de seguridad y alarmas de costo. **La red de la Universidad bloquea el dominio:** ver el punto 1 |
 
 ### Las dos profundidades de ficha
 
@@ -73,6 +73,12 @@ fuera lo más visible del sitio. Construido el 2026-10-05 y **publicado el
 Todo vive en `src/content/proximos/student-community-day.mdx`: para cambiar un
 enlace, el horario, los participantes o los patrocinadores se edita ese archivo,
 sin tocar componentes.
+
+**Ojo con los QR del evento:** el evento es en el campus, y la red de la
+Universidad bloquea el dominio propio desde el 2026-10-20 (ver el
+[punto 1](#1-cerrar-el-despliegue)). Hasta que lo desbloqueen, los QR y los
+enlaces que se impriman o se compartan para el campus llevan la URL de Amplify:
+`https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/student-community-day/`.
 
 **Lo que decidió el club** (2026-10-05 y 06), para no volver a preguntarlo:
 
@@ -207,7 +213,9 @@ edición: el brochure promete prioridad de renovación con la tarifa 2027.
 
 El sitio está **en línea desde el 2026-09-29** en <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, alojado en AWS
 Amplify Hosting ([D-23](decisiones.md#d-23)) y conectado a la rama
-`aws-sbg-ucuenca` de <https://github.com/AlvaradoDavid/SBG_AWS_Ucuenca>.
+`aws-sbg-ucuenca` de <https://github.com/AlvaradoDavid/SBG_AWS_Ucuenca>. Desde
+el 2026-10-20 tiene dominio propio, <https://www.aws-sbg-ucuenca.com/>
+([D-33](decisiones.md#d-33)).
 
 > **Cada push a `aws-sbg-ucuenca` se publica en producción.** No hay rama de
 > pruebas: se verifica con `pnpm build` antes de hacer push.
@@ -216,9 +224,9 @@ Amplify Hosting ([D-23](decisiones.md#d-23)) y conectado a la rama
 
 - La portada, el catálogo, los eventos y la búsqueda cargan.
 - `/servicios/almacenamiento/s3` (sin barra) responde 301 hacia la versión con barra.
-- El `og:image` apunta a `https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/_astro/…`, la imagen responde 200 y cada evento
-  comparte su propia foto: Amplify inyectó `AWS_APP_ID` y `AWS_BRANCH` sin tocar
-  nada, así que **no hace falta definir `SITE_URL`**.
+- El `og:image` apuntaba a `https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/_astro/…`, la imagen respondía 200 y cada evento
+  compartía su propia foto: Amplify inyectó `AWS_APP_ID` y `AWS_BRANCH` sin tocar
+  nada. Hasta que llegó el dominio, `SITE_URL` no hizo falta.
 - La vista previa de los enlaces en WhatsApp muestra la foto.
 
 **Hecho después de publicar** (2026-09-29):
@@ -302,10 +310,44 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   logo a color del kit, primero en el cartel, en la página del evento y en la de
   patrocinio.
 
+**Dominio propio, el 2026-10-20** ([D-33](decisiones.md#d-33)):
+
+- ✅ **`aws-sbg-ucuenca.com` registrado en Route 53** y conectado en *Hosting →
+  Custom domains*. Amplify creó los registros (un alias en la raíz y un CNAME en
+  `www`) y el certificado.
+- ✅ **Comprobado desde fuera de la red de la Universidad**, con check-host.net,
+  Mozilla Observatory y el lector r.jina.ai, porque desde dentro el dominio está
+  bloqueado:
+  - `https://www.aws-sbg-ucuenca.com/` responde 200 con la portada.
+  - Una URL inexistente da 404.
+  - La raíz redirige.
+  - Mozilla Observatory da B+, con 11 de 12 pruebas: la CSP y HSTS llegan. En
+    la URL de Amplify, las cabeceras son las mismas de siempre.
+- ✅ **`SITE_URL` definida** y redesplegada: `og:image` ya no apunta a
+  `amplifyapp.com`.
+
 **Pendiente:**
 
-- **Subdominio de la Universidad.** Aplazado. Cuando llegue, se añade como
-  dominio en Amplify y se define `SITE_URL`.
+- **`SITE_URL` debe llevar `www`.** El 2026-10-20 quedó como
+  `https://aws-sbg-ucuenca.com`, la raíz, así que `og:image` pasa por la
+  redirección antes de llegar a la imagen. Hay que cambiarla a
+  `https://www.aws-sbg-ucuenca.com` y redesplegar.
+- **La redirección de la raíz a `www` es un 302** (temporal), que es lo que crea
+  Amplify. Si en *Rewrites and redirects* aparece como regla, conviene pasarla a
+  `301`. La regla `/<*>` → `/404.html` tiene que seguir siendo la última.
+- **Levantar el bloqueo en la red de la Universidad.** El firewall de la
+  Universidad (Fortinet) clasifica el dominio, con FortiGuard, como «Newly
+  Observed Domain» y lo bloquea por ser nuevo. Hay dos caminos, y conviene
+  recorrer los dos antes del 14 de noviembre:
+  1. Pedir a la DTIC que permita `aws-sbg-ucuenca.com` y
+     `www.aws-sbg-ucuenca.com`. Es lo más rápido.
+  2. Pedir la reclasificación en
+     <https://www.fortiguard.com/faq/wfratingsubmit>, proponiendo «Education».
+     El formulario no ofrece la categoría actual, y FortiGuard no dice cuánto
+     tarda.
+
+  Mientras tanto, lo que se comparta o imprima para el campus va con la URL de
+  Amplify, que sí pasa.
 
 **Lo que no se hace:** activar el firewall (WAF) que ofrece Amplify — ver
 [D-24](decisiones.md#d-24).
@@ -728,7 +770,8 @@ se versionaron para no tener que reescribirlos.
 ### Después de cada push
 
 Amplify tarda unos 2 minutos en publicar. Para confirmar que el sitio responde
-como debe:
+como debe (contra la URL de Amplify: el dominio propio sirve lo mismo, y desde la
+red de la Universidad está bloqueado, ver el punto 1):
 
 ```bash
 curl -sI https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/ | grep -iE "^HTTP|content-security|strict-transport|cache-control"
@@ -750,10 +793,14 @@ tres cosas: los `\r`, porque en Windows los `.mdx` tienen CRLF y Amplify compila
 con LF; el id que `DiagramaAWS` sortea en cada build, y la URL del sitio, que
 aparece tal cual y también codificada (`https%3A%2F%2F…`) dentro del enlace de
 Google Calendar del Student Community Day. Sin esa última, la portada y
-`/student-community-day/` parecen distintas aunque no lo sean:
+`/student-community-day/` parecen distintas aunque no lo sean. La URL que se pide
+(`U`, la de Amplify) y la que aparece en el HTML (`S`, el valor de `SITE_URL`)
+ya no son la misma:
 
 ```bash
 U=https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com
-norm() { sed -e "s#$U#http://localhost:4321#g" -e "s#https%3A%2F%2Faws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com#http%3A%2F%2Flocalhost%3A4321#g" | tr -d '\r' | sed -E 's/(pie|punta)-[a-z0-9]+/\1-ID/g'; }
+S=https://www.aws-sbg-ucuenca.com
+SC=$(printf %s "$S" | sed 's#:#%3A#; s#/#%2F#g')
+norm() { sed -e "s#$S#http://localhost:4321#g" -e "s#$SC#http%3A%2F%2Flocalhost%3A4321#g" | tr -d '\r' | sed -E 's/(pie|punta)-[a-z0-9]+/\1-ID/g'; }
 cmp <(curl -s "$U/eventos/" | norm) <(norm < dist/eventos/index.html) && echo idénticas
 ```

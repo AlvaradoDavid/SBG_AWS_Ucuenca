@@ -107,6 +107,9 @@ un recurso y no a una dirección, y no se cobran por consulta.
   ]}
 />
 
-Es el camino clásico de un sitio estático con dominio propio. Este sitio todavía no lo tiene: vive
-en la URL que le da [AWS Amplify](/servicios/front-end-web-y-movil/amplify/), y el día que llegue un
-dominio, lo que se añade es justo ese primer paso: resolver el nombre.
+Es el camino clásico de un sitio estático con dominio propio. Este sitio recorre el primer paso
+igual: su dominio, `aws-sbg-ucuenca.com`, está registrado en Route 53, y su zona alojada resuelve el
+nombre. Lo que cambia es el resto: el alias apunta a la CDN de
+[AWS Amplify](/servicios/front-end-web-y-movil/amplify/), que es CloudFront administrado por Amplify,
+y no a una distribución y un bucket propios. Los registros los creó Amplify solo al conectar el
+dominio.

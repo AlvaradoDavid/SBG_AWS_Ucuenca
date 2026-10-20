@@ -3,7 +3,8 @@
 Sitio web del club de estudiantes de AWS de la Universidad de Cuenca: quiénes somos, qué eventos
 hemos hecho y un catálogo en español de los servicios de AWS.
 
-**En línea:** <https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>
+**En línea:** <https://www.aws-sbg-ucuenca.com/> (también en
+<https://aws-sbg-ucuenca.d2jrpw2uglkitl.amplifyapp.com/>, la URL de Amplify)
 
 ## Qué hay en el sitio
 

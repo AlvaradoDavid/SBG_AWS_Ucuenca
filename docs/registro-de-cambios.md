@@ -27,6 +27,15 @@ página del evento y a 1280 de la de patrocinio, sin desplazamiento horizontal.
 En escritorio los seis logos caben en una fila del cartel; en celular, Aitheros
 y Next Generation Tech van en la segunda.
 
+**Publicado el 2026-10-20 en `65dce8b`** (con su nota, `39be23a`). Amplify tardó
+unos 150 segundos. Comprobado con `curl` en la URL de Amplify: la portada
+responde 200 con la CSP y HSTS, `/no-existe/` da 404 sin redirección, el `.ics`
+sigue como `text/calendar`, y los dos tamaños del logo (44 y 96 px en pantalla)
+responden 200 como `image/webp` e `immutable`. La portada,
+`/student-community-day/` y `/student-community-day/patrocinio/` son idénticas
+al build local. Para compararlas, `S` tuvo que ir sin `www`
+(`https://aws-sbg-ucuenca.com`), porque `SITE_URL` sigue en la raíz.
+
 ---
 
 ## Dominio propio: `www.aws-sbg-ucuenca.com`

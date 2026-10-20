@@ -310,6 +310,12 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   logo a color del kit, primero en el cartel, en la página del evento y en la de
   patrocinio.
 
+**Publicado el 2026-10-20** y comprobado en producción:
+
+- ✅ **Next Generation Tech, sexto patrocinador** (`65dce8b`, documentado en
+  `39be23a`): su logo en el cartel, en la página del evento y en la de
+  patrocinio.
+
 **Dominio propio, el 2026-10-20** ([D-33](decisiones.md#d-33)):
 
 - ✅ **`aws-sbg-ucuenca.com` registrado en Route 53** y conectado en *Hosting →

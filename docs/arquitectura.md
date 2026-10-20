@@ -112,7 +112,13 @@ parejo y se bajó a 584 × 480. Su fondo blanco es parte de la imagen, así que 
 sin `sobreBlanco` y ocupa la tarjeta entera. El de AWS, que va primero porque
 es el patrocinador principal, no llegó en `logos/`: es una copia del SVG del kit
 del programa (`Branding/Logos & Icons/aws.svg`), a color y transparente, con
-`sobreBlanco`. Astro sirve los SVG tal cual, sin convertirlos.
+`sobreBlanco`. Astro sirve los SVG tal cual, sin convertirlos. El de Next
+Generation Tech llegó el 2026-10-20 en `logos/Next Generation tech/`, con 17
+variantes: iconos, versiones apiladas y horizontales, cada una a color, en negro
+y en blanco. El sitio usa la horizontal a color, `LogoPrincipal-NGT.png`
+(1667 × 1667, transparente): se le quitó el margen vacío, como al de Deuna, y se
+bajó a 779 × 220. Va con `sobreBlanco`. `NGTLogo_OraclePartner.png` es el mismo
+dibujo en más resolución, sin nada de Oracle a la vista.
 
 **El arte no pasa por `pnpm fotos`.** Los originales están en
 `Eventos/2026-11-14 AWS Student Community Day/arte/`, una subcarpeta que el

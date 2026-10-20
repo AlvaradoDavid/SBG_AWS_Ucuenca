@@ -2,6 +2,33 @@
 
 ---
 
+## Next Generation Tech, sexto patrocinador del Student Community Day
+
+2026-10-20. Llegó el kit de logos de Next Generation Tech en
+`logos/Next Generation tech/`: 17 PNG con el icono, versiones apiladas y
+horizontales, cada una a color, en negro y en blanco.
+
+- **El logo:** `src/assets/patrocinadores/next-generation-tech.png`, la versión
+  horizontal a color (`LogoPrincipal-NGT.png`) sin el margen vacío y bajada a
+  779 × 220 (42 KB). Es transparente, así que va con `sobreBlanco`, como AWS y
+  Deuna.
+- **Una línea en `patrocinadores`** de `student-community-day.mdx`, al final.
+  Sale en el cartel de la portada, en el cartel y en «Patrocinadores» de
+  `/student-community-day/`, y en «Ya nos acompañan» de la página de
+  patrocinio, cuya frase pasa a «AWS, Deuna, TicketIn, Ambross TI, Aitheros y
+  Next Generation Tech ya apoyan…».
+- **Los originales** quedaron en `logos/Next Generation tech/`, que no se
+  versiona. La carpeta trae un `.DS_Store` de macOS, que `.gitignore` ya ignora.
+
+**Verificado:** `pnpm build` completo en esta máquina, con Pagefind, de 264
+páginas, las mismas; `pnpm enlaces` da ✓ con 394 destinos. Sin JavaScript
+nuevo. Capturas con `pnpm servir` a 390 y 1280 px de la portada, a 390 de la
+página del evento y a 1280 de la de patrocinio, sin desplazamiento horizontal.
+En escritorio los seis logos caben en una fila del cartel; en celular, Aitheros
+y Next Generation Tech van en la segunda.
+
+---
+
 ## Dominio propio: `www.aws-sbg-ucuenca.com`
 
 2026-10-20. El club registró `aws-sbg-ucuenca.com` en Route 53 y lo conectó en

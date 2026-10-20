@@ -398,8 +398,8 @@ La lista lleva `aria-label="Patrocinadores"`, para que un lector de pantalla no
 lea los logos sueltos.
 
 Un logo que trae su propio fondo (TicketIn en amarillo, Ambross en azul, Aitheros
-en blanco) ocupa la tarjeta entera. Uno transparente (`sobreBlanco: true`, los de AWS y
-Deuna) va sobre blanco, con relleno. El `alt` es el nombre del patrocinador. Las imágenes se
+en blanco) ocupa la tarjeta entera. Uno transparente (`sobreBlanco: true`, los de AWS,
+Deuna y Next Generation Tech) va sobre blanco, con relleno. El `alt` es el nombre del patrocinador. Las imágenes se
 generan al doble de su alto en pantalla, sin pasar del original.
 
 ---

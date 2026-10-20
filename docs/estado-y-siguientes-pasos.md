@@ -198,9 +198,9 @@ edición: el brochure promete prioridad de renovación con la tarifa 2027.
   como organizadores. El club pidió dejarlo pendiente.
 - **Logos según el nivel.** El brochure vende «logo en web» en todos los niveles.
   Si el club quiere que los de Oro salgan más grandes y primero, hace falta un
-  campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los cuatro
-  patrocinadores locales (Deuna, TicketIn, Ambross TI y Aitheros, que se sumó el
-  2026-10-14). AWS, el principal desde el 2026-10-15, va primero, pero con
+  campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los cinco
+  patrocinadores locales (Deuna, TicketIn, Ambross TI, Aitheros, que se sumó el
+  2026-10-14, y Next Generation Tech, el 2026-10-20). AWS, el principal desde el 2026-10-15, va primero, pero con
   tarjeta del mismo tamaño que las demás.
 - **Una fecha límite para patrocinar.** El merchandising y los badges necesitan
   tiempo de imprenta. Si el club fija una fecha, puede ir en la página.

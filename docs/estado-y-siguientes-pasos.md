@@ -329,15 +329,20 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   - La raíz redirige.
   - Mozilla Observatory da B+, con 11 de 12 pruebas: la CSP y HSTS llegan. En
     la URL de Amplify, las cabeceras son las mismas de siempre.
-- ✅ **`SITE_URL` definida** y redesplegada: `og:image` ya no apunta a
-  `amplifyapp.com`.
+- ✅ **`SITE_URL` es `https://www.aws-sbg-ucuenca.com`**. Primero quedó en la
+  raíz, y dos builds salieron así aun después de cambiarla; con el despliegue de
+  las 20:58 UTC ya tomó `www`.
+  - El `og:image` de la portada, de `/student-community-day/` y de su página de
+    patrocinio apunta a `https://www.aws-sbg-ucuenca.com/_astro/…`, igual que el
+    enlace de Google Calendar.
+  - Desde fuera de la red, las dos imágenes responden 200 directo, sin
+    redirección.
+
+  Si alguna vez vuelve a salir el valor viejo, hay que revisar si la rama tiene
+  un valor propio, que gana sobre el de *All branches*.
 
 **Pendiente:**
 
-- **`SITE_URL` debe llevar `www`.** El 2026-10-20 quedó como
-  `https://aws-sbg-ucuenca.com`, la raíz, así que `og:image` pasa por la
-  redirección antes de llegar a la imagen. Hay que cambiarla a
-  `https://www.aws-sbg-ucuenca.com` y redesplegar.
 - **La redirección de la raíz a `www` es un 302** (temporal), que es lo que crea
   Amplify. Si en *Rewrites and redirects* aparece como regla, conviene pasarla a
   `301`. La regla `/<*>` → `/404.html` tiene que seguir siendo la última.

@@ -67,14 +67,19 @@ la consola y redesplegó. El porqué está en [D-33](decisiones.md#d-33).
 **Lo que salió al verificar:**
 
 - **`SITE_URL` quedó en la raíz** (`https://aws-sbg-ucuenca.com`), así que
-  `og:image` pasa por la redirección de 302 antes de llegar a la imagen. Hay que
-  cambiarla a `https://www.aws-sbg-ucuenca.com`.
+  `og:image` pasaba por la redirección de 302 antes de llegar a la imagen.
+  **Corregido ese mismo día:** después del cambio, los builds de las 16:47 y las
+  16:58 UTC siguieron saliendo con la raíz; el de las 20:58 UTC ya toma `www`.
+  - El `og:image` de la portada, del evento y de su página de patrocinio apunta a
+    `https://www.aws-sbg-ucuenca.com/_astro/…`, igual que el enlace de Google
+    Calendar.
+  - Con check-host.net, las dos imágenes responden 200 sin redirección.
 - **La red de la Universidad bloquea el dominio.** Su firewall (Fortinet) usa la
   clasificación de FortiGuard, que lo puso en «Newly Observed Domain», e
   intercepta el HTTPS con un certificado propio, así que desde esta máquina
   `curl` y WebFetch fallan contra el dominio. La URL de Amplify sí pasa.
 
-Cómo resolver las dos cosas: [estado §1](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
+Cómo levantar el bloqueo: [estado §1](estado-y-siguientes-pasos.md#1-cerrar-el-despliegue).
 
 ---
 

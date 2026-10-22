@@ -13,6 +13,8 @@ interface Props {
   /** Imagen de la vista previa al compartir el enlace. Por defecto, la del club. */
   imagen?: ImageMetadata;
   imagenAlt?: string;
+  /** Falso en la 404, que Amplify sirve en cualquier ruta inexistente. */
+  canonica?: boolean;
 }
 
 const {
@@ -20,7 +22,12 @@ const {
   description = `${club.nombre} – ${club.universidad}: comunidad enfocada en cloud computing, innovación y tecnologías AWS.`,
   imagen = fotoParaCompartir,
   imagenAlt = `Stand del ${club.nombreCorto} en el inicio de ciclo`,
+  canonica = true,
 } = Astro.props;
+
+// El mismo contenido se sirve en el dominio propio y en la URL de Amplify. La
+// canónica, armada con SITE_URL, les dice a los buscadores cuál indexar (D-33).
+const urlCanonica = canonica && new URL(Astro.url.pathname, Astro.site).href;
 
 // Sin recorte a 1200×630: dos de las fotos de portada son carteles y el recorte
 // les cortaría el título. Cada red ajusta la vista previa a su manera.
@@ -37,6 +44,7 @@ const vistaPrevia =
     <link rel="icon" type="image/svg+xml" href="/marca/program-icon-purple.svg" />
     <title>{title} · {club.nombreCorto}</title>
     <meta name="description" content={description} />
+    {urlCanonica && <link rel="canonical" href={urlCanonica} />}
     <meta property="og:title" content={`${title} · ${club.nombreCorto}`} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />

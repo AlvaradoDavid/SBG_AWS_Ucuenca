@@ -340,6 +340,16 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
 
   Si alguna vez vuelve a salir el valor viejo, hay que revisar si la rama tiene
   un valor propio, que gana sobre el de *All branches*.
+- ✅ **Revisión completa el 2026-10-21**, con `curl` directo contra el dominio:
+  - Las 689 URLs que se alcanzan desde la portada de `www` (263 páginas, más
+    fotos, estilos y fuentes) responden 200, y ninguna apunta a la raíz, a la
+    URL de Amplify ni a localhost.
+  - El certificado de ACM cubre la raíz y `*.aws-sbg-ucuenca.com`, y vence el
+    2027-05-06.
+  - La raíz redirige a `www` conservando la ruta.
+- **URL canónica en cada página** (`<link rel="canonical">`), para que los
+  buscadores no indexen la URL de Amplify como duplicado
+  ([D-33](decisiones.md#d-33)). Hecha el 2026-10-22, **sin publicar**.
 
 **Pendiente:**
 

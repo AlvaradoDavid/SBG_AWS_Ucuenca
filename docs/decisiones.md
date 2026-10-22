@@ -990,6 +990,11 @@ otro `SITE_URL`.
 
 - La URL de Amplify sigue respondiendo con el mismo contenido. Los enlaces ya
   compartidos no se rompen, y la rama sigue sin renombrarse.
+- Como hay dos direcciones con el mismo contenido, cada página declara la suya
+  con `<link rel="canonical">`, armada con `SITE_URL`, para que los buscadores
+  indexen `www` y no la URL de Amplify. No se redirige la de Amplify a `www`
+  porque es la que pasa el bloqueo de la Universidad. La 404 no lleva canónica:
+  Amplify la sirve en cualquier ruta inexistente.
 - La CSP no cambió: `'self'` es el origen desde el que se sirve la página, sea
   cual sea.
 - **La red de la Universidad bloquea el dominio** desde el primer día. Su firewall

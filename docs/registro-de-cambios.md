@@ -2,6 +2,29 @@
 
 ---
 
+## URL canónica en cada página
+
+2026-10-22. Desde que llegó el dominio, el sitio responde con el mismo
+contenido en dos direcciones: `www.aws-sbg-ucuenca.com` y la URL de Amplify, que
+se mantiene porque pasa el bloqueo de la Universidad. Sin canónica, un buscador
+puede indexar la de Amplify o repartir las dos ([D-33](decisiones.md#d-33)).
+
+- **`Layout.astro`** añade `<link rel="canonical">` con `SITE_URL` más la ruta
+  de la página (`new URL(Astro.url.pathname, Astro.site)`). En producción
+  queda, por ejemplo, `https://www.aws-sbg-ucuenca.com/eventos/`.
+- **Prop nueva, `canonica`**, `true` por defecto. La 404 pasa `false`: Amplify
+  la sirve en cualquier ruta inexistente, así que no tiene una dirección propia.
+
+**Verificado:** build completo en esta máquina con
+`astro.config.verificacion.mjs`, Pagefind y
+`SITE_URL=https://www.aws-sbg-ucuenca.com`: 264 páginas, las mismas. Cada una de
+las 263 que no son la 404 lleva exactamente una canónica, igual a `www` más su
+ruta en `dist/`; la 404 no lleva ninguna. `pnpm enlaces` da ✓ con 394 destinos.
+Sin JavaScript nuevo, y la CSP no cambia: un `<link rel="canonical">` no carga
+nada.
+
+---
+
 ## Next Generation Tech, sexto patrocinador del Student Community Day
 
 2026-10-20. Llegó el kit de logos de Next Generation Tech en

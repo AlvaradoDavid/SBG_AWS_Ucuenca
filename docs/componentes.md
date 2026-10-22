@@ -20,10 +20,14 @@ Envoltura de todas las páginas.
 | --- | --- | --- |
 | `title` | string | Se muestra como `{title} · AWS SBG UCuenca` |
 | `description` | string? | Por defecto, la descripción del club |
+| `canonica` | boolean? | `true` por defecto. Solo la 404 pasa `false` |
 
 Aporta:
 
 - Meta tags de SEO y Open Graph
+- La **URL canónica** (`<link rel="canonical">`): `SITE_URL` más la ruta de la
+  página, para que los buscadores indexen `www.aws-sbg-ucuenca.com` y no la URL
+  de Amplify, que sirve lo mismo ([D-33](decisiones.md#d-33))
 - Enlace **«Saltar al contenido»** que apunta a `<main id="contenido">`
 - Nav y Footer
 - El **script de reveals**: activa `.reveal-activo` y observa los `[data-reveal]`

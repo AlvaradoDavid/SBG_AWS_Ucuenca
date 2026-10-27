@@ -347,9 +347,10 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   - El certificado de ACM cubre la raíz y `*.aws-sbg-ucuenca.com`, y vence el
     2027-05-06.
   - La raíz redirige a `www` conservando la ruta.
-- **URL canónica en cada página** (`<link rel="canonical">`), para que los
+- ✅ **URL canónica en cada página** (`<link rel="canonical">`), para que los
   buscadores no indexen la URL de Amplify como duplicado
-  ([D-33](decisiones.md#d-33)). Hecha el 2026-10-22, **sin publicar**.
+  ([D-33](decisiones.md#d-33)). Publicada el 2026-10-26 en `92b83ad`: las 264
+  páginas la llevan en producción, también servidas desde la URL de Amplify.
 
 **Pendiente:**
 

@@ -23,6 +23,18 @@ ruta en `dist/`; la 404 no lleva ninguna. `pnpm enlaces` da ✓ con 394 destinos
 Sin JavaScript nuevo, y la CSP no cambia: un `<link rel="canonical">` no carga
 nada.
 
+**Publicado el 2026-10-26 en `92b83ad`** (con su nota, `0e1a6bb`), a las 01:43
+UTC del 27. Amplify tardó unos 2 minutos. Comprobado con `curl`:
+
+- Las 264 páginas de `dist/` llevan en producción la canónica esperada, tanto
+  en `www` como en la URL de Amplify. Esta última también apunta a `www`.
+- Una ruta inexistente da 404, sin canónica y sin redirección.
+- Las cabeceras de siempre llegan: CSP, HSTS, `immutable` en `/_astro/` y
+  `text/calendar` en el `.ics`.
+- Las 689 URLs alcanzables desde la portada de `www` responden 200.
+- La portada, `/eventos/`, `/servicios/` y la página de patrocinio son idénticas
+  al build local.
+
 ---
 
 ## Next Generation Tech, sexto patrocinador del Student Community Day

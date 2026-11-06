@@ -1,0 +1,384 @@
+---
+/**
+ * Cronograma oficial y agenda del evento con sesiones simultáneas y filtros por sala.
+ * Permite a los asistentes revisar la programación en detalle y compartir el enlace
+ * directo (#agenda).
+ *
+ * Cumple con las tres reglas del proyecto:
+ * 1. El color de marca nunca es color de texto; el texto va en escala tinta o blanco.
+ * 2. 100% legible y funcional sin JavaScript; con JS añade filtros interactivos y botón de copiar enlace.
+ * 3. Presupuesto de JS mínimo (script vanilla en línea de ~0.7 KB sin dependencias).
+ */
+import { agruparPorBloques, type Proximo, type SesionAgenda } from '../lib/proximos';
+import { club } from '../lib/categorias';
+
+interface Props {
+  evento: Proximo;
+}
+
+const { evento } = Astro.props;
+const agenda: SesionAgenda[] = evento.data.agenda ?? [];
+const bloques = agruparPorBloques(agenda);
+
+const salasFiltro = [
+  { id: 'todas', label: 'Todas las salas' },
+  { id: 'auditorio-001', label: 'Auditorio 001', match: 'Auditorio 001' },
+  { id: 'auditorio-002', label: 'Auditorio 002', match: 'Auditorio 002' },
+  { id: 'aula-bloque-a', label: 'Aula Bloque A', match: 'Aula bloque A' },
+  { id: 'plenarias', label: 'Plenarias & Networking', match: ['Auditorio', 'Hall / exterior'] },
+];
+
+function normalizarClaseSala(sala: string): string {
+  if (sala.includes('001')) return 'sala-auditorio-001';
+  if (sala.includes('002')) return 'sala-auditorio-002';
+  if (sala.toLowerCase().includes('bloque a')) return 'sala-aula-bloque-a';
+  return 'sala-plenaria';
+}
+
+const instagram = `@${new URL(club.instagram).pathname.replaceAll('/', '')}`;
+const botonSecundario =
+  'inline-flex items-center justify-center gap-2 rounded-lg border border-tinta-300 bg-white px-4 py-2.5 text-xs font-bold text-tinta-900 transition hover:border-morado-300 hover:bg-morado-50';
+---
+
+<section id="agenda" class="fondo-aurora border-y border-morado-100 scroll-mt-20">
+  <div class="mx-auto max-w-6xl px-6 py-16 sm:py-20">
+    <!-- Encabezado de la agenda -->
+    <div data-reveal class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <div class="flex items-center gap-2">
+          <p class="font-mono text-xs uppercase tracking-widest text-tinta-500">Programación oficial</p>
+          <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-marca-purple"></span>
+          <span class="font-mono text-xs text-tinta-500">Sábado 14 de noviembre de 2026</span>
+        </div>
+        <h2 class="mt-3 font-display text-3xl font-bold text-tinta-900 sm:text-4xl">
+          Agenda del evento
+        </h2>
+        <p class="mt-3 max-w-2xl leading-relaxed text-tinta-600">
+          Una jornada técnica completa con tres salas simultáneas: conferencias de inteligencia artificial,
+          talleres de Kubernetes, seguridad cloud en Amazon S3 y espacios de networking con comunidades de todo el país.
+        </p>
+      </div>
+
+      <!-- Acciones directas: Copiar enlace de la agenda y enlace a TicketIn -->
+      <div class="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          id="btn-copiar-agenda"
+          class="inline-flex items-center gap-2 rounded-lg border border-tinta-300 bg-white px-4 py-2.5 text-xs font-bold text-tinta-800 shadow-sm shadow-morado-900/5 transition hover:border-morado-300 hover:bg-morado-50 hover:text-tinta-900 focus-visible:outline-morado-700"
+          title="Copiar enlace directo a esta agenda"
+        >
+          <svg class="h-4 w-4 text-morado-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+          </svg>
+          <span id="txt-copiar-agenda">Copiar enlace de agenda</span>
+        </button>
+
+        <a
+          href={evento.data.entradas.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-lg bg-morado-700 px-4 py-2.5 text-xs font-bold text-white shadow-sm shadow-morado-900/10 transition hover:bg-morado-800 focus-visible:outline-morado-700"
+        >
+          Reserva tu entrada ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- Píldoras de filtrado por sala (compatibles con y sin JS) -->
+    <div data-reveal class="mt-10 border-t border-morado-100 pt-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <p class="font-mono text-xs font-bold uppercase tracking-wider text-tinta-500">
+          Filtrar por espacio:
+        </p>
+        <div id="filtros-salas" class="flex flex-wrap gap-2" role="tablist" aria-label="Filtrar agenda por sala">
+          {salasFiltro.map((sala, i) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={i === 0 ? 'true' : 'false'}
+              data-filtro={sala.id}
+              class:list={[
+                'btn-filtro-sala rounded-full px-3.5 py-1.5 text-xs font-bold transition focus-visible:outline-morado-700',
+                i === 0
+                  ? 'bg-morado-700 text-white shadow-sm ring-1 ring-morado-700'
+                  : 'border border-tinta-200 bg-white text-tinta-700 hover:border-morado-300 hover:bg-morado-50',
+              ]}
+            >
+              {sala.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista cronológica de bloques horarios -->
+    <div class="mt-8 space-y-8" id="lista-bloques-agenda">
+      {bloques.map((bloque) => {
+        const esMultiple = bloque.sesiones.length > 1;
+        const esBreak = bloque.sesiones.some((s) => s.tipo === 'break');
+
+        return (
+          <div
+            data-reveal
+            data-bloque-horario
+            class="bloque-horario rounded-2xl border border-morado-100 bg-white/70 p-5 shadow-sm shadow-morado-900/5 backdrop-blur-sm sm:p-7"
+          >
+            <!-- Cabecera del bloque: Horario e indicador -->
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-morado-100 pb-4">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-8 items-center rounded-lg bg-morado-100 px-3 font-mono text-sm font-bold text-tinta-900 ring-1 ring-morado-200">
+                  {bloque.horario}
+                </span>
+                <span class="text-xs font-medium text-tinta-500">
+                  {esMultiple
+                    ? `${bloque.sesiones.length} sesiones en simultáneo`
+                    : esBreak
+                      ? 'Pausa y networking general'
+                      : 'Sesión plenaria'}
+                </span>
+              </div>
+              {esMultiple && (
+                <span class="hidden font-mono text-[11px] uppercase tracking-wider text-tinta-400 sm:inline-block">
+                  Salas: Auditorio 001 · Auditorio 002 · Aula Bloque A
+                </span>
+              )}
+            </div>
+
+            <!-- Sesiones dentro del bloque -->
+            <div
+              class:list={[
+                'mt-5',
+                esMultiple
+                  ? 'grid gap-5 md:grid-cols-2 lg:grid-cols-3'
+                  : 'space-y-4',
+              ]}
+            >
+              {bloque.sesiones.map((sesion) => {
+                const claseSala = normalizarClaseSala(sesion.sala);
+                const esCharla = sesion.tipo === 'charla';
+                const esTaller = sesion.tipo === 'workshop';
+                const esPausa = sesion.tipo === 'break';
+                const esProtocolo = sesion.tipo === 'protocolo' || sesion.tipo === 'cierre';
+
+                return (
+                  <article
+                    data-sesion
+                    data-sala-clase={claseSala}
+                    class:list={[
+                      'sesion-tarjeta relative flex flex-col justify-between rounded-xl border p-5 transition duration-200',
+                      esPausa
+                        ? 'border-amber-200 bg-gradient-to-br from-amber-50/70 to-white text-tinta-900 shadow-sm'
+                        : esMultiple
+                          ? 'border-morado-100 bg-white shadow-sm hover:border-morado-300 hover:shadow-md'
+                          : 'border-morado-100 bg-morado-50/40 shadow-sm',
+                    ]}
+                  >
+                    <div>
+                      <!-- Etiquetas: Sala + Tipo de sesión -->
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span
+                          class:list={[
+                            'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 font-mono text-xs font-bold tracking-tight',
+                            sesion.sala.includes('001')
+                              ? 'bg-morado-100 text-tinta-800 ring-1 ring-morado-200'
+                              : sesion.sala.includes('002')
+                                ? 'bg-tinta-100 text-tinta-800 ring-1 ring-tinta-200'
+                                : sesion.sala.includes('Bloque A') || sesion.sala.includes('bloque A')
+                                  ? 'bg-morado-50 text-tinta-800 ring-1 ring-morado-200'
+                                  : esPausa
+                                    ? 'bg-amber-100 text-tinta-800 ring-1 ring-amber-200'
+                                    : 'bg-morado-100 text-tinta-800 ring-1 ring-morado-200',
+                          ]}
+                        >
+                          <svg class="h-3 w-3 shrink-0 text-tinta-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                          </svg>
+                          {sesion.sala}
+                        </span>
+
+                        <div class="flex items-center gap-1.5">
+                          {esTaller && (
+                            <span class="inline-flex items-center gap-1 rounded-full bg-morado-100 px-2.5 py-0.5 text-[11px] font-bold text-tinta-700 ring-1 ring-morado-200">
+                              <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-marca-purple"></span>
+                              Taller / Workshop
+                            </span>
+                          )}
+                          {esCharla && (
+                            <span class="inline-flex items-center gap-1 rounded-full bg-tinta-100 px-2.5 py-0.5 text-[11px] font-medium text-tinta-700 ring-1 ring-tinta-200">
+                              Charla técnica
+                            </span>
+                          )}
+                          {esPausa && (
+                            <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold text-tinta-800 ring-1 ring-amber-300">
+                              <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-marca-amber"></span>
+                              Networking & Stands
+                            </span>
+                          )}
+                          {esProtocolo && (
+                            <span class="inline-flex items-center gap-1 rounded-full bg-morado-100 px-2.5 py-0.5 text-[11px] font-bold text-tinta-700 ring-1 ring-morado-200">
+                              Plenaria
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <!-- Título de la sesión -->
+                      <h3 class="mt-3 font-display text-lg font-bold leading-snug text-tinta-900">
+                        {sesion.titulo}
+                      </h3>
+
+                      <!-- Ponente / Responsable -->
+                      {sesion.speaker && (
+                        <div class="mt-3 flex flex-wrap items-center gap-2">
+                          <p class="text-sm font-bold text-tinta-800">
+                            {sesion.speaker}
+                          </p>
+                          {sesion.rolSpeaker && (
+                            <span class="text-xs text-tinta-500">
+                              · {sesion.rolSpeaker}
+                            </span>
+                          )}
+                          {sesion.sponsor && (
+                            <span class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-tinta-700 ring-1 ring-amber-200">
+                              <span aria-hidden="true" class="h-1 w-1 rounded-full bg-marca-amber"></span>
+                              Sponsor {sesion.sponsor}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      <!-- Descripción -->
+                      {sesion.descripcion && (
+                        <p class="mt-3 text-xs leading-relaxed text-tinta-600">
+                          {sesion.descripcion}
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- Aviso para voluntarios y equipo técnico -->
+    <div data-reveal class="mt-8 rounded-xl border border-morado-100 bg-white/60 p-4 text-xs leading-relaxed text-tinta-600">
+      <p class="flex items-center gap-2">
+        <svg class="h-4 w-4 shrink-0 text-morado-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+        </svg>
+        <span>
+          <strong class="font-bold text-tinta-900">Equipo organizador y voluntarios:</strong> Convocatoria técnica, pruebas de audio/video y montaje general en Auditorio a partir de las <strong class="font-bold text-tinta-900">07:00</strong>.
+        </span>
+      </p>
+    </div>
+
+    <!-- Contacto para dudas sobre ponencias o agenda -->
+    <div data-reveal class="mt-12 rounded-2xl border border-morado-200 bg-white p-6 shadow-sm shadow-morado-900/5 sm:p-8">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h3 class="font-display text-lg font-bold text-tinta-900">¿Tienes dudas sobre las charlas o el cronograma?</h3>
+          <p class="mt-1 text-sm text-tinta-600">
+            Escríbenos directamente por nuestras redes sociales para coordinar detalles o resolver preguntas.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href={club.instagram} target="_blank" rel="noopener noreferrer" class={botonSecundario}>
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38C1.35 2.68.93 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.93 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/>
+            </svg>
+            Instagram · {instagram}
+          </a>
+          <a href={club.linkedin} target="_blank" rel="noopener noreferrer" class={botonSecundario}>
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/>
+            </svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Copiar enlace directo a la sección de la agenda
+  const btnCopiar = document.getElementById('btn-copiar-agenda');
+  const txtCopiar = document.getElementById('txt-copiar-agenda');
+
+  if (btnCopiar && txtCopiar) {
+    btnCopiar.addEventListener('click', async () => {
+      const urlAgenda = `${window.location.origin}${window.location.pathname}#agenda`;
+      try {
+        await navigator.clipboard.writeText(urlAgenda);
+        txtCopiar.textContent = '¡Enlace copiado!';
+        btnCopiar.classList.add('border-morado-700', 'bg-morado-50');
+        setTimeout(() => {
+          txtCopiar.textContent = 'Copiar enlace de agenda';
+          btnCopiar.classList.remove('border-morado-700', 'bg-morado-50');
+        }, 2200);
+      } catch {
+        // En navegadores que restrinjan portapapeles, saltar al anclaje
+        window.location.hash = 'agenda';
+      }
+    });
+  }
+
+  // Filtrado accesible por salas
+  const botonesFiltro = document.querySelectorAll<HTMLButtonElement>('.btn-filtro-sala');
+  const bloquesHorarios = document.querySelectorAll<HTMLElement>('[data-bloque-horario]');
+
+  if (botonesFiltro.length > 0 && bloquesHorarios.length > 0) {
+    botonesFiltro.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const filtro = btn.getAttribute('data-filtro') || 'todas';
+
+        // Actualizar estados visuales de los botones
+        botonesFiltro.forEach((b) => {
+          b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+          if (b === btn) {
+            b.className = 'btn-filtro-sala rounded-full px-3.5 py-1.5 text-xs font-bold transition focus-visible:outline-morado-700 bg-morado-700 text-white shadow-sm ring-1 ring-morado-700';
+          } else {
+            b.className = 'btn-filtro-sala rounded-full px-3.5 py-1.5 text-xs font-bold transition focus-visible:outline-morado-700 border border-tinta-200 bg-white text-tinta-700 hover:border-morado-300 hover:bg-morado-50';
+          }
+        });
+
+        // Filtrar tarjetas y ocultar bloques vacíos si no hay coincidencias
+        bloquesHorarios.forEach((bloque) => {
+          const tarjetas = bloque.querySelectorAll<HTMLElement>('[data-sesion]');
+          let visiblesEnBloque = 0;
+
+          tarjetas.forEach((tarjeta) => {
+            const salaClase = tarjeta.getAttribute('data-sala-clase') || '';
+            let coincide = false;
+
+            if (filtro === 'todas') {
+              coincide = true;
+            } else if (filtro === 'auditorio-001' && salaClase === 'sala-auditorio-001') {
+              coincide = true;
+            } else if (filtro === 'auditorio-002' && salaClase === 'sala-auditorio-002') {
+              coincide = true;
+            } else if (filtro === 'aula-bloque-a' && salaClase === 'sala-aula-bloque-a') {
+              coincide = true;
+            } else if (filtro === 'plenarias' && salaClase === 'sala-plenaria') {
+              coincide = true;
+            }
+
+            if (coincide) {
+              tarjeta.style.display = '';
+              visiblesEnBloque++;
+            } else {
+              tarjeta.style.display = 'none';
+            }
+          });
+
+          // Si el bloque no tiene ninguna sesión visible con el filtro, ocultar el bloque entero
+          bloque.style.display = visiblesEnBloque > 0 ? '' : 'none';
+        });
+      });
+    });
+  }
+</script>

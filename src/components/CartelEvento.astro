@@ -140,6 +140,17 @@ const enlaceSobreOscuro =
             >
               Reserva tu entrada
             </a>
+            {!conDetalles && (
+              <a
+                href="#agenda"
+                class="inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur transition hover:border-white/60 hover:bg-white/15"
+              >
+                <svg class="h-4 w-4 text-marca-purple" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m0 0l-3.5-3.5M12 18l3.5-3.5" />
+                </svg>
+                Ver agenda
+              </a>
+            )}
           </div>
           <div class="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 text-sm">
             <!-- Los dos enlaces van juntos: si no caben, bajan los dos, no queda un punto suelto. -->
@@ -151,12 +162,19 @@ const enlaceSobreOscuro =
                 <a href={`/${evento.id}.ics`} class={enlaceSobreOscuro}>Apple u Outlook</a>
               </span>
             </p>
-            {conDetalles && (
+            {conDetalles ? (
               <a
                 href={ruta}
                 class="inline-flex items-center gap-2 font-bold text-white underline decoration-marca-purple decoration-2 underline-offset-4 transition hover:decoration-white"
               >
                 Ver todos los detalles <span aria-hidden="true">→</span>
+              </a>
+            ) : (
+              <a
+                href="#agenda"
+                class="inline-flex items-center gap-2 font-bold text-white underline decoration-marca-purple decoration-2 underline-offset-4 transition hover:decoration-white"
+              >
+                Ver agenda y sesiones <span aria-hidden="true">↓</span>
               </a>
             )}
           </div>

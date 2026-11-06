@@ -1,0 +1,53 @@
+---
+/**
+ * Ruta corta y directa para compartir la agenda:
+ * https://www.aws-sbg-ucuenca.com/agenda/ -> Redirige directamente a /student-community-day/#agenda
+ * 
+ * Permite usar este enlace en biografías de redes sociales, afiches, mensajes de WhatsApp
+ * y publicaciones, manteniendo metadatos completos de OpenGraph para vistas previas.
+ */
+import Layout from '../layouts/Layout.astro';
+import { proximoEvento, rutaDeProximo } from '../lib/proximos';
+
+const evento = await proximoEvento();
+const destino = evento ? `${rutaDeProximo(evento)}#agenda` : '/';
+const afiche = evento?.data.afiche;
+---
+
+<Layout
+  title="Agenda · AWS Student Community Day Ecuador"
+  description="Cronograma oficial del AWS Student Community Day Ecuador: conferencias de IA, talleres prácticos de Kubernetes, seguridad ofensiva en Amazon S3 y networking en Campus Balzay."
+  imagen={afiche}
+  imagenAlt="Agenda oficial del AWS Student Community Day Ecuador"
+>
+  <div class="fondo-aurora flex min-h-[60vh] items-center justify-center px-6 py-20 text-center">
+    <div class="max-w-md rounded-2xl border border-morado-100 bg-white p-8 shadow-sm shadow-morado-900/5">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-morado-100 text-morado-700">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h1 class="mt-4 font-display text-2xl font-bold text-tinta-900">
+        Agenda del evento
+      </h1>
+      <p class="mt-2 text-sm text-tinta-600">
+        Redirigiendo a la programación oficial del AWS Student Community Day Ecuador...
+      </p>
+      <div class="mt-6">
+        <a
+          href={destino}
+          class="inline-flex items-center justify-center gap-2 rounded-lg bg-morado-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-morado-800"
+        >
+          Ver programación ahora →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ destino }}>
+    // Redirección inmediata en el cliente hacia la sección #agenda
+    if (window.location.pathname.startsWith('/agenda')) {
+      window.location.replace(destino);
+    }
+  </script>
+</Layout>

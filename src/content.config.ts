@@ -231,6 +231,33 @@ const proximos = defineCollection({
           }
         })
         .optional(),
+      /**
+       * Cronograma oficial del evento: charlas, talleres, pausas y sesiones generales.
+       * Permite filtrar por sala y consultar horarios y ponentes.
+       */
+      agenda: z
+        .array(
+          z.object({
+            horaInicio: z.string(),
+            horaFin: z.string(),
+            titulo: z.string(),
+            tipo: z.enum([
+              'logistica',
+              'protocolo',
+              'charla',
+              'workshop',
+              'break',
+              'cierre',
+            ]),
+            speaker: z.string().optional(),
+            rolSpeaker: z.string().optional(),
+            sala: z.string(),
+            sponsor: z.string().optional(),
+            descripcion: z.string().optional(),
+            paraVoluntarios: z.boolean().optional().default(false),
+          })
+        )
+        .optional(),
     }),
 });
 

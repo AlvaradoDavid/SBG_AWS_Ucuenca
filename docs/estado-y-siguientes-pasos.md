@@ -103,10 +103,11 @@ enlaces que se impriman o se compartan para el campus llevan la URL de Amplify:
 
 **Pendiente del club:**
 
-- **Agenda y ponentes.** Cuando lleguen, la sección «Agenda y ponentes» de la
-  página deja de decir «Muy pronto». Hace falta un campo nuevo en el esquema
-  (`agenda`, con hora, título y ponente) y, por ponente, nombre, tema y foto con
-  su permiso, como con el CORE Team.
+- **Agenda y ponentes.** ✅ Integrada con el borrador oficial de 15 actividades:
+  sesiones simultáneas en 3 salas (Auditorio 001, Auditorio 002 y Aula Bloque A),
+  filtros por sala, enlace directo a `#agenda`, botón para copiar enlace al portapapeles
+  y ruta corta `/agenda/`. Cuando se confirmen fotos de los ponentes invitados con su
+  permiso, se podrán agregar a cada tarjeta.
 - **Otros participantes,** además de los 8 Student Builder Groups.
 - **El arte original.** La foto del cartel es un recorte del afiche horizontal
   (682 × 901 px) y se ve algo blanda en pantallas de alta densidad. Con la foto de

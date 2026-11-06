@@ -426,6 +426,28 @@ tiene `patrocinio` o ya terminó (`buscaPatrocinio()` en `src/lib/patrocinio.ts`
 
 ---
 
+## `AgendaEvento.astro`
+
+Cronograma interactivo y accesible del evento con sesiones simultáneas y filtros por sala.
+
+```astro
+<AgendaEvento evento={evento} />
+```
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `evento` | `Proximo` | Entrada de la colección con `agenda` poblada |
+
+Características:
+- Agrupa las actividades por bloques horarios cronológicos.
+- Maneja sesiones paralelas en 3 salas (`Auditorio 001`, `Auditorio 002`, `Aula bloque A`) y sesiones plenarias.
+- Píldoras de filtrado interactivo por sala con roles accesibles (`role="tablist"` y `aria-selected`).
+- Botón **«Copiar enlace de agenda»** que copia la URL directa (`/student-community-day/#agenda`) con confirmación visual.
+- 100% accesible y legible sin JavaScript: todas las sesiones quedan renderizadas estáticamente en el DOM.
+- Presupuesto de JS: ~0.7 KB de script vainilla sin librerías externas.
+
+---
+
 ## `ImagenPlaceholder.astro`
 
 Marco punteado para huecos de imagen pendientes.
@@ -468,12 +490,13 @@ Una página y un archivo de calendario por cada entrada de `proximos`, en la ra�
 enlaces.
 
 La página tiene, en orden: el cartel a todo el ancho, con la foto hasta el borde
-derecho en escritorio; «El evento», con el cuerpo del `.mdx` y «Qué incluye»;
-«Cómo participar», con la entrada y cómo llegar; las comunidades
-participantes; «Agenda y ponentes», que por ahora dice «Muy pronto» y lleva a
-Instagram y LinkedIn; y al final, los patrocinadores con `InvitacionPatrocinio`.
+derecho en escritorio; «El evento», con el cuerpo del `.mdx`, «Qué incluye» y acceso
+rápido a la programación; «Cómo participar», con la entrada y cómo llegar; las comunidades
+participantes; «Agenda del evento» (`AgendaEvento.astro`), con el cronograma oficial de 15 actividades,
+sesiones paralelas en 3 salas simultáneas, filtros interactivos y enlace directo a `#agenda`;
+y al final, los patrocinadores con `InvitacionPatrocinio`.
 Su `og:image` es el afiche completo. Después del evento se quedan el cartel,
-«El evento», las comunidades y los patrocinadores.
+«El evento», la agenda histórica, las comunidades y los patrocinadores.
 
 ### `pages/[proximo]/patrocinio.astro`
 

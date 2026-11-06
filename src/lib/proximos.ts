@@ -112,3 +112,59 @@ export function archivoCalendario(evento: Proximo, pagina: string, ahora = new D
   ];
   return lineas.map(plegar).join('\r\n') + '\r\n';
 }
+
+export type TipoSesion =
+  | 'logistica'
+  | 'protocolo'
+  | 'charla'
+  | 'workshop'
+  | 'break'
+  | 'cierre';
+
+export interface SesionAgenda {
+  horaInicio: string;
+  horaFin: string;
+  titulo: string;
+  tipo: TipoSesion;
+  speaker?: string;
+  rolSpeaker?: string;
+  sala: string;
+  sponsor?: string;
+  descripcion?: string;
+  paraVoluntarios?: boolean;
+}
+
+export interface BloqueHorario {
+  horario: string;
+  horaInicio: string;
+  horaFin: string;
+  sesiones: SesionAgenda[];
+}
+
+export function tieneAgenda(evento: Proximo): boolean {
+  return Array.isArray(evento.data.agenda) && evento.data.agenda.length > 0;
+}
+
+export function agruparPorBloques(sesiones: SesionAgenda[]): BloqueHorario[] {
+  const bloques: BloqueHorario[] = [];
+  const mapa = new Map<string, SesionAgenda[]>();
+
+  for (const sesion of sesiones) {
+    const clave = `${sesion.horaInicio} – ${sesion.horaFin}`;
+    if (!mapa.has(clave)) {
+      mapa.set(clave, []);
+    }
+    mapa.get(clave)!.push(sesion);
+  }
+
+  for (const [horario, items] of mapa.entries()) {
+    bloques.push({
+      horario,
+      horaInicio: items[0].horaInicio,
+      horaFin: items[0].horaFin,
+      sesiones: items,
+    });
+  }
+
+  return bloques;
+}

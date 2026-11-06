@@ -48,6 +48,134 @@ patrocinadores:
   - { nombre: 'Aitheros', logo: '../../assets/patrocinadores/aitheros.png' }
   - { nombre: 'Next Generation Tech', logo: '../../assets/patrocinadores/next-generation-tech.png', sobreBlanco: true }
 
+# Cronograma oficial del evento: sesiones plenarias, charlas técnicas en 3 salas simultáneas, workshops y pausas.
+agenda:
+  - horaInicio: '08:30'
+    horaFin: '09:00'
+    titulo: 'Registro y check-in'
+    tipo: 'logistica'
+    speaker: 'Staff TicketIn & Voluntarios'
+    sala: 'Hall / exterior'
+    descripcion: 'Recepción de asistentes, entrega de credenciales e invitación al AWS Builder Center.'
+
+  - horaInicio: '09:00'
+    horaFin: '10:00'
+    titulo: 'Inauguración y bienvenida oficial'
+    tipo: 'protocolo'
+    speaker: 'MC, Universidad de Cuenca & CORE Team'
+    sala: 'Auditorio'
+    descripcion: 'Apertura de la jornada, bienvenida institucional, presentación del Código de Conducta y agradecimiento a patrocinadores.'
+
+  # Bloque 1 de sesiones paralelas (10:00 - 11:00)
+  - horaInicio: '10:00'
+    horaFin: '11:00'
+    titulo: '¿Cómo estudiar AWS y no morir en el intento?'
+    tipo: 'workshop'
+    speaker: 'Emi Fajardo'
+    rolSpeaker: 'Speaker invitado'
+    sala: 'Auditorio 001'
+    descripcion: 'Estrategias efectivas, recursos clave y metodología para preparar certificaciones de AWS y dominar la nube desde la universidad.'
+
+  - horaInicio: '10:00'
+    horaFin: '11:00'
+    titulo: 'De cero a agentes IA en producción: arquitectura real sobre Amazon Bedrock'
+    tipo: 'charla'
+    speaker: 'Stalin Benenaula'
+    rolSpeaker: 'Speaker de DeUna'
+    sponsor: 'Deuna'
+    sala: 'Auditorio 002'
+    descripcion: 'Arquitectura de referencia, patrones de integración y despliegue real de agentes autónomos con modelos fundacionales en Amazon Bedrock.'
+
+  - horaInicio: '10:00'
+    horaFin: '11:00'
+    titulo: 'Del chatbot al sistema autónomo: IA generativa y automatización empresarial en AWS'
+    tipo: 'charla'
+    speaker: 'Jose Figueroa'
+    rolSpeaker: 'Speaker invitado'
+    sala: 'Aula bloque A'
+    descripcion: 'Evolución de chatbots hacia agentes empresariales autónomos orquestados con servicios serverless e inteligencia artificial en AWS.'
+
+  # Bloque 2 de sesiones paralelas (11:00 - 12:00, con coffee break a las 11:45)
+  - horaInicio: '11:00'
+    horaFin: '12:00'
+    titulo: '¿Tu base de datos ya entiende español?'
+    tipo: 'charla'
+    speaker: 'Juan Carlos Pesántez'
+    rolSpeaker: 'Docente de la Universidad de Cuenca'
+    sala: 'Auditorio 001'
+    descripcion: 'Consultas semánticas en lenguaje natural, modelos vectoriales e integración práctica con bases de datos en la nube de AWS.'
+
+  - horaInicio: '11:00'
+    horaFin: '12:00'
+    titulo: 'De Bucket a Brecha: Seguridad Ofensiva en Amazon S3'
+    tipo: 'charla'
+    speaker: 'Anthony López'
+    rolSpeaker: 'Especialista en Cloud Security'
+    sala: 'Auditorio 002'
+    descripcion: 'Análisis de vectores de ataque comunes, auditoría de permisos IAM y contramedidas defensivas con demostraciones en entornos de laboratorio.'
+
+  - horaInicio: '11:00'
+    horaFin: '12:00'
+    titulo: 'IoT e IA generativa de AWS para diagnosticar máquinas'
+    tipo: 'charla'
+    speaker: 'Marco Robles'
+    rolSpeaker: 'Speaker invitado'
+    sala: 'Aula bloque A'
+    descripcion: 'Sesión interactiva integrando telemetría de sensores IoT con modelos fundacionales de AWS para mantenimiento predictivo y diagnóstico industrial.'
+
+  # Coffee break & Networking
+  - horaInicio: '11:45'
+    horaFin: '12:00'
+    titulo: 'Coffee break y networking en stands'
+    tipo: 'break'
+    sala: 'Hall / exterior'
+    descripcion: 'Pausa de café, visita a los stands de empresas patrocinadoras y networking con comunidades universitarias de todo el país.'
+
+  # Bloque 3 de sesiones paralelas (12:00 - 13:00)
+  - horaInicio: '12:00'
+    horaFin: '13:00'
+    titulo: 'Alta disponibilidad y escalamiento en Kubernetes con Amazon EKS'
+    tipo: 'charla'
+    speaker: 'Max Zeballos Torres'
+    rolSpeaker: 'Cloud & DevOps Engineer'
+    sala: 'Auditorio 001'
+    descripcion: 'Patrones arquitectónicos de alta disponibilidad, autoescalado de pods y nodos, y resiliencia multi-AZ para cargas críticas en Kubernetes.'
+
+  - horaInicio: '12:00'
+    horaFin: '13:00'
+    titulo: 'AWS Cloud Challenge: Despliega, Escala y Resuelve'
+    tipo: 'workshop'
+    speaker: 'Oscar Lara'
+    rolSpeaker: 'AWS Student Builder Group UIDE'
+    sala: 'Auditorio 002'
+    descripcion: 'Mini hackathon práctico de 1 hora con cuentas AWS de laboratorio preparadas para resolver retos en vivo de arquitectura y despliegue.'
+
+  - horaInicio: '12:00'
+    horaFin: '13:00'
+    titulo: 'Menos vibe coding, más specs: creando una app Link in Bio en AWS con Kiro'
+    tipo: 'charla'
+    speaker: 'Luis Miguel Palacios'
+    rolSpeaker: 'Software Engineer'
+    sala: 'Aula bloque A'
+    descripcion: 'Desarrollo guiado por especificaciones y despliegue en la nube con Kiro, incluyendo demo interactiva con código QR y analítica en tiempo real.'
+
+  # Cierre y foto
+  - horaInicio: '13:00'
+    horaFin: '13:45'
+    titulo: 'Cierre: agradecimientos, encuesta de feedback y sellos de swag'
+    tipo: 'cierre'
+    speaker: 'CORE TEAM'
+    sala: 'Auditorio'
+    descripcion: 'Clausura de la jornada, agradecimiento a speakers y sponsors, encuesta de satisfacción y canje de sellos para entrega de swag oficial.'
+
+  - horaInicio: '13:45'
+    horaFin: '14:00'
+    titulo: 'Foto grupal oficial del evento'
+    tipo: 'cierre'
+    speaker: 'Todos los asistentes, speakers y equipo'
+    sala: 'Auditorio'
+    descripcion: 'Fotografía conmemorativa oficial de la primera edición del Student Community Day con toda la comunidad reunida.'
+
 # La página para empresas, /student-community-day/patrocinio/ (D-32). Sale del
 # brochure de patrocinio del 2026-10-05; va de «usted», como el brochure.
 patrocinio:

@@ -77,7 +77,7 @@ Si tiene `patrocinio`, también una página para empresas:
 | `resumen` | string (máx. 220) | Meta descripción y texto del calendario |
 | `inicio`, `fin` | date | **Con hora y zona:** `2026-11-14T09:00:00-05:00`. Se formatean en la hora de Ecuador, no en UTC |
 | `lugar` | string[] | Un renglón por línea del cartel |
-| `mapa` | url | Google Maps. El del Student Community Day usa el código plus del campus |
+| `mapa` | url | Google Maps. El del Student Community Day va en coordenadas: el punto exacto dentro del Campus Balzay |
 | `acceso` | string | «Entrada gratuita, con cupos limitados» |
 | `entradas` | `{ url, sitio }` | TicketIn: el único enlace de inscripción |
 | `incluye` | string[] | «Qué incluye», en la página |

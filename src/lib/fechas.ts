@@ -61,3 +61,13 @@ export function horaDeEvento(instante: Date): string {
     .format(instante)
     .replace(':', 'h');
 }
+
+/** "2026-11-14": el día del evento en Ecuador, para el `datetime` de las horas de su agenda. */
+export function fechaIsoDeEvento(instante: Date): string {
+  return instante.toLocaleDateString('en-CA', { timeZone: ZONA_ECUADOR });
+}
+
+/** "10:00" de la agenda → "10h00", como `horaDeEvento`. */
+export function horaDeAgenda(hora: string): string {
+  return hora.replace(':', 'h');
+}

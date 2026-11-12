@@ -94,6 +94,9 @@ const eventos = defineCollection({
   }),
 });
 
+/** Una hora de la agenda, «10:00»: con ceros, para que se ordene como texto. */
+const hora = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Hora en formato HH:MM, por ejemplo 09:00');
+
 /**
  * Eventos que el club organiza y todavía no ocurren. Cada uno tiene su cartel en
  * la portada, bajo el hero, mientras no haya terminado, y su propia página. Cuando
@@ -232,31 +235,59 @@ const proximos = defineCollection({
         })
         .optional(),
       /**
-       * Cronograma oficial del evento: charlas, talleres, pausas y sesiones generales.
-       * Permite filtrar por sala y consultar horarios y ponentes.
+       * La agenda pública del día (D-34). Sale de la hoja de seguimiento del club,
+       * pero solo con lo que le sirve a quien asiste: el montaje, los responsables
+       * de sala y las notas internas se quedan en la hoja.
        */
       agenda: z
-        .array(
-          z.object({
-            horaInicio: z.string(),
-            horaFin: z.string(),
-            titulo: z.string(),
-            tipo: z.enum([
-              'logistica',
-              'protocolo',
-              'charla',
-              'workshop',
-              'break',
-              'cierre',
-            ]),
-            speaker: z.string().optional(),
-            rolSpeaker: z.string().optional(),
-            sala: z.string(),
-            sponsor: z.string().optional(),
-            descripcion: z.string().optional(),
-            paraVoluntarios: z.boolean().optional().default(false),
-          })
-        )
+        .object({
+          /**
+           * Las salas donde hay charlas o talleres a la vez, en el orden de las
+           * columnas de la agenda y de los botones del filtro.
+           */
+          salas: z.array(z.string()).min(1),
+          /** Una línea bajo el título de la agenda: cuánto dura cada sesión, por ejemplo. */
+          nota: z.string().optional(),
+          sesiones: z
+            .array(
+              z.object({
+                /** Hora de Ecuador, «HH:MM». Se muestra como «10h00». */
+                desde: hora,
+                hasta: hora,
+                titulo: z.string(),
+                /**
+                 * Las charlas y los talleres van en una de `salas`. Lo general (registro,
+                 * inauguración, cierre) y las pausas son para todos: el filtro no los oculta.
+                 */
+                tipo: z.enum(['charla', 'taller', 'general', 'pausa']),
+                ponente: z.string().optional(),
+                /** De dónde viene quien da la sesión, tal como lo dio el club. */
+                afiliacion: z.string().optional(),
+                /** La sesión la da un patrocinador, el de `afiliacion`. */
+                patrocinador: z.boolean().optional().default(false),
+                /** Opcional en lo general: la hoja no siempre dice dónde es. */
+                sala: z.string().optional(),
+                /** Una línea para quien asiste: el formato, qué esperar. Nada inventado. */
+                nota: z.string().optional(),
+              })
+            )
+            .min(1),
+        })
+        .superRefine((agenda, ctx) => {
+          for (const { titulo, tipo, sala, desde, hasta } of agenda.sesiones) {
+            if (hasta <= desde) {
+              ctx.addIssue({ code: 'custom', message: `«${titulo}» termina (${hasta}) antes de empezar (${desde})` });
+            }
+            // Una sala mal escrita («Aula Taller/ Aula 001») sacaría la sesión de su
+            // columna y del filtro sin que nadie lo note.
+            if ((tipo === 'charla' || tipo === 'taller') && !agenda.salas.includes(sala ?? '')) {
+              ctx.addIssue({
+                code: 'custom',
+                message: `«${titulo}» es ${tipo} y su sala («${sala ?? 'ninguna'}») no está en salas: ${agenda.salas.join(', ')}`,
+              });
+            }
+          }
+        })
         .optional(),
     }),
 });

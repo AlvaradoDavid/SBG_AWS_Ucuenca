@@ -113,58 +113,35 @@ export function archivoCalendario(evento: Proximo, pagina: string, ahora = new D
   return lineas.map(plegar).join('\r\n') + '\r\n';
 }
 
-export type TipoSesion =
-  | 'logistica'
-  | 'protocolo'
-  | 'charla'
-  | 'workshop'
-  | 'break'
-  | 'cierre';
+export type Agenda = NonNullable<Proximo['data']['agenda']>;
+export type Sesion = Agenda['sesiones'][number];
 
-export interface SesionAgenda {
-  horaInicio: string;
-  horaFin: string;
-  titulo: string;
-  tipo: TipoSesion;
-  speaker?: string;
-  rolSpeaker?: string;
-  sala: string;
-  sponsor?: string;
-  descripcion?: string;
-  paraVoluntarios?: boolean;
-}
-
-export interface BloqueHorario {
-  horario: string;
-  horaInicio: string;
-  horaFin: string;
-  sesiones: SesionAgenda[];
+/** Las sesiones que empiezan y terminan a la misma hora: las que van a la vez. */
+export interface Bloque {
+  desde: string;
+  hasta: string;
+  sesiones: Sesion[];
 }
 
 export function tieneAgenda(evento: Proximo): boolean {
-  return Array.isArray(evento.data.agenda) && evento.data.agenda.length > 0;
+  return Boolean(evento.data.agenda);
 }
 
-export function agruparPorBloques(sesiones: SesionAgenda[]): BloqueHorario[] {
-  const bloques: BloqueHorario[] = [];
-  const mapa = new Map<string, SesionAgenda[]>();
-
-  for (const sesion of sesiones) {
-    const clave = `${sesion.horaInicio} – ${sesion.horaFin}`;
-    if (!mapa.has(clave)) {
-      mapa.set(clave, []);
-    }
-    mapa.get(clave)!.push(sesion);
+/**
+ * La agenda en bloques, por hora de inicio. Dentro de cada bloque, las sesiones
+ * van en el orden de `salas`, para que cada sala quede siempre en la misma columna
+ * aunque la hoja del club las liste en otro orden.
+ */
+export function bloquesDeAgenda(agenda: Agenda): Bloque[] {
+  const columna = (sesion: Sesion) => (sesion.sala ? agenda.salas.indexOf(sesion.sala) : -1);
+  const bloques = new Map<string, Bloque>();
+  for (const sesion of agenda.sesiones) {
+    const clave = `${sesion.desde}-${sesion.hasta}`;
+    const bloque = bloques.get(clave) ?? { desde: sesion.desde, hasta: sesion.hasta, sesiones: [] };
+    bloque.sesiones.push(sesion);
+    bloques.set(clave, bloque);
   }
-
-  for (const [horario, items] of mapa.entries()) {
-    bloques.push({
-      horario,
-      horaInicio: items[0].horaInicio,
-      horaFin: items[0].horaFin,
-      sesiones: items,
-    });
-  }
-
-  return bloques;
+  return [...bloques.values()]
+    .map((bloque) => ({ ...bloque, sesiones: bloque.sesiones.sort((a, b) => columna(a) - columna(b)) }))
+    .sort((a, b) => a.desde.localeCompare(b.desde) || a.hasta.localeCompare(b.hasta));
 }

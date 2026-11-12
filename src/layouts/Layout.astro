@@ -58,6 +58,8 @@ const vistaPrevia =
         <meta property="og:image:alt" content={imagenAlt} />
       </>
     )}
+    <!-- Lo que una página necesita añadir al <head>: /agenda/ pone ahí su redirección. -->
+    <slot name="head" />
   </head>
   <body class="bg-white font-sans text-tinta-900 antialiased">
     <a

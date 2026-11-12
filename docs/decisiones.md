@@ -1010,3 +1010,66 @@ otro `SITE_URL`.
 **Lo que se descartó.** Seguir esperando el subdominio de la Universidad. Nunca
 llegó, y `aws.ucuenca.edu.ec` habría chocado con la misma sección de las pautas
 de marca.
+
+---
+
+<a id="d-34"></a>
+
+## D-34 · La agenda del evento: lo que dice la hoja del club, una columna por sala y atajos solo con JavaScript
+
+**Decisión.** La agenda del Student Community Day vive en el campo `agenda` de su
+`.mdx`: las `salas` con sesiones a la vez, una `nota` general y las `sesiones`.
+Sale de la hoja de seguimiento del club («SCD_Ecuador_Seguimiento_Evento -
+Agenda»), copiando títulos, ponentes y salas tal como vienen. `AgendaEvento.astro`
+la muestra en bloques por horario; cuando hay sesiones a la vez, cada sala ocupa
+siempre la misma columna, en el orden de `salas`. Con JavaScript aparecen dos
+atajos: ver una sola sala y copiar el enlace a `#agenda`. `/agenda/` lleva a esa
+sección.
+
+**Por qué solo lo que dice la hoja.** La primera versión (`52a410a`, publicada el
+2026-11-05) añadía a cada sesión una descripción y un cargo para cada ponente
+(«Especialista en Cloud Security», «Software Engineer») que no venían en ninguna
+parte, y repartía las sesiones en salas que no eran las de la hoja. Son datos de
+personas reales en una página pública: se quitaron. Lo que queda en `afiliacion`
+y en `nota` sale de las columnas de la hoja («Docente de la Universidad de
+Cuenca», «SBG UIDE», «Mini hackathon de 1 h»). Si el club quiere una descripción
+por charla, se la tiene que pedir a cada ponente, como las fotos.
+
+**Qué no se publica.** El montaje de las 07h00, los responsables de sala, la
+prueba de audio de una charla remota, «si el aula es pequeña, intercambiar con la
+sesión de Max» o el branding del coffee break: son notas para el equipo y se
+quedan en la hoja. La primera versión ponía el montaje en un recuadro de la
+página pública.
+
+**Por qué una columna por sala.** La hoja lista las sesiones de cada bloque en
+cualquier orden. Si la agenda las copiara así, el Auditorio saldría primero en un
+bloque y segundo en el siguiente. Ordenadas por `salas`, quien sigue una sala la
+encuentra siempre en el mismo lugar, y en celular salen en ese mismo orden.
+
+**Por qué los atajos se esconden sin JavaScript.** Un botón que no hace nada es
+peor que no tener botón. El filtro y «Copiar enlace a la agenda» llevan `hidden`
+en el HTML y el script se lo quita; el de copiar, además, solo si el navegador
+deja escribir en el portapapeles. Los filtros son botones de alternancia con
+`aria-pressed` dentro de un `role="group"`, como los del catálogo: la primera
+versión usaba `role="tablist"` sin paneles ni flechas, que promete a un lector de
+pantalla un comportamiento que no existía. Lo que es para todos (registro,
+inauguración, pausa, cierre) sigue a la vista con cualquier sala elegida.
+
+**Por qué `/agenda/` es una página y no una redirección.** Por lo mismo que la
+página del evento está en la raíz ([D-31](#d-31)): la redirección de Amplify solo
+se configura en la consola, y la de Astro no lleva `og:image`. `/agenda/` trae el
+afiche para la vista previa, redirige con un `meta refresh` (la primera versión lo
+hacía con JavaScript, y sin él se quedaba ahí) y su canónica es la página del
+evento.
+
+**Lo que se descartó.**
+
+- **Colores propios para cada tipo de sesión,** con el amber de Tailwind para las
+  pausas. El amber del sitio es el de marca y significa advertencia
+  ([D-27](#d-27)); la escala `amber-*` de Tailwind no es parte del sistema. Las
+  pausas van con borde punteado y la etiqueta «Pausa».
+- **`backdrop-blur` en los bloques.** Los fondos de marca son degradados sin
+  filtros justamente para no pagar ese costo al pintar.
+- **Tres enlaces a `#agenda` en la misma página** y un segundo «Reservar» en «El
+  evento», que además seguía ahí después del evento. Queda «Ver la agenda ↓» en el
+  cartel, en el lugar donde la portada dice «Ver todos los detalles →».

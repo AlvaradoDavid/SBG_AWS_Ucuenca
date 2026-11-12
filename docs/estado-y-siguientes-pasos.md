@@ -12,12 +12,12 @@ tareas que quedan pendientes sin tener que redescubrir nada.
 | Diseño y sistema de tokens | Completo y documentado. El morado ocupa superficies: hero, pie y fondos aurora ([D-28](decisiones.md#d-28)) |
 | Navegación (escritorio y móvil) | Completa |
 | Portada | Completa: hero en morado profundo con collage, cifras y partículas; cartel del Student Community Day; pilares, trayectoria, galería |
-| Próximo evento | **AWS Student Community Day Ecuador, 14 de noviembre de 2026**: cartel bajo el hero, página en `/student-community-day/` y página para patrocinadores en `/student-community-day/patrocinio/`. Faltan agenda, ponentes y el arte original: ver más abajo |
+| Próximo evento | **AWS Student Community Day Ecuador, 14 de noviembre de 2026**: cartel bajo el hero, página en `/student-community-day/` y página para patrocinadores en `/student-community-day/patrocinio/`. Agenda publicada; faltan fotos de los ponentes y el arte original: ver más abajo |
 | Galería de eventos | Completa, con visor accesible |
 | Catálogo de servicios | **251 fichas: el catálogo completo de AWS.** 41 completas con diagrama, 210 breves |
 | Contenido de eventos | Completo: los 7 con texto; 5 con cifra de asistentes |
 | Accesibilidad | AA en todo; AAA en los contrastes principales |
-| Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto. **Ojo con los datos del catálogo:** ver el punto 5 |
+| Presupuesto de JS | 4.6 KB en portada, 1.0 KB en el resto, salvo 2.1 KB en `/student-community-day/` por los atajos de la agenda. **Ojo con los datos del catálogo:** ver el punto 5 |
 | Infraestructura AWS | ✅ **En línea en Amplify, con dominio propio:** <https://www.aws-sbg-ucuenca.com/> desde el 2026-10-20, con 404 real, cabeceras de seguridad y alarmas de costo. **La red de la Universidad bloquea el dominio:** ver el punto 1 |
 
 ### Las dos profundidades de ficha
@@ -57,8 +57,9 @@ fuera lo más visible del sitio. Construido el 2026-10-05 y **publicado el
   los patrocinadores.
 - **Una página propia,** `/student-community-day/`, para Instagram, los QR y
   WhatsApp: el evento, cómo participar, las 8 comunidades participantes, la
-  agenda («Muy pronto») y los patrocinadores al final. Al compartirla sale el
-  afiche.
+  agenda y los patrocinadores al final. Al compartirla sale el afiche.
+- **La agenda,** en `/student-community-day/#agenda`, con la URL corta `/agenda/`
+  ([D-34](decisiones.md#d-34)). Ver [la agenda](#la-agenda).
 - **Un archivo de calendario,** `/student-community-day.ics`, y un enlace a
   Google Calendar.
 - **Un enlace en la barra de navegación,** entre «Inicio» y «Servicios AWS», en
@@ -103,11 +104,9 @@ enlaces que se impriman o se compartan para el campus llevan la URL de Amplify:
 
 **Pendiente del club:**
 
-- **Agenda y ponentes.** ✅ Integrada con el borrador oficial de 15 actividades:
-  sesiones simultáneas en 3 salas (Auditorio 001, Auditorio 002 y Aula Bloque A),
-  filtros por sala, enlace directo a `#agenda`, botón para copiar enlace al portapapeles
-  y ruta corta `/agenda/`. Cuando se confirmen fotos de los ponentes invitados con su
-  permiso, se podrán agregar a cada tarjeta.
+- **Fotos y descripciones de los ponentes,** si el club las quiere en la agenda:
+  cada ponente tiene que darlas y aprobarlas, como con el CORE Team. Ver
+  [la agenda](#la-agenda).
 - **Otros participantes,** además de los 8 Student Builder Groups.
 - **El arte original.** La foto del cartel es un recorte del afiche horizontal
   (682 × 901 px) y se ve algo blanda en pantallas de alta densidad. Con la foto de
@@ -135,6 +134,43 @@ enlaces que se impriman o se compartan para el campus llevan la URL de Amplify:
    organizar.
 4. La página `/student-community-day/` sigue en línea, ya sin inscripción. Si se
    quiere, puede enlazar a la galería del evento.
+
+### La agenda
+
+Publicada por primera vez el 2026-11-05 (`52a410a`) y **corregida el 2026-11-12**
+con la versión de ese día de la hoja de seguimiento del club
+(`SCD_Ecuador_Seguimiento_Evento - Agenda.pdf`, en el escritorio):
+
+- **Las salas son las de la hoja:** Auditorio, Aula Taller / Aula 001 y Aula 002 /
+  Polivalente. La primera versión las había cambiado por «Auditorio 001»,
+  «Auditorio 002» y «Aula bloque A», y algunas sesiones estaban en otra sala.
+- **Sin datos inventados:** fuera las descripciones de cada charla y los cargos
+  de los ponentes que no venían en la hoja ([D-34](decisiones.md#d-34)). Los
+  nombres, tal como los escribe la hoja: «Juan Carlos Pesantez» y «Jose Figueroa»,
+  sin tilde.
+- **Sin lo interno:** el montaje de las 07h00 ya no sale en la página pública.
+
+**Para cambiarla** se edita `agenda` en `src/content/proximos/student-community-day.mdx`;
+no hay que tocar componentes. La hoja dice «BORRADOR para definir con los
+speakers», así que puede volver a cambiar antes del sábado:
+
+- **Una sesión que cambia de hora o de sala:** su `desde`, `hasta` o `sala`. Si la
+  sala no está escrita igual que en `salas`, el build falla y dice cuál.
+- **Una sesión nueva:** copiar otra y cambiarla. El orden del archivo no importa:
+  la agenda se ordena por hora y, a la vez, por sala.
+- **Una sala nueva:** añadirla a `salas`, en el lugar donde debe ir su columna.
+
+**Lo que la hoja deja abierto,** para revisar con el club:
+
+- El cierre (13h00) y la foto grupal no tienen sala en la hoja, así que la agenda
+  no dice dónde son.
+- El taller de Emi Fajardo «se postuló como taller: confirmar formato». Sale como
+  taller.
+- La charla de Luis Miguel Palacios puede cambiar de aula con la de Max Zeballos
+  «si el aula es pequeña».
+- La charla de Jose Figueroa puede ser a distancia («confirmar si se conecta a
+  distancia»). Si lo es, conviene decirlo en su `nota`.
+- La foto grupal de las 13h45 es, según la hoja, de voluntarios y ponentes.
 
 ### La página para patrocinadores
 
@@ -199,9 +235,10 @@ edición: el brochure promete prioridad de renovación con la tarifa 2027.
   como organizadores. El club pidió dejarlo pendiente.
 - **Logos según el nivel.** El brochure vende «logo en web» en todos los niveles.
   Si el club quiere que los de Oro salgan más grandes y primero, hace falta un
-  campo `nivel` en `patrocinadores`. Hoy no se sabe el nivel de los cinco
-  patrocinadores locales (Deuna, TicketIn, Ambross TI, Aitheros, que se sumó el
-  2026-10-14, y Next Generation Tech, el 2026-10-20). AWS, el principal desde el 2026-10-15, va primero, pero con
+  campo `nivel` en `patrocinadores`. Del nivel de los cinco patrocinadores
+  locales solo se sabe el de Deuna, Plata, por la hoja de la agenda del
+  2026-11-12. Los otros son TicketIn, Ambross TI, Aitheros, que se sumó el
+  2026-10-14, y Next Generation Tech, el 2026-10-20. AWS, el principal desde el 2026-10-15, va primero, pero con
   tarjeta del mismo tamaño que las demás.
 - **Una fecha límite para patrocinar.** El merchandising y los badges necesitan
   tiempo de imprenta. Si el club fija una fecha, puede ir en la página.
@@ -348,6 +385,8 @@ detalle está en el [registro de cambios](registro-de-cambios.md).
   - El certificado de ACM cubre la raíz y `*.aws-sbg-ucuenca.com`, y vence el
     2027-05-06.
   - La raíz redirige a `www` conservando la ruta.
+- ✅ **Agenda del Student Community Day** (`52a410a`), publicada el 2026-11-05.
+  Corregida el 2026-11-12: ver [la agenda](#la-agenda).
 - ✅ **URL canónica en cada página** (`<link rel="canonical">`), para que los
   buscadores no indexen la URL de Amplify como duplicado
   ([D-33](decisiones.md#d-33)). Publicada el 2026-10-26 en `92b83ad`: las 264
@@ -695,8 +734,8 @@ pnpm enlaces
 ```
 
 Vigila tres cosas en la salida: que no aparezca ningún aviso `[DiagramaAWS]`,
-que el número de páginas siga cuadrando (hoy: 264 en el build y 260 indexadas por Pagefind, de las
-cuales 251 son fichas de servicio) y que `pnpm enlaces` termine con ✓. Este
+que el número de páginas siga cuadrando (hoy: 265 en el build, con `/agenda/`, y 260 indexadas
+por Pagefind, de las cuales 251 son fichas de servicio) y que `pnpm enlaces` termine con ✓. Este
 último detecta enlaces internos sin barra final, destinos que no existen —por
 ejemplo un `slug` mal escrito en `alternativas`— y anclas rotas.
 

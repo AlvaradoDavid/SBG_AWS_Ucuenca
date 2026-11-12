@@ -2,6 +2,66 @@
 
 ---
 
+## La agenda del Student Community Day, corregida y al día
+
+2026-11-12. La agenda que se publicó el 2026-11-05 (`52a410a`) la hizo otro
+agente sin las pautas del proyecto. Se revisó contra `docs/` y se actualizó con
+la hoja de seguimiento del club de ese día ([D-34](decisiones.md#d-34)).
+
+**Datos, con la hoja del 2026-11-12:**
+
+- **Salas:** Auditorio, Aula Taller / Aula 001 y Aula 002 / Polivalente. Las de la
+  primera versión («Auditorio 001», «Auditorio 002», «Aula bloque A») no eran las
+  de la hoja ni se correspondían con ellas: las charlas de Stalin Benenaula y de
+  Max Zeballos, que son en el Auditorio, iban una en el «Auditorio 002» y otra en
+  el «Auditorio 001».
+- **Fuera lo inventado:** una descripción por sesión y cargos como «Especialista
+  en Cloud Security» o «Software Engineer» que la hoja no trae. Quedan las
+  afiliaciones y notas que sí trae: «Docente de la Universidad de Cuenca», «AWS
+  Student Builder Group UIDE», Deuna como patrocinador, «Mini hackathon de una
+  hora», «Sesión interactiva».
+- **Fuera lo interno:** el recuadro del montaje de las 07h00 para voluntarios.
+- El cierre y la foto grupal van sin sala, como en la hoja; la primera versión
+  los ponía en el Auditorio.
+
+**Diseño y código:**
+
+- **`AgendaEvento.astro` reescrito.** Un bloque por horario y, a la vez, una
+  columna por sala, siempre en el mismo orden. Horas como en el resto del sitio
+  («10h00») en `<time datetime>`. Sin la escala `amber-*` de Tailwind, que no es
+  del sistema, sin `backdrop-blur`, sin textos de 10 px y sin efectos de hover en
+  tarjetas que no se pueden pulsar. La fecha y el resumen salen de los datos en
+  vez de estar escritos a mano (decía «talleres de Kubernetes», y la de EKS es una
+  charla).
+- **Filtro por sala** con `aria-pressed` en un `role="group"`, como el del
+  catálogo, en lugar de un `role="tablist"` sin paneles; 44 px de alto en vez de
+  28; con una región `aria-live`; y lo que es para todos queda a la vista con
+  cualquier sala. **Él y «Copiar enlace a la agenda» solo aparecen con
+  JavaScript:** antes eran botones muertos sin él.
+- **Esquema nuevo de `agenda`** en `content.config.ts`: `salas`, `nota` y
+  `sesiones`, con los campos en español. El build falla con una hora mal escrita,
+  una sesión que termina antes de empezar o una charla en una sala que no está en
+  `salas`. Los tipos de `lib/proximos.ts` salen del esquema, sin una interfaz
+  duplicada.
+- **Página del evento:** un solo enlace a la agenda, «Ver la agenda ↓», en el
+  cartel. Salen el botón «Ver agenda» con `backdrop-blur` del cartel y los botones
+  «Ver programación completa» y «Reservar en TicketIn ↗» de «El evento», que
+  repetían el cartel y seguían ahí después del evento. Se quitó el `scroll-mt-20`
+  que duplicaba el `scroll-padding-top` global.
+- **`/agenda/`** redirige con `meta refresh` en vez de JavaScript, usa la
+  canónica de la página del evento, y cuando ya no hay evento próximo lleva a la
+  agenda del último. `Layout.astro` gana un `slot="head"` para eso.
+
+**Verificado:** build completo en esta máquina con `astro.config.verificacion.mjs`:
+265 páginas, las mismas que con la primera versión. `pnpm enlaces` da ✓ con 395
+destinos. Con `pnpm servir` y las cabeceras de producción: sin errores de CSP en
+la consola; el filtro deja 8 sesiones con una sala elegida y vuelve a 14 con
+«Todas»; el `hidden` de los atajos está en el HTML. Capturas a 390 y 1280 px sin
+desbordes. La página del evento baja de 2.5 a 2.1 KB de JavaScript y de 69.6 a
+58.0 KB de HTML. Sin cambios en la CSP.
+
+---
+
 ## URL canónica en cada página
 
 2026-10-22. Desde que llegó el dominio, el sitio responde con el mismo

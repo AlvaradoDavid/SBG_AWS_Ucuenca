@@ -44,7 +44,8 @@ Mínimo 44×44 px, según WCAG 2.5.5.
 | Enlaces del menú móvil | alto 44 |
 | Cerrar el visor | 44 × 44 |
 | Flechas del visor | 48 × 48 |
-| Botones de filtro | alto mínimo 40 |
+| Botones de filtro del catálogo | alto mínimo 40 |
+| Filtro de salas de la agenda | alto 44 |
 
 ### Semántica
 
@@ -87,9 +88,13 @@ Medido sobre `dist/` después de `pnpm build`:
 | --- | --- | --- |
 | Portada | 4.6 KB | 47.7 KB |
 | Página de evento | 1.0 KB | 43.3 KB |
-| Página de un próximo evento (`/student-community-day/`) | 1.0 KB | 30.1 KB |
+| Página de un próximo evento (`/student-community-day/`) | 2.1 KB | 58.0 KB |
 | Ficha de servicio | 1.0 KB | 24.3 KB |
 | **Catálogo de servicios** | **52.4 KB** | **503.5 KB** |
+
+En la página del Student Community Day, 1.1 KB son los dos atajos de la agenda
+(ver una sala y copiar el enlace); el HTML creció con la agenda misma, que va
+entera en el HTML para leerse sin JavaScript ([D-34](decisiones.md#d-34)).
 
 De los 4.6 KB de la portada, 3.0 KB son el campo de partículas del hero. El
 cartel del próximo evento no suma JavaScript, solo HTML: 8.4 KB de los 47.7 KB de

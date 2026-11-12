@@ -353,7 +353,7 @@ se carga con prioridad; en la portada, con `loading="lazy"`.
 | `evento` | `Proximo` | Una entrada de la colección `proximos` |
 | `nivel` | `'h1'` \| `'h2'` | `h1` en la página del evento, `h2` en la portada |
 | `idTitulo` | string | Para el `aria-labelledby` de la sección que lo contiene |
-| `conDetalles` | boolean? | Añade «Ver todos los detalles →» hacia la página del evento |
+| `conDetalles` | boolean? | Añade «Ver todos los detalles →» hacia la página del evento. Sin él, si el evento tiene agenda, ese lugar lo ocupa «Ver la agenda ↓» |
 
 De arriba abajo: el logo de AWS y el del grupo, la píldora «Próximo evento» con
 «Somos los anfitriones», el nombre partido como en el afiche (`cartel` en el
@@ -428,7 +428,9 @@ tiene `patrocinio` o ya terminó (`buscaPatrocinio()` en `src/lib/patrocinio.ts`
 
 ## `AgendaEvento.astro`
 
-Cronograma interactivo y accesible del evento con sesiones simultáneas y filtros por sala.
+La agenda del día de un próximo evento, a partir del campo `agenda` de su `.mdx`
+([D-34](decisiones.md#d-34)). La monta `pages/[proximo].astro` cuando el evento la
+tiene; si no, esa página dice «Muy pronto».
 
 ```astro
 <AgendaEvento evento={evento} />
@@ -436,15 +438,33 @@ Cronograma interactivo y accesible del evento con sesiones simultáneas y filtro
 
 | Prop | Tipo | Notas |
 | --- | --- | --- |
-| `evento` | `Proximo` | Entrada de la colección con `agenda` poblada |
+| `evento` | `Proximo` | Una entrada de `proximos` con `agenda` |
 
-Características:
-- Agrupa las actividades por bloques horarios cronológicos.
-- Maneja sesiones paralelas en 3 salas (`Auditorio 001`, `Auditorio 002`, `Aula bloque A`) y sesiones plenarias.
-- Píldoras de filtrado interactivo por sala con roles accesibles (`role="tablist"` y `aria-selected`).
-- Botón **«Copiar enlace de agenda»** que copia la URL directa (`/student-community-day/#agenda`) con confirmación visual.
-- 100% accesible y legible sin JavaScript: todas las sesiones quedan renderizadas estáticamente en el DOM.
-- Presupuesto de JS: ~0.7 KB de script vainilla sin librerías externas.
+- **Un bloque por horario,** con la hora a la izquierda en escritorio y encima en
+  celular. `bloquesDeAgenda()` (`src/lib/proximos.ts`) agrupa las sesiones que
+  empiezan y terminan a la misma hora y las ordena por `salas`, para que cada sala
+  ocupe siempre la misma columna. Las horas van como en el resto del sitio
+  («10h00») y dentro de `<time datetime>`; un lector de pantalla oye «10h00 a 11h00».
+- **La tarjeta** lleva la sala, la etiqueta del tipo («Charla», «Taller», «Para
+  todos», «Pausa»), el título como `h4` bajo el `h3` de la hora, el ponente con su
+  afiliación y la `nota`. Las pausas van con borde punteado sobre `morado-50`.
+  Texto siempre en `tinta`: el morado va en el ícono de la sala, el punto de los
+  talleres y los bordes.
+- **Los atajos, solo con JavaScript.** El filtro por sala y «Copiar enlace a la
+  agenda» llevan `hidden` y el script se lo quita; el de copiar, solo si existe
+  `navigator.clipboard`. Los filtros son botones con `aria-pressed` en un
+  `role="group"`, de 44 px de alto, con el activo en blanco sobre `morado-700`. Con
+  una sala elegida quedan sus charlas y talleres más lo que es para todos, cada
+  uno a todo el ancho, y una región `aria-live` lo anuncia.
+- Mientras el evento está vigente, una línea final avisa que los cambios se
+  publican en Instagram y lleva al Instagram y al LinkedIn del club.
+
+El JavaScript de la página del evento pasó de 1.0 a 2.1 KB con estos dos atajos.
+
+**`pages/agenda.astro`** es la URL corta, `/agenda/`: lleva a `#agenda` del próximo
+evento con agenda (o del último, cuando ya pasaron) con un `meta refresh`, trae el
+afiche como `og:image` y su canónica es la página del evento. El `meta` entra por
+el `slot="head"` de `Layout.astro`.
 
 ---
 
@@ -490,13 +510,12 @@ Una página y un archivo de calendario por cada entrada de `proximos`, en la ra�
 enlaces.
 
 La página tiene, en orden: el cartel a todo el ancho, con la foto hasta el borde
-derecho en escritorio; «El evento», con el cuerpo del `.mdx`, «Qué incluye» y acceso
-rápido a la programación; «Cómo participar», con la entrada y cómo llegar; las comunidades
-participantes; «Agenda del evento» (`AgendaEvento.astro`), con el cronograma oficial de 15 actividades,
-sesiones paralelas en 3 salas simultáneas, filtros interactivos y enlace directo a `#agenda`;
-y al final, los patrocinadores con `InvitacionPatrocinio`.
-Su `og:image` es el afiche completo. Después del evento se quedan el cartel,
-«El evento», la agenda histórica, las comunidades y los patrocinadores.
+derecho en escritorio y «Ver la agenda ↓»; «El evento», con el cuerpo del `.mdx` y
+«Qué incluye»; «Cómo participar», con la entrada y cómo llegar; las comunidades
+participantes; la agenda en `#agenda` (`AgendaEvento.astro`), o «Muy pronto» con
+las redes del club si todavía no hay; y al final, los patrocinadores con
+`InvitacionPatrocinio`. Su `og:image` es el afiche completo. Después del evento se
+quedan el cartel, «El evento», las comunidades, la agenda y los patrocinadores.
 
 ### `pages/[proximo]/patrocinio.astro`
 

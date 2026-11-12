@@ -85,6 +85,7 @@ Si tiene `patrocinio`, también una página para empresas:
 | `participantes` | `{ siglas, universidad, ciudad, anfitrion }[]` | |
 | `patrocinadores` | `{ nombre, logo, sobreBlanco }[]` | `logo` es una imagen de `src/assets/patrocinadores/` |
 | `patrocinio` | objeto? | La página para empresas, `/<evento>/patrocinio/` ([D-32](decisiones.md#d-32)). Sin él no se genera |
+| `agenda` | `{ salas[], nota?, sesiones[] }`? | La agenda del día ([D-34](decisiones.md#d-34)). Sin ella, la página dice «Muy pronto» |
 
 El cuerpo del `.mdx` es la sección «El evento» de la página. Las imágenes van
 con el helper `image()`: un logo o un afiche que falta rompe el build.
@@ -98,6 +99,15 @@ en el orden de `niveles`: `true` si lo incluye, `false` si no y un texto si
 importa cuánto («2», «Preferencial»). El esquema rechaza una fila con más o menos
 valores que niveles, y un `whatsapp` que no sea un celular del Ecuador
 (`+5939` y ocho cifras). Un nivel con `agotado: true` pierde su botón.
+
+**El campo `agenda`** trae las `salas` donde hay sesiones a la vez, en el orden de
+sus columnas; una `nota` general («Cada charla o taller dura unos 45 minutos…») y
+las `sesiones`. Cada sesión lleva `desde` y `hasta` («10:00», hora de Ecuador),
+`titulo`, `tipo` (`charla`, `taller`, `general` o `pausa`) y, opcionales,
+`ponente`, `afiliacion`, `patrocinador` (la da el patrocinador de `afiliacion`),
+`sala` y `nota`. El esquema rechaza una hora mal escrita, una sesión que termina
+antes de empezar y una charla o un taller cuya sala no está en `salas`: una sala
+con un espacio de más la sacaría de su columna y del filtro sin aviso.
 
 **Los logos de los patrocinadores** llegaron en `logos/`, en la raíz del
 proyecto, que no se versiona: el sitio usa sus copias de

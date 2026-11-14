@@ -2,6 +2,21 @@
 
 ---
 
+## Actualización de la agenda y nombres de aulas del Student Community Day
+
+2026-11-13. Se actualizó la agenda del Student Community Day según el borrador
+reciente de la hoja de seguimiento del club:
+
+- **Nombres de aulas actualizados:** de «Aula Taller / Aula 001» y «Aula 002 /
+  Polivalente» a **Aula 1** y **Aula 2** (junto con el **Auditorio**).
+- **Ajuste de bloques y coffee break:** las charlas y talleres se imparten en tres
+  bloques continuos (10h00–11h00, 11h00–12h00 y 12h00–13h00). El coffee break y
+  networking en stands pasa al horario de 13h00 a 13h30 en el Hall / exterior.
+- **Cierre del evento:** pasa al horario de 13h30 a 14h00, con agradecimientos,
+  encuesta de feedback y entrega de sellos para swag.
+
+---
+
 ## La agenda del Student Community Day, corregida y al día
 
 2026-11-12. La agenda que se publicó el 2026-11-05 (`52a410a`) la hizo otro

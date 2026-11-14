@@ -137,18 +137,16 @@ enlaces que se impriman o se compartan para el campus llevan la URL de Amplify:
 
 ### La agenda
 
-Publicada por primera vez el 2026-11-05 (`52a410a`) y **corregida el 2026-11-12**
-con la versión de ese día de la hoja de seguimiento del club
-(`SCD_Ecuador_Seguimiento_Evento - Agenda.pdf`, en el escritorio):
+Publicada por primera vez el 2026-11-05 (`52a410a`) y **actualizada el 2026-11-13**
+con la versión más reciente de la hoja de seguimiento del club:
 
-- **Las salas son las de la hoja:** Auditorio, Aula Taller / Aula 001 y Aula 002 /
-  Polivalente. La primera versión las había cambiado por «Auditorio 001»,
-  «Auditorio 002» y «Aula bloque A», y algunas sesiones estaban en otra sala.
+- **Las salas son las de la hoja actualizada:** Auditorio, Aula 1 y Aula 2.
 - **Sin datos inventados:** fuera las descripciones de cada charla y los cargos
   de los ponentes que no venían en la hoja ([D-34](decisiones.md#d-34)). Los
   nombres, tal como los escribe la hoja: «Juan Carlos Pesantez» y «Jose Figueroa»,
   sin tilde.
 - **Sin lo interno:** el montaje de las 07h00 ya no sale en la página pública.
+- **Horarios ajustados:** las sesiones paralelas se desarrollan en tres bloques (10h00, 11h00 y 12h00), seguidas del coffee break y networking en stands (13h00–13h30) y el cierre con entrega de swag (13h30–14h00).
 
 **Para cambiarla** se edita `agenda` en `src/content/proximos/student-community-day.mdx`;
 no hay que tocar componentes. La hoja dice «BORRADOR para definir con los
@@ -162,15 +160,13 @@ speakers», así que puede volver a cambiar antes del sábado:
 
 **Lo que la hoja deja abierto,** para revisar con el club:
 
-- El cierre (13h00) y la foto grupal no tienen sala en la hoja, así que la agenda
-  no dice dónde son.
+- El cierre (13h30) no tiene sala en la hoja, así que la agenda no dice dónde es.
 - El taller de Emi Fajardo «se postuló como taller: confirmar formato». Sale como
   taller.
 - La charla de Luis Miguel Palacios puede cambiar de aula con la de Max Zeballos
   «si el aula es pequeña».
 - La charla de Jose Figueroa puede ser a distancia («confirmar si se conecta a
   distancia»). Si lo es, conviene decirlo en su `nota`.
-- La foto grupal de las 13h45 es, según la hoja, de voluntarios y ponentes.
 
 ### La página para patrocinadores
 

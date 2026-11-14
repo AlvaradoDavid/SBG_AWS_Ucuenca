@@ -9,6 +9,7 @@ reciente de la hoja de seguimiento del club:
 
 - **Nombres de aulas actualizados:** de «Aula Taller / Aula 001» y «Aula 002 /
   Polivalente» a **Aula 1** y **Aula 2** (junto con el **Auditorio**).
+- **Formato de sesión:** la sesión de Juan Carlos Pesantez («¿Tu base de datos ya entiende español?») se actualiza a formato taller (Workshop).
 - **Ajuste de bloques y coffee break:** las charlas y talleres se imparten en tres
   bloques continuos (10h00–11h00, 11h00–12h00 y 12h00–13h00). El coffee break y
   networking en stands pasa al horario de 13h00 a 13h30 en el Hall / exterior.
